@@ -1,0 +1,372 @@
+{
+  "$schema": "./error-codes.schema.json",
+  "_meta": {
+    "version": "1.0.0",
+    "description": "Error codes cho Agent-skill API",
+    "lastUpdated": "2026-01-16"
+  },
+  "HTTP_ERRORS": {
+    "BAD_REQUEST": {
+      "code": "HTTP_400",
+      "status": 400,
+      "message": "Yeu cau khong hop le",
+      "details": "Request body hoac query params khong dung format",
+      "suggestion": "Kiem tra lai params va thu lai"
+    },
+    "UNAUTHORIZED": {
+      "code": "HTTP_401",
+      "status": 401,
+      "message": "Chua xac thuc",
+      "details": "Token khong hop le hoac da het han",
+      "suggestion": "Vui long dang nhap lai"
+    },
+    "FORBIDDEN": {
+      "code": "HTTP_403",
+      "status": 403,
+      "message": "Khong co quyen truy cap",
+      "details": "Tai khoan khong co quyen thuc hien hanh dong nay",
+      "suggestion": "Lien he quan tri vien de duoc cap quyen"
+    },
+    "NOT_FOUND": {
+      "code": "HTTP_404",
+      "status": 404,
+      "message": "Khong tim thay du lieu",
+      "details": "Resource khong ton tai hoac da bi xoa",
+      "suggestion": "Kiem tra lai ID hoac duong dan"
+    },
+    "CONFLICT": {
+      "code": "HTTP_409",
+      "status": 409,
+      "message": "Du lieu bi trung",
+      "details": "Resource da ton tai trong he thong",
+      "suggestion": "Su dung du lieu khac hoac cap nhat resource hien tai"
+    },
+    "VALIDATION_ERROR": {
+      "code": "HTTP_422",
+      "status": 422,
+      "message": "Du lieu khong hop le",
+      "details": "Mot hoac nhieu truong du lieu khong dung format",
+      "suggestion": "Kiem tra lai cac truong va thu lai"
+    },
+    "RATE_LIMITED": {
+      "code": "HTTP_429",
+      "status": 429,
+      "message": "Qua nhieu yeu cau",
+      "details": "Ban da vuot qua gioi han so luong yeu cau",
+      "suggestion": "Vui long doi mot lat roi thu lai"
+    },
+    "INTERNAL_ERROR": {
+      "code": "HTTP_500",
+      "status": 500,
+      "message": "Loi he thong",
+      "details": "Da xay ra loi khong mong muon",
+      "suggestion": "Vui long thu lai sau hoac lien he ho tro"
+    },
+    "SERVICE_UNAVAILABLE": {
+      "code": "HTTP_503",
+      "status": 503,
+      "message": "Dich vu tam thoi khong kha dung",
+      "details": "He thong dang bao tri hoac qua tai",
+      "suggestion": "Vui long thu lai sau it phut"
+    }
+  },
+  "BUSINESS_ERRORS": {
+    "AUTH": {
+      "_description": "Loi lien quan den xac thuc va tai khoan nguoi dung",
+      "AUTH_001": {
+        "code": "AUTH_001",
+        "status": 400,
+        "message": "Thong tin dang nhap khong chinh xac",
+        "details": "Email hoac mat khau khong dung",
+        "suggestion": "Kiem tra lai email va mat khau"
+      },
+      "AUTH_002": {
+        "code": "AUTH_002",
+        "status": 409,
+        "message": "Email da duoc su dung",
+        "details": "Email nay da duoc dang ky trong he thong",
+        "suggestion": "Su dung email khac hoac dang nhap neu da co tai khoan"
+      },
+      "AUTH_003": {
+        "code": "AUTH_003",
+        "status": 400,
+        "message": "Mat khau khong du manh",
+        "details": "Mat khau can it nhat 8 ky tu, bao gom chu hoa, chu thuong, so va ky tu dac biet",
+        "suggestion": "Tao mat khau manh hon theo yeu cau"
+      },
+      "AUTH_004": {
+        "code": "AUTH_004",
+        "status": 400,
+        "message": "Token khong hop le",
+        "details": "Token xac thuc khong dung format hoac da bi gia mao",
+        "suggestion": "Yeu cau gui lai email xac thuc"
+      },
+      "AUTH_005": {
+        "code": "AUTH_005",
+        "status": 400,
+        "message": "Token da het han",
+        "details": "Token xac thuc da qua thoi gian su dung",
+        "suggestion": "Yeu cau gui lai email xac thuc"
+      },
+      "AUTH_006": {
+        "code": "AUTH_006",
+        "status": 403,
+        "message": "Tai khoan bi khoa",
+        "details": "Tai khoan cua ban da bi vo hieu hoa",
+        "suggestion": "Lien he ho tro de duoc giup do"
+      },
+      "AUTH_007": {
+        "code": "AUTH_007",
+        "status": 400,
+        "message": "Mat khau cu khong dung",
+        "details": "Mat khau hien tai ban nhap khong chinh xac",
+        "suggestion": "Kiem tra lai mat khau hien tai"
+      },
+      "AUTH_008": {
+        "code": "AUTH_008",
+        "status": 400,
+        "message": "So dien thoai da duoc su dung",
+        "details": "So dien thoai nay da duoc dang ky trong he thong",
+        "suggestion": "Su dung so dien thoai khac"
+      },
+      "AUTH_009": {
+        "code": "AUTH_009",
+        "status": 400,
+        "message": "OTP khong hop le",
+        "details": "Ma OTP khong dung hoac da het han",
+        "suggestion": "Yeu cau gui lai ma OTP"
+      }
+    },
+    "ORD": {
+      "_description": "Loi lien quan den don hang",
+      "ORD_001": {
+        "code": "ORD_001",
+        "status": 400,
+        "message": "Don hang da bi huy",
+        "details": "Khong the thuc hien hanh dong tren don hang da huy",
+        "suggestion": "Tao don hang moi"
+      },
+      "ORD_002": {
+        "code": "ORD_002",
+        "status": 400,
+        "message": "Gio hang trong",
+        "details": "Khong the tao don hang khi gio hang khong co san pham",
+        "suggestion": "Them san pham vao gio hang truoc"
+      },
+      "ORD_003": {
+        "code": "ORD_003",
+        "status": 400,
+        "message": "Khong the huy don hang",
+        "details": "Don hang da duoc xu ly, khong the huy",
+        "suggestion": "Lien he ho tro de duoc giup do"
+      },
+      "ORD_004": {
+        "code": "ORD_004",
+        "status": 400,
+        "message": "Don hang khong ton tai",
+        "details": "Khong tim thay don hang voi ID da cung cap",
+        "suggestion": "Kiem tra lai ma don hang"
+      },
+      "ORD_005": {
+        "code": "ORD_005",
+        "status": 400,
+        "message": "Dia chi giao hang khong hop le",
+        "details": "Dia chi giao hang thieu thong tin hoac khong nam trong vung phuc vu",
+        "suggestion": "Cap nhat dia chi giao hang hop le"
+      },
+      "ORD_006": {
+        "code": "ORD_006",
+        "status": 400,
+        "message": "Don hang dat toi da san pham",
+        "details": "So luong san pham trong don hang vuot qua gioi han cho phep",
+        "suggestion": "Chia thanh nhieu don hang"
+      }
+    },
+    "PAY": {
+      "_description": "Loi lien quan den thanh toan",
+      "PAY_001": {
+        "code": "PAY_001",
+        "status": 400,
+        "message": "So du khong du",
+        "details": "So du tai khoan khong du de thuc hien giao dich",
+        "suggestion": "Nap them tien vao tai khoan hoac chon phuong thuc thanh toan khac"
+      },
+      "PAY_002": {
+        "code": "PAY_002",
+        "status": 400,
+        "message": "Phuong thuc thanh toan khong hop le",
+        "details": "Phuong thuc thanh toan da chon khong duoc ho tro",
+        "suggestion": "Chon phuong thuc thanh toan khac"
+      },
+      "PAY_003": {
+        "code": "PAY_003",
+        "status": 400,
+        "message": "Giao dich that bai",
+        "details": "Giao dich khong the hoan thanh do loi tu cong thanh toan",
+        "suggestion": "Thu lai sau hoac lien he ngan hang"
+      },
+      "PAY_004": {
+        "code": "PAY_004",
+        "status": 400,
+        "message": "Giao dich da duoc xu ly",
+        "details": "Giao dich nay da duoc xu ly truoc do",
+        "suggestion": "Kiem tra lai lich su giao dich"
+      },
+      "PAY_005": {
+        "code": "PAY_005",
+        "status": 400,
+        "message": "So tien khong hop le",
+        "details": "So tien giao dich phai lon hon 0 va nho hon gioi han",
+        "suggestion": "Nhap so tien hop le"
+      }
+    },
+    "PTS": {
+      "_description": "Loi lien quan den diem thuong",
+      "PTS_001": {
+        "code": "PTS_001",
+        "status": 400,
+        "message": "Diem khong du",
+        "details": "So diem hien tai khong du de thuc hien doi thuong",
+        "suggestion": "Tich luy them diem hoac giam so diem su dung"
+      },
+      "PTS_002": {
+        "code": "PTS_002",
+        "status": 400,
+        "message": "Diem da het han",
+        "details": "Mot so diem trong tai khoan da het han su dung",
+        "suggestion": "Kiem tra lai so diem con hieu luc"
+      },
+      "PTS_003": {
+        "code": "PTS_003",
+        "status": 400,
+        "message": "Khong the su dung diem",
+        "details": "San pham hoac chuong trinh nay khong ho tro thanh toan bang diem",
+        "suggestion": "Chon phuong thuc thanh toan khac"
+      }
+    },
+    "VCH": {
+      "_description": "Loi lien quan den voucher",
+      "VCH_001": {
+        "code": "VCH_001",
+        "status": 400,
+        "message": "Voucher da het han",
+        "details": "Ma voucher nay da het thoi gian su dung",
+        "suggestion": "Su dung voucher khac"
+      },
+      "VCH_002": {
+        "code": "VCH_002",
+        "status": 400,
+        "message": "Voucher khong ton tai",
+        "details": "Ma voucher khong dung hoac da bi xoa",
+        "suggestion": "Kiem tra lai ma voucher"
+      },
+      "VCH_003": {
+        "code": "VCH_003",
+        "status": 400,
+        "message": "Voucher da het luot su dung",
+        "details": "So luong voucher da duoc su dung het",
+        "suggestion": "Su dung voucher khac"
+      },
+      "VCH_004": {
+        "code": "VCH_004",
+        "status": 400,
+        "message": "Khong du dieu kien su dung voucher",
+        "details": "Don hang khong thoa man dieu kien ap dung voucher",
+        "suggestion": "Kiem tra dieu kien su dung voucher"
+      },
+      "VCH_005": {
+        "code": "VCH_005",
+        "status": 400,
+        "message": "Da su dung voucher nay",
+        "details": "Ban da su dung voucher nay truoc do",
+        "suggestion": "Moi nguoi chi duoc su dung 1 lan"
+      }
+    },
+    "STR": {
+      "_description": "Loi lien quan den cua hang",
+      "STR_001": {
+        "code": "STR_001",
+        "status": 400,
+        "message": "Cua hang khong hoat dong",
+        "details": "Cua hang tam ngung hoat dong hoac da dong cua",
+        "suggestion": "Chon cua hang khac"
+      },
+      "STR_002": {
+        "code": "STR_002",
+        "status": 400,
+        "message": "Ngoai vung phuc vu",
+        "details": "Dia chi giao hang nam ngoai vung phuc vu cua cua hang",
+        "suggestion": "Chon dia chi khac hoac cua hang khac"
+      },
+      "STR_003": {
+        "code": "STR_003",
+        "status": 400,
+        "message": "Cua hang chua duoc xac minh",
+        "details": "Cua hang chua hoan tat qua trinh xac minh",
+        "suggestion": "Doi cua hang duoc xac minh hoac chon cua hang khac"
+      }
+    },
+    "PRD": {
+      "_description": "Loi lien quan den san pham",
+      "PRD_001": {
+        "code": "PRD_001",
+        "status": 400,
+        "message": "San pham het hang",
+        "details": "San pham hien khong con trong kho",
+        "suggestion": "Chon san pham khac hoac doi hang ve"
+      },
+      "PRD_002": {
+        "code": "PRD_002",
+        "status": 400,
+        "message": "San pham ngung kinh doanh",
+        "details": "San pham nay da ngung ban",
+        "suggestion": "Chon san pham khac"
+      },
+      "PRD_003": {
+        "code": "PRD_003",
+        "status": 400,
+        "message": "So luong vuot qua ton kho",
+        "details": "So luong yeu cau lon hon so luong con lai trong kho",
+        "suggestion": "Giam so luong hoac chon san pham khac"
+      },
+      "PRD_004": {
+        "code": "PRD_004",
+        "status": 400,
+        "message": "San pham khong ton tai",
+        "details": "Khong tim thay san pham voi ID da cung cap",
+        "suggestion": "Kiem tra lai ma san pham"
+      }
+    },
+    "SYS": {
+      "_description": "Loi he thong chung",
+      "SYS_001": {
+        "code": "SYS_001",
+        "status": 503,
+        "message": "Dich vu tam thoi khong kha dung",
+        "details": "He thong dang bao tri hoac gap su co",
+        "suggestion": "Vui long thu lai sau it phut"
+      },
+      "SYS_002": {
+        "code": "SYS_002",
+        "status": 500,
+        "message": "Loi ket noi co so du lieu",
+        "details": "Khong the ket noi den co so du lieu",
+        "suggestion": "Vui long thu lai sau"
+      },
+      "SYS_003": {
+        "code": "SYS_003",
+        "status": 500,
+        "message": "Loi xu ly file",
+        "details": "Khong the xu ly file tai len",
+        "suggestion": "Kiem tra lai file va thu lai"
+      },
+      "SYS_004": {
+        "code": "SYS_004",
+        "status": 500,
+        "message": "Loi gui email",
+        "details": "Khong the gui email thong bao",
+        "suggestion": "Kiem tra lai dia chi email"
+      }
+    }
+  }
+}

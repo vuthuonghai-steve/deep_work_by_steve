@@ -1,0 +1,200 @@
+ERROR RESPONSE SYSTEM - SKILL STRUCTURE
+========================================
+
+📦 error-response-system/
+│
+├── 📄 README.txt                     # Package overview & quick start
+├── 📄 SKILL.md                       # Main skill documentation (AI-optimized)
+│
+├── 📁 assets/                        # Templates and resources
+│   └── 📄 error-codes-template.json # Error codes template with examples
+│
+├── 📁 scripts/                       # Automation scripts
+│   ├── 🐍 validate-error-codes.py   # Validate error codes JSON
+│   └── 🐍 generate-types.py         # Generate TypeScript types
+│
+└── 📁 references/                    # Documentation
+    ├── 📄 README.md                  # Overview & quick reference
+    ├── 📄 AI-AGENT-GUIDE.md         # Detailed AI agent instructions
+    ├── 📄 implementation-guide.md    # Complete implementation guide
+    └── 📄 migration-guide.md         # Migration from v1.x to v2.0
+
+
+FILE PURPOSES
+=============
+
+ROOT LEVEL
+----------
+README.txt
+  Purpose: Package overview, installation instructions
+  Audience: Everyone (first file to read)
+  
+SKILL.md
+  Purpose: Main skill documentation with auto-activation rules
+  Audience: AI Agents & Developers
+  Key Features: Decision trees, pattern recognition, mandatory rules
+
+
+ASSETS FOLDER
+-------------
+error-codes-template.json
+  Purpose: Complete error codes database with metadata
+  Contains: HTTP errors, Business errors (AUTH, ORD, PAY, etc.)
+  Metadata: useCases, relatedCodes, _aiGuidance
+  
+
+SCRIPTS FOLDER
+--------------
+validate-error-codes.py
+  Purpose: Validate error codes JSON structure
+  Features: Severity levels, detailed error messages, Vietnamese check
+  Usage: python scripts/validate-error-codes.py
+  
+generate-types.py
+  Purpose: Generate TypeScript types from JSON
+  Output: types.ts with interfaces, unions, helpers
+  Usage: python scripts/generate-types.py
+
+
+REFERENCES FOLDER
+-----------------
+README.md
+  Purpose: Quick start guide and overview
+  Audience: All users
+  Contains: Installation, examples, best practices
+  
+AI-AGENT-GUIDE.md
+  Purpose: Complete instructions for AI agents
+  Audience: Claude, GPT-4, other AI assistants
+  Contains: Auto-activation logic, decision trees, patterns
+  
+implementation-guide.md
+  Purpose: Detailed implementation instructions
+  Audience: Developers
+  Contains: Setup, helper functions, frontend integration, testing
+  
+migration-guide.md
+  Purpose: Upgrade guide from v1.x to v2.0
+  Audience: Existing users
+  Contains: Migration steps, breaking changes (none!), enhancements
+
+
+WORKFLOW
+========
+
+FOR AI AGENTS
+-------------
+1. Read SKILL.md for auto-activation rules
+2. Consult AI-AGENT-GUIDE.md for decision logic
+3. Use pattern recognition to select error codes
+4. Generate type-safe error responses
+
+FOR DEVELOPERS
+--------------
+1. Read README.txt for overview
+2. Follow implementation-guide.md for setup
+3. Copy error-codes-template.json to project
+4. Run generate-types.py
+5. Create helper functions
+6. Start using in API routes
+
+FOR MIGRATION
+-------------
+1. Read migration-guide.md
+2. Update error codes JSON (optional)
+3. Replace scripts
+4. Regenerate types
+5. Done! (no code changes needed)
+
+
+KEY FEATURES
+============
+
+✅ AI-First Design
+   - Auto-activation on file paths & keywords
+   - Pattern recognition matrix
+   - Decision trees for AI agents
+
+✅ Type Safety
+   - Generated TypeScript types
+   - Union types for all error codes
+   - Type guards and helpers
+
+✅ Developer Experience
+   - Vietnamese user messages
+   - Actionable suggestions
+   - Detailed error context
+
+✅ Maintainability
+   - Single source of truth (JSON)
+   - Validation before use
+   - Auto-generated types
+
+✅ Backward Compatible
+   - 100% compatible with v1.x
+   - No breaking changes
+   - Incremental adoption
+
+
+VERSION INFO
+============
+
+Version: 2.0.0
+Date: 2026-02-06
+License: MIT
+
+Changes from v1.x:
+- Enhanced error code metadata (useCases, relatedCodes)
+- AI-optimized documentation structure
+- Better validation with severity levels
+- Improved type generation with JSDoc
+- Dedicated AI Agent Guide
+- 100% backward compatible
+
+
+INSTALLATION PATHS
+==================
+
+Claude Projects:
+  ~/.claude/skills/error-response-system/
+
+Your Project:
+  src/lib/errors/error-codes.json      # From assets/
+  src/lib/errors/types.ts              # Generated
+  src/lib/errors/helpers.ts            # Create manually
+  src/lib/errors/index.ts              # Create manually
+  scripts/validate-error-codes.py     # From scripts/
+  scripts/generate-types.py           # From scripts/
+
+
+DOCUMENTATION READING ORDER
+============================
+
+First Time Users:
+  1. README.txt (this location)
+  2. references/README.md
+  3. references/implementation-guide.md
+
+AI Agents:
+  1. SKILL.md
+  2. references/AI-AGENT-GUIDE.md
+
+Migrating from v1.x:
+  1. references/migration-guide.md
+  2. references/README.md
+
+Advanced Usage:
+  1. references/implementation-guide.md
+  2. SKILL.md
+  3. references/AI-AGENT-GUIDE.md
+
+
+SUPPORT
+=======
+
+Documentation: See references/ folder
+Examples: See implementation-guide.md
+Validation: python scripts/validate-error-codes.py
+Type Generation: python scripts/generate-types.py
+
+For issues or questions, check the documentation first!

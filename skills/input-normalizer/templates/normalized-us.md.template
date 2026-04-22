@@ -1,0 +1,55 @@
+# Normalized User Story Template
+
+```json
+{
+  "documentType": "user_story",
+  "id": "{{id}}",
+  "title": "{{title}}",
+  "description": "{{description}}",
+  "acceptanceCriteria": [
+    "{{criteria1}}",
+    "{{criteria2}}"
+  ],
+  "priority": "{{priority}}",
+  "module": "{{module}}",
+  "source": {
+    "file": "{{source.file}}",
+    "line": {{source.line}},
+    "section": "{{source.section}}"
+  },
+  "labels": [{{#each labels}}"{{this}}"{{#unless @last}}, {{/unless}}{{/each}}],
+  "assignee": "{{assignee}}",
+  "storyPoints": {{storyPoints}},
+  "originalContent": "{{originalContent}}",
+  "createdAt": "{{createdAt}}"
+}
+```
+
+## Example
+
+```json
+{
+  "documentType": "user_story",
+  "id": "US-M1-001",
+  "title": "User Registration",
+  "description": "As a new user, I want to register with email and password so that I can access the platform",
+  "acceptanceCriteria": [
+    "User can enter email and password",
+    "Email is validated for correct format",
+    "Password meets minimum security requirements",
+    "User receives confirmation after registration"
+  ],
+  "priority": "must-have",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/04-features/m1-auth/user-stories.md",
+    "line": 15,
+    "section": "Registration"
+  },
+  "labels": ["auth", "registration", "new-user"],
+  "assignee": null,
+  "storyPoints": 5,
+  "originalContent": "US-M1-001: As a new user...",
+  "createdAt": "2026-03-02T10:30:00Z"
+}
+```

@@ -1,0 +1,80 @@
+%%{init: {"flowchart": {"defaultRenderer": "elk"}} }%%
+flowchart TD
+  %% ============================================================
+  %% SWIMLANE TEMPLATE — 3-Lane Business Process Flow
+  %% ============================================================
+  %% Instructions:
+  %%   1. Replace %%BUSINESS_FUNCTION%% with kebab-case function name
+  %%   2. Replace %%UC_ID%% with UC-ID (e.g., UC01, UC19)
+  %%   3. Replace %%DATE%% with YYYY-MM-DD
+  %%   4. For each node: choose shape from mermaid-flowchart-guide.md §1
+  %%   5. For User Lane: click, input, submit, view actions
+  %%   6. For System Lane: validate, process, call API, respond
+  %%   7. For DB Lane: SELECT, INSERT, UPDATE, DELETE operations
+  %% ============================================================
+  %% Business Function: %%BUSINESS_FUNCTION%%
+  %% UC-ID: %%UC_ID%%
+  %% Generated: %%DATE%%
+  %% ============================================================
+
+  subgraph User ["👤 User"]
+    direction TB
+    U_start(["▶ %%TRIGGER_ACTION%%"])
+    U_input["%%USER_INPUT_ACTION%%"]
+    U_submit["%%USER_SUBMIT_ACTION%%"]
+    U_success["✅ %%SUCCESS_MESSAGE%%"]
+    U_error["❌ %%ERROR_MESSAGE%%"]
+  end
+
+  subgraph System ["⚙️ System"]
+    direction TB
+    S_receive["%%RECEIVE_REQUEST%%"]
+    S_validate{"%%VALIDATION_CHECK%%?"}
+    S_process["%%BUSINESS_LOGIC%%"]
+    S_respond_ok["%%SUCCESS_RESPONSE%%"]
+    S_respond_err["%%ERROR_RESPONSE%%"]
+  end
+
+  subgraph DB ["🗄️ Database"]
+    direction TB
+    D_query[("%%DB_READ_OPERATION%%")]
+    D_write[("%%DB_WRITE_OPERATION%%")]
+  end
+
+  %% ============================================================
+  %% CONNECTIONS (define after all subgraphs)
+  %% ============================================================
+  U_start --> U_input --> U_submit
+  U_submit --> S_receive
+
+  S_receive --> S_validate
+
+  %% Exception Path
+  S_validate -- "%%INVALID_CONDITION%%" --> S_respond_err --> U_error
+
+  %% Happy Path continues
+  S_validate -- "%%VALID_CONDITION%%" --> D_query
+
+  D_query -- "%%SUCCESS_CONDITION%%" --> S_process --> D_write --> S_respond_ok --> U_success
+
+  %% ============================================================
+  %% PLACEHOLDER SUMMARY (remove before finalizing):
+  %% %%BUSINESS_FUNCTION%%   — e.g., "user-registration", "bookmark-save"
+  %% %%UC_ID%%               — e.g., "UC01", "UC19"
+  %% %%DATE%%                — e.g., "2026-02-20"
+  %% %%TRIGGER_ACTION%%      — e.g., "Truy cập trang Register"
+  %% %%USER_INPUT_ACTION%%   — e.g., "Điền form đăng ký"
+  %% %%USER_SUBMIT_ACTION%%  — e.g., "Nhấn Submit"
+  %% %%SUCCESS_MESSAGE%%     — e.g., "Redirect về trang Login"
+  %% %%ERROR_MESSAGE%%       — e.g., "Hiển thị lỗi: Email đã tồn tại"
+  %% %%RECEIVE_REQUEST%%     — e.g., "Nhận POST /api/users/register"
+  %% %%VALIDATION_CHECK%%    — e.g., "Schema hợp lệ"
+  %% %%BUSINESS_LOGIC%%      — e.g., "Hash password (bcrypt)"
+  %% %%SUCCESS_RESPONSE%%    — e.g., "Trả 201 Created"
+  %% %%ERROR_RESPONSE%%      — e.g., "Trả 400 Validation Error"
+  %% %%DB_READ_OPERATION%%   — e.g., "SELECT users WHERE email=?"
+  %% %%DB_WRITE_OPERATION%%  — e.g., "INSERT user record"
+  %% %%INVALID_CONDITION%%   — e.g., "Không hợp lệ"
+  %% %%VALID_CONDITION%%     — e.g., "Hợp lệ"
+  %% %%SUCCESS_CONDITION%%   — e.g., "Email chưa tồn tại" / "Tìm thấy"
+  %% ============================================================

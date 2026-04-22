@@ -1,0 +1,230 @@
+# Test fixtures for input-normalizer validation tests
+
+## Valid Functional Requirement (FR)
+
+```json
+{
+  "id": "FR-auth-001",
+  "title": "User Registration",
+  "description": "Users should be able to register with email and password",
+  "priority": "high",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/FR/requirements.md",
+    "line": 15,
+    "section": "Authentication"
+  },
+  "dependencies": ["FR-auth-002"],
+  "tags": ["auth", "registration"],
+  "originalContent": "FR-AUTH-001: User Registration - Users should be able to register...",
+  "createdAt": "2026-03-08T10:00:00Z"
+}
+```
+
+---
+
+## Valid User Story (US)
+
+```json
+{
+  "id": "US-M1-001",
+  "title": "User Registration",
+  "description": "As a new user, I want to register with email and password, so that I can access the platform",
+  "acceptanceCriteria": [
+    "Email field is validated",
+    "Password must be at least 8 characters",
+    "Success message displayed after registration"
+  ],
+  "priority": "must-have",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/user-stories.md",
+    "line": 5
+  },
+  "labels": ["auth", "registration"],
+  "assignee": "team-auth",
+  "storyPoints": 5,
+  "createdAt": "2026-03-08T10:00:00Z"
+}
+```
+
+---
+
+## Valid Use Case (UC)
+
+```json
+{
+  "id": "UC-M1-001",
+  "name": "User Registration",
+  "actor": "Guest User",
+  "preconditions": [
+    "User is not authenticated",
+    "User has valid email address"
+  ],
+  "postconditions": [
+    "User account is created",
+    "Verification email is sent"
+  ],
+  "flow": {
+    "main": [
+      {
+        "step": 1,
+        "action": "User opens registration page",
+        "actor": "Guest User"
+      },
+      {
+        "step": 2,
+        "action": "User fills in email and password",
+        "actor": "Guest User"
+      },
+      {
+        "step": 3,
+        "action": "System validates input",
+        "actor": "System"
+      }
+    ],
+    "alternative": [
+      {
+        "condition": "Email already exists",
+        "steps": [3]
+      }
+    ]
+  },
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/use-cases.md",
+    "line": 20
+  },
+  "createdAt": "2026-03-08T10:00:00Z"
+}
+```
+
+---
+
+## Invalid FR - Missing Required Field
+
+```json
+{
+  "id": "FR-auth-002",
+  "title": "User Login",
+  "description": "Users should be able to login with credentials",
+  "priority": "high"
+}
+```
+
+---
+
+## Invalid FR - Wrong Priority Enum
+
+```json
+{
+  "id": "FR-auth-003",
+  "title": "Password Reset",
+  "description": "Users should be able to reset password",
+  "priority": "super-critical",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/FR/requirements.md",
+    "line": 30
+  }
+}
+```
+
+---
+
+## Invalid FR - Wrong Module Pattern
+
+```json
+{
+  "id": "FR-auth-004",
+  "title": "Two-Factor Auth",
+  "description": "Users should be able to enable 2FA",
+  "priority": "medium",
+  "module": "M10",
+  "source": {
+    "file": "Docs/life-1/01-vision/FR/requirements.md",
+    "line": 40
+  }
+}
+```
+
+---
+
+## Invalid US - Missing Acceptance Criteria
+
+```json
+{
+  "id": "US-M1-002",
+  "title": "User Login",
+  "description": "As a user, I want to login, so that I can access my account",
+  "priority": "must-have",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/user-stories.md",
+    "line": 10
+  }
+}
+```
+
+---
+
+## Invalid US - Wrong Priority Enum
+
+```json
+{
+  "id": "US-M1-003",
+  "title": "Social Login",
+  "description": "As a user, I want to login with Google",
+  "acceptanceCriteria": ["Google OAuth works"],
+  "priority": "optional",
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/user-stories.md",
+    "line": 15
+  }
+}
+```
+
+---
+
+## Invalid UC - Missing Flow Main Steps
+
+```json
+{
+  "id": "UC-M1-002",
+  "name": "User Login",
+  "actor": "Registered User",
+  "preconditions": ["User exists in system"],
+  "postconditions": ["User is authenticated"],
+  "flow": {},
+  "module": "M1",
+  "source": {
+    "file": "Docs/life-1/01-vision/use-cases.md",
+    "line": 30
+  }
+}
+```
+
+---
+
+## Invalid UC - Wrong Module
+
+```json
+{
+  "id": "UC-M1-003",
+  "name": "View Profile",
+  "actor": "User",
+  "preconditions": ["User is logged in"],
+  "postconditions": ["Profile page displayed"],
+  "flow": {
+    "main": [
+      {"step": 1, "action": "User clicks profile"}
+    ]
+  },
+  "module": "M9",
+  "source": {
+    "file": "Docs/life-1/01-vision/use-cases.md",
+    "line": 40
+  }
+}
+```

@@ -1,0 +1,42 @@
+# Pipeline Init Template
+
+```yaml
+# .skill-context/{pipeline_name}/pipeline.yaml
+pipeline_name: {pipeline_name}
+project: {project}
+version: "1.0"
+
+stages:
+  - id: stage_01
+    skill: {skill_01}
+    depends_on: []
+    checkpoint: false
+    completion_criteria:
+      required_outputs: []
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_02
+    skill: {skill_02}
+    depends_on: [stage_01]
+    checkpoint: false
+    completion_criteria:
+      required_outputs: []
+      validation_script: ""
+      lint_exit_code: 0
+```
+
+## Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{pipeline_name}` | Unique pipeline identifier | uml-documentation |
+| `{project}` | Project name | life-2 |
+| `{skill_01}`, `{skill_02}` | Skill names to invoke | flow-design-analyst |
+
+## Usage
+
+1. Copy this template to `.skill-context/{pipeline_name}/pipeline.yaml`
+2. Replace variables with actual values
+3. Add stages as needed
+4. Set `checkpoint: true` for stages where you want to pause for review

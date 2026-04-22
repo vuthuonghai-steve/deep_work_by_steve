@@ -1,0 +1,84 @@
+# Pipeline YAML Example: UML Generation
+
+```yaml
+# .skill-context/uml-generation/pipeline.yaml
+pipeline_name: uml-generation
+project: life-2
+version: "1.0"
+
+stages:
+  - id: stage_01
+    skill: flow-design-analyst
+    depends_on: []
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/flow/index.md"
+        - "Docs/life-2/diagrams/flow/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_02
+    skill: sequence-design-analyst
+    depends_on: [stage_01]
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/sequence/index.md"
+        - "Docs/life-2/diagrams/sequence/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_03
+    skill: class-diagram-analyst
+    depends_on: [stage_02]
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/class/index.md"
+        - "Docs/life-2/diagrams/class/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_04
+    skill: activity-diagram-design-analyst
+    depends_on: [stage_03]
+    checkpoint: true
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/activity/index.md"
+        - "Docs/life-2/diagrams/activity/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+```
+
+## Usage
+
+```bash
+# Tạo pipeline context
+mkdir -p .skill-context/uml-generation
+cp pipeline.yaml.example .skill-context/uml-generation/pipeline.yaml
+
+# Chạy pipeline
+/pipeline-runner .skill-context/uml-generation/pipeline.yaml
+
+# Hoặc chạy với input path
+/pipeline-runner Docs/life-1/01-vision/FR/
+```
+
+## Stage Dependencies
+
+```
+flow-design-analyst (stage_01)
+    │
+    ↓ (depends_on: [])
+sequence-design-analyst (stage_02)
+    │
+    ↓ (depends_on: [stage_01])
+class-diagram-analyst (stage_03)
+    │
+    ↓ (depends_on: [stage_02])
+activity-diagram-design-analyst (stage_04)
+    ↓ (checkpoint: true)
+    ⏸️ PAUSE FOR REVIEW
+```

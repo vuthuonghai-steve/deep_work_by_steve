@@ -1,0 +1,122 @@
+# Field Validators Config
+# Mapping PayloadCMS field types to Zod validators
+
+fieldMappings:
+  text:
+    zodValidator: "zod.string()"
+    defaultValidation:
+      - "min(1)"
+    errorMessages:
+      required: "{label} là bắt buộc"
+      min: "{label} phải có ít nhất {min} ký tự"
+      max: "{label} không được quá {max} ký tự"
+
+  textarea:
+    zodValidator: "zod.string()"
+    defaultValidation:
+      - "max(1000)"
+    errorMessages:
+      required: "{label} là bắt buộc"
+      max: "{label} không được quá {max} ký tự"
+
+  number:
+    zodValidator: "zod.number()"
+    defaultValidation: []
+    errorMessages:
+      required: "{label} là bắt buộc"
+      min: "{label} phải lớn hơn hoặc bằng {min}"
+      max: "{label} phải nhỏ hơn hoặc bằng {max}"
+
+  email:
+    zodValidator: "zod.string().email()"
+    defaultValidation: []
+    errorMessages:
+      required: "Email là bắt buộc"
+      invalid: "Email không hợp lệ"
+
+  password:
+    zodValidator: "zod.string()"
+    defaultValidation:
+      - "min(8)"
+      - "max(100)"
+    errorMessages:
+      required: "Mật khẩu là bắt buộc"
+      min: "Mật khẩu phải có ít nhất 8 ký tự"
+      max: "Mật khẩu không được quá 100 ký tự"
+
+  select:
+    zodValidator: "zod.enum([])"
+    defaultValidation: []
+    errorMessages:
+      required: "Vui lòng chọn {label}"
+      invalid: "Giá trị không hợp lệ"
+
+  radio:
+    zodValidator: "zod.enum([])"
+    defaultValidation: []
+    errorMessages:
+      required: "Vui lòng chọn {label}"
+      invalid: "Giá trị không hợp lệ"
+
+  checkbox:
+    zodValidator: "zod.boolean()"
+    defaultValidation: []
+    errorMessages:
+      required: "Vui lòng chọn {label}"
+
+  date:
+    zodValidator: "zod.string().datetime()"
+    defaultValidation: []
+    errorMessages:
+      required: "{label} là bắt buộc"
+      invalid: "{label} không hợp lệ"
+
+  upload:
+    zodValidator: "zod.string()"
+    defaultValidation: []
+    errorMessages:
+      required: "{label} là bắt buộc"
+      invalid: "File không hợp lệ"
+
+  relationship:
+    zodValidator: "zod.string()"
+    defaultValidation:
+      - "min(1)"
+    errorMessages:
+      required: "Vui lòng chọn {label}"
+
+  array:
+    zodValidator: "zod.array(zod.string())"
+    defaultValidation: []
+    errorMessages:
+      required: "{label} là bắt buộc"
+      min: "Vui lòng thêm ít nhất {min} item"
+      max: "Không được quá {max} items"
+
+  json:
+    zodValidator: "zod.any()"
+    defaultValidation: []
+    errorMessages:
+      invalid: "{label} không hợp lệ"
+
+# Special validation patterns
+specialPatterns:
+  phone:
+    pattern: "^0\\d{9}$"
+    errorMessage: "Số điện thoại không hợp lệ (vd: 0912345678)"
+    example: "0912345678"
+
+  url:
+    pattern: "^https?://.*"
+    errorMessage: "URL không hợp lệ"
+    example: "https://example.com"
+
+  slug:
+    pattern: "^[a-z0-9-]+$"
+    errorMessage: "Slug chỉ chứa chữ thường, số và dấu gạch ngang"
+    example: "my-product-slug"
+
+  vietnamesePhone:
+    pattern: "^0\\d{9}$"
+    errorMessage: "Số điện thoại phải có 10 chữ số, bắt đầu bằng 0"
+    example: "0912345678"

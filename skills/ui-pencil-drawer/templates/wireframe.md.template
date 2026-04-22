@@ -1,0 +1,74 @@
+# Screen: {SCREEN_NAME}
+> module: {MODULE_CODE}
+> spec: {SPEC_FILE_PATH} §{SECTION_NUMBER}
+> layout: vertical | horizontal
+> width: 375 | 768 | 1440
+> height: fit_content | {number}
+> state: default
+
+<!--
+  INSTRUCTIONS:
+  - {SCREEN_NAME}: kebab-case screen name, prefixed with module (e.g., m1/login)
+  - {MODULE_CODE}: M1 | M2 | M3 | M4 | M5 | M6
+  - {SPEC_FILE_PATH}: full path from project root
+  - {SECTION_NUMBER}: specific section number in spec file
+  - width: 375 (mobile) | 768 (tablet) | 1440 (desktop)
+  - This file defines the DATA CONTRACT (Level 1).
+  - All comp entries MUST have `spec-cite` to prevent hallucination.
+  - Replace all {PLACEHOLDER} values before using in Phase 3.
+-->
+
+---
+
+## Section: {SECTION_1_NAME}
+> composition: split-screen | immersive-card | sidebar-layout | stacked
+> styling: neo-brutalism | glassmorphism | minimal
+> layout: vertical | horizontal
+> width: fill_container
+> height: fit_content
+> gap: 24
+> padding: 16
+
+<!--
+  One Section block per functional area (header, hero, form, footer, etc.)
+  - `composition` and `styling` provide a creative vibe for Phase 3 to execute freely.
+  - Concrete layout attrs (gap, padding, width, height) guide visual rhythm.
+  - Duplicate this block for each section needed.
+  Common section names: top-bar | hero-area | form-area | cta-area | content-area | sidebar | footer-bar | empty-state | error-state
+-->
+
+- comp: {COMPONENT_NAME}
+  ref: {NODE_ID_FROM_COMPONENT_MAP}
+  width: fill_container | fit_content | {px}
+  spec-cite: [spec §{N}.{M} — {short description}]
+  text@{FIELD_ID}: "{Display Text}"
+
+<!--
+  Duplicate the `- comp:` block for each component in this section.
+  - spec-cite: MANDATORY. Will be injected as Tagging Injection in Phase 3.
+  - ref: must be a real node ID from Phase 0 component_map.
+  - CAPS_UNDERSCORE IDs (e.g., BTN_PRIMARY_ID) = placeholders to resolve before Phase 3.
+  - Real IDs look like: FEkTl, Njux9, Pq3mR
+  - If no Lib-Component fits: AI may build inline in Phase 3 (maintain Tagging Injection).
+-->
+
+---
+
+## States
+
+- default: {Describe the default visible state — source: spec §{N}}
+- loading?: {Describe loading state — source: activity m{N}-a* §{node} OR spec §{N}}
+- error?: {Describe error state — source: activity m{N}-a* §{node} OR spec §{N}}
+- empty?: {Describe empty state — source: activity m{N}-a* §{node} OR spec §{N}}
+- success?: {Describe success/redirect state — source: activity m{N}-a* §{node}}
+
+<!--
+  Remove states with ? that are not mentioned in spec or activity diagrams.
+  Always keep `default` state.
+  State source citation format: "source: activity m1-a1 §B3" or "source: spec §2.3"
+-->
+
+---
+
+## Notes
+- Inference: {If AI inferred something from project_context not explicit in spec or diagrams, document it here}

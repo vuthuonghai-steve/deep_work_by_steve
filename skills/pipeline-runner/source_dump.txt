@@ -1,0 +1,1169 @@
+# ==================================================
+# Path: /home/steve/Documents/KLTN/.claude/skills/pipeline-runner
+# Detected tech: python
+# ==================================================
+
+## DIRECTORY STRUCTURE
+```
+pipeline-runner/
+├── knowledge/
+│   ├── error-codes.md
+│   ├── pipeline-config.md
+│   └── skills-registry.md
+├── loop/
+│   ├── checklist.md
+│   └── verify-complete.md
+├── scripts/
+│   ├── parse_pipeline.py
+│   ├── resume_pipeline.py
+│   ├── spawn_skill.py
+│   └── validate_stage.py
+├── templates/
+│   ├── pipeline-init.yaml
+│   ├── pipeline-uml-generation.yaml
+│   └── task-input.json
+├── SKILL.md
+└── TRIGGER.md
+```
+
+## FILE CONTENTS
+
+### TRIGGER.md
+```md
+# Pipeline Trigger — UML Generation
+
+```
+/pipeline-runner <path-to-docs>
+```
+
+## Mục tiêu
+
+Scan toàn bộ file trong thư mục input, phân tích nội dung, và sinh complete UML documentation bao gồm:
+- Flow Diagrams (Business Process)
+- Sequence Diagrams (User/System/DB interactions)
+- Class Diagrams (Data models)
+- Activity Diagrams (Detailed workflows)
+
+## Input
+
+- **Path**: Thư mục chứa tài liệu đầu vào (FR, specs, requirements...)
+- **Output**: Thư mụcDocs/life-2/diagrams/
+
+## Pipeline Configuration
+
+Pipeline sẽ chạy tuần tự các skills:
+
+```
+flow-design-analyst
+    ↓
+sequence-design-analyst
+    ↓
+class-diagram-analyst
+    ↓
+activity-diagram-design-analyst
+```
+
+## Execution
+
+1. **Khởi động**: Pipeline runner đọc pipeline.yaml
+2. **Stage 1**: flow-design-analyst tạo flow diagrams
+3. **Stage 2**: sequence-design-analyst tạo sequence diagrams
+4. **Stage 3**: class-diagram-analyst tạo class diagrams
+5. **Stage 4**: activity-diagram-design-analyst tạo activity diagrams
+6. **Hoàn thành**: Tạo summary.md với tất cả outputs
+
+## Usage
+
+```bash
+# Run pipeline với docs đầu vào
+/pipeline-runner Docs/life-1/01-vision/FR/
+
+# Resume nếu bị gián đoạn
+/pipeline-runner --resume
+
+# Check status
+/pipeline-runner --status
+```
+
+```
+
+### SKILL.md
+```md
+---
+name: pipeline-runner
+description: Orchestrates multi-stage skill pipelines by spawning sub-agents sequentially. Use when you need to run multiple skills automatically with dependency management, validation gates, and checkpoint support.
+trigger_patterns:
+  - "/pipeline-runner <path>"
+  - "/uml-pipeline <path>"
+  - "chạy pipeline"
+  - "run pipeline"
+  - "generate uml"
+---
+
+# Pipeline Runner — Orchestrator Skill
+
+## Mission
+
+**Persona:** Pipeline Orchestrator. Automatically chain and execute multiple skills in sequence, managing dependencies, validation, and state persistence.
+
+## Boot Sequence
+
+1. Read this `SKILL.md` (Core orchestration logic).
+2. Read `knowledge/pipeline-config.md` — Pipeline YAML schema.
+3. Read `.skill-context/{pipeline_name}/pipeline.yaml` — User's pipeline definition.
+4. Read `.skill-context/{pipeline_name}/_queue.json` — Runtime state (if resuming).
+
+*Additional files load per-step below (Progressive Disclosure).*
+
+---
+
+## Workflow Phases
+
+### Phase 1: INIT — Initialize Pipeline
+
+1. Read pipeline.yaml to get stages, dependencies, checkpoints.
+2. Validate all skills referenced exist in skills.yaml.
+3. Create or resume _queue.json with status tracking.
+4. Notify user: pipeline start, stage count, first stage.
+
+### Phase 2: EXECUTE — Run Stage Loop
+
+For each stage (in dependency order):
+
+1. **Find Runnable**: Check if all dependencies are COMPLETED.
+2. **Spawn Sub-agent**: Create task-input.json, invoke sub-agent via Task tool.
+3. **Execute**: Sub-agent runs the skill with isolated context.
+4. **Validate**: Run validation_script, check exit code = 0.
+5. **Update Queue**: Write _queue.json with COMPLETED or FAILED.
+6. **Checkpoint**: If checkpoint=true, pause and ask user to continue.
+
+### Phase 3: COMPLETE — Finalize
+
+1. Generate summary.md with all outputs.
+2. Report completion to user.
+
+---
+
+## Interaction Points (Gates)
+
+| Gate | When | Action |
+|------|------|--------|
+| **Pipeline Start** | Before INIT | Show: pipeline name, stages, input |
+| **Checkpoint** | After stage with checkpoint=true | Ask: "Continue / Stop / View Details" |
+| **Validation Failed** | After stage fails | Ask: "Retry / Skip / Stop" |
+| **Skill Not Found** | During validation | Ask: "Select alternative / Stop" |
+| **Pipeline Complete** | After all stages | Show: summary path, all outputs |
+
+---
+
+## Guardrails
+
+| ID | Rule | Mechanism |
+|----|------|----------|
+| G1 | Dependency Enforcement | Only run stage when all depends_on are COMPLETED |
+| G2 | Validation Gate | Hard stop if exit code != 0 |
+| G3 | Checkpoint Pause | Pause at checkpoint=true stages |
+| G4 | Atomic State | Write _queue.tmp first, then rename to _queue.json |
+| G5 | Source Citation | Require each skill cite input from previous stage |
+
+---
+
+## Progressive Disclosure
+
+### Tier 1: Always Load
+- SKILL.md (this file)
+- knowledge/pipeline-config.md
+
+### Tier 2: Per-Stage
+- Current skill's SKILL.md (when spawning sub-agent)
+- knowledge/error-codes.md (when error occurs)
+
+### Tier 3: Debug
+- loop/checklist.md (when verifying quality)
+- scripts/resume_pipeline.py (when resuming failed pipeline)
+
+---
+
+## Quick Trigger
+
+### Command Patterns
+
+```
+/pipeline-runner <input-path>     # Run pipeline with input path
+/uml-pipeline <input-path>       # Quick UML generation shortcut
+```
+
+### Example Usage
+
+```bash
+# Generate UML from FR docs
+/pipeline-runner Docs/life-1/01-vision/FR/
+
+# Resume failed pipeline
+/pipeline-runner --resume
+
+# Check status
+/pipeline-runner --status
+```
+
+---
+
+## Reference
+
+See TRIGGER.md for full trigger documentation.
+See templates/pipeline-uml-generation.yaml for example pipeline config.
+
+```
+
+### templates/pipeline-uml-generation.yaml
+```yaml
+# Pipeline YAML Example: UML Generation
+
+```yaml
+# .skill-context/uml-generation/pipeline.yaml
+pipeline_name: uml-generation
+project: life-2
+version: "1.0"
+
+stages:
+  - id: stage_01
+    skill: flow-design-analyst
+    depends_on: []
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/flow/index.md"
+        - "Docs/life-2/diagrams/flow/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_02
+    skill: sequence-design-analyst
+    depends_on: [stage_01]
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/sequence/index.md"
+        - "Docs/life-2/diagrams/sequence/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_03
+    skill: class-diagram-analyst
+    depends_on: [stage_02]
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/class/index.md"
+        - "Docs/life-2/diagrams/class/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_04
+    skill: activity-diagram-design-analyst
+    depends_on: [stage_03]
+    checkpoint: true
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/activity/index.md"
+        - "Docs/life-2/diagrams/activity/*.md"
+      validation_script: ""
+      lint_exit_code: 0
+```
+
+## Usage
+
+```bash
+# Tạo pipeline context
+mkdir -p .skill-context/uml-generation
+cp pipeline.yaml.example .skill-context/uml-generation/pipeline.yaml
+
+# Chạy pipeline
+/pipeline-runner .skill-context/uml-generation/pipeline.yaml
+
+# Hoặc chạy với input path
+/pipeline-runner Docs/life-1/01-vision/FR/
+```
+
+## Stage Dependencies
+
+```
+flow-design-analyst (stage_01)
+    │
+    ↓ (depends_on: [])
+sequence-design-analyst (stage_02)
+    │
+    ↓ (depends_on: [stage_01])
+class-diagram-analyst (stage_03)
+    │
+    ↓ (depends_on: [stage_02])
+activity-diagram-design-analyst (stage_04)
+    ↓ (checkpoint: true)
+    ⏸️ PAUSE FOR REVIEW
+```
+
+```
+
+### templates/task-input.json
+```json
+{
+  "task_id": "task-{stage_id}",
+  "stage_id": "{stage_id}",
+  "skill_name": "{skill_name}",
+  "skill_path": "{skill_path}",
+  "input": {
+    "project": "{project}",
+    "source_docs": [
+      "{input_doc_1}",
+      "{input_doc_2}"
+    ]
+  },
+  "output": {
+    "target_dir": "{output_dir}",
+    "index_file": "{index_file}"
+  },
+  "validation": {
+    "script": "{validation_script}",
+    "expected_exit_code": 0,
+    "required_outputs": [
+      "{output_1}",
+      "{output_2}"
+    ]
+  },
+  "handoff": {
+    "from_stage": "{previous_stage_id}",
+    "previous_output": "{previous_output_path}"
+  }
+}
+
+```
+
+### templates/pipeline-init.yaml
+```yaml
+# Pipeline Init Template
+
+```yaml
+# .skill-context/{pipeline_name}/pipeline.yaml
+pipeline_name: {pipeline_name}
+project: {project}
+version: "1.0"
+
+stages:
+  - id: stage_01
+    skill: {skill_01}
+    depends_on: []
+    checkpoint: false
+    completion_criteria:
+      required_outputs: []
+      validation_script: ""
+      lint_exit_code: 0
+
+  - id: stage_02
+    skill: {skill_02}
+    depends_on: [stage_01]
+    checkpoint: false
+    completion_criteria:
+      required_outputs: []
+      validation_script: ""
+      lint_exit_code: 0
+```
+
+## Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{pipeline_name}` | Unique pipeline identifier | uml-documentation |
+| `{project}` | Project name | life-2 |
+| `{skill_01}`, `{skill_02}` | Skill names to invoke | flow-design-analyst |
+
+## Usage
+
+1. Copy this template to `.skill-context/{pipeline_name}/pipeline.yaml`
+2. Replace variables with actual values
+3. Add stages as needed
+4. Set `checkpoint: true` for stages where you want to pause for review
+
+```
+
+### loop/verify-complete.md
+```md
+# Pipeline Runner — Post-Pipeline Verification
+
+> Verification checklist after pipeline completes
+
+---
+
+## Completion Verification
+
+### All Stages Complete
+- [ ] All stages marked COMPLETED in _queue.json
+- [ ] No stages marked FAILED
+- [ ] No stages marked IN_PROGRESS
+
+### Outputs Generated
+- [ ] All required_outputs exist
+- [ ] All validation scripts passed
+- [ ] summary.md generated
+
+### State Cleanup
+- [ ] _queue.json shows final state
+- [ ] No temporary files remain (.tmp)
+- [ ] Backup files cleaned up
+
+---
+
+## Final Report Checklist
+
+| Item | Status |
+|------|--------|
+| Pipeline name | [ ] |
+| Total stages | [ ] |
+| Completed stages | [ ] |
+| Failed stages | [ ] |
+| Total time | [ ] |
+| Output paths | [ ] |
+
+---
+
+## Error Summary (if any)
+
+| Stage | Error | Recovery Attempted |
+|-------|-------|-------------------|
+| | | |
+
+---
+
+## Next Steps
+
+- [ ] User notified of completion
+- [ ] Output paths provided to user
+- [ ] Summary report accessible
+
+```
+
+### loop/checklist.md
+```md
+# Pipeline Runner — Pre-Stage Checklist
+
+> Based on design.md §8 Risks & Blind Spots
+
+---
+
+## Pre-Stage Verification
+
+Before running each stage, verify:
+
+### Dependency Check
+- [ ] All dependencies in `depends_on` are marked COMPLETED in _queue.json
+- [ ] No circular dependencies
+
+### Validation Check
+- [ ] Validation script exists (if specified)
+- [ ] Expected exit code is defined
+- [ ] Required outputs are listed
+
+### State Check
+- [ ] _queue.json is readable
+- [ ] Backup exists (_queue.json.backup)
+- [ ] Atomic write will be used
+
+### Skill Check
+- [ ] Skill exists in skills.yaml
+- [ ] Skill path is valid
+- [ ] Input files exist (if specified)
+
+---
+
+## Risk Mitigation Checklist
+
+| Risk | Mitigation | Verified |
+|------|------------|----------|
+| Skill not found | Pre-flight check skills exist | [ ] |
+| Validation bypass | Hard stop if exit code != 0 | [ ] |
+| Context overflow | Sub-agent isolation | [ ] |
+| State corruption | Atomic writes | [ ] |
+| Checkpoint skip | Require --force to skip | [ ] |
+| Infinite retry | Max retries cap | [ ] |
+
+---
+
+## Post-Stage Verification
+
+After stage completes:
+
+- [ ] Validation passed (exit code = 0)
+- [ ] _queue.json updated with COMPLETED
+- [ ] Output files exist
+- [ ] Checkpoint pause (if configured)
+
+```
+
+### knowledge/error-codes.md
+```md
+# Error Codes — Error Handling & Recovery
+
+> Source: arc-1.md §4.2
+
+---
+
+## Overview
+
+Pipeline runner defines error codes for each failure scenario with recovery strategies.
+
+## Error Codes
+
+| Code | Name | Severity | Recovery |
+|------|------|----------|----------|
+| E001 | SKILL_NOT_FOUND | HIGH | Select alternative skill or stop |
+| E002 | VALIDATION_FAILED | HIGH | Retry, skip, or stop |
+| E003 | DEPENDENCY_UNSATISFIED | MEDIUM | Wait or stop |
+| E004 | STATE_CORRUPTION | HIGH | Restore from backup or stop |
+| E005 | CHECKPOINT_SKIP_ATTEMPT | LOW | Require --force flag |
+| E006 | MAX_RETRIES_EXCEEDED | HIGH | Stop pipeline |
+| E007 | INVALID_PIPELINE_CONFIG | HIGH | Fix pipeline.yaml |
+| E008 | SUBAGENT_TIMEOUT | MEDIUM | Retry or stop |
+
+## Error Handling Flow
+
+```
+Stage Execution
+    │
+    ├── Success → Update queue (COMPLETED)
+    │
+    └── Failure
+        ├── E001: SKILL_NOT_FOUND
+        │   └── Ask: Select alternative / Stop
+        │
+        ├── E002: VALIDATION_FAILED
+        │   └── Ask: Retry / Skip / Stop
+        │
+        ├── E003: DEPENDENCY_UNSATISFIED
+        │   └── Wait for dependency / Stop
+        │
+        └── E006: MAX_RETRIES_EXCEEDED
+            └── Stop pipeline, report error
+```
+
+## Recovery Strategies
+
+### Retry Logic
+
+```python
+MAX_RETRIES = 3
+
+def execute_stage(stage):
+    for attempt in range(MAX_RETRIES):
+        try:
+            result = spawn_subagent(stage)
+            if validate(result):
+                return SUCCESS
+        except Exception as e:
+            if attempt == MAX_RETRIES - 1:
+                raise MaxRetriesExceededError(e)
+    return FAILURE
+```
+
+### State Recovery
+
+```python
+def recover_state(queue_path):
+    # Check for backup
+    if exists(queue_path + '.backup'):
+        restore(queue_path + '.backup', queue_path)
+    else:
+        # Start fresh
+        create_new_queue(queue_path)
+```
+
+### Atomic Write Pattern
+
+```python
+def update_queue(queue_path, updates):
+    temp_path = queue_path + '.tmp'
+    # Write to temp
+    write_json(temp_path, updates)
+    # Atomic rename
+    rename(temp_path, queue_path)
+```
+
+## User Interaction Prompts
+
+| Error | Prompt |
+|-------|--------|
+| E001 | `⚠️ Skill '{skill}' not found. Select alternative or [Stop]` |
+| E002 | `❌ Validation failed: {error}. [Retry] / [Skip] / [Stop]` |
+| E003 | `⏳ Waiting for dependency: {dep}. Wait or [Stop]` |
+| E006 | `🛑 Max retries exceeded. [Stop]` |
+
+```
+
+### knowledge/pipeline-config.md
+```md
+# Pipeline Configuration — pipeline.yaml Schema
+
+> Source: arc-1.md §3.1
+
+---
+
+## Overview
+
+`pipeline.yaml` is the single source of truth for pipeline ORDER. It defines stages, dependencies, and validation criteria.
+
+## Schema
+
+```yaml
+pipeline_name: string          # Unique identifier for pipeline
+project: string               # Project name (e.g., "life-2")
+version: string               # Pipeline version (e.g., "1.0")
+
+stages:
+  - id: string               # Unique stage ID (e.g., "stage_01")
+    skill: string             # Skill name to invoke
+    depends_on: [string]     # Array of stage IDs this depends on
+    checkpoint: boolean       # Pause for user review after this stage
+    completion_criteria:
+      required_outputs:       # List of expected output files
+        - string
+      validation_script: string   # Script to run for validation
+      lint_exit_code: integer      # Expected exit code (usually 0)
+```
+
+## Example
+
+```yaml
+pipeline_name: uml-documentation
+project: life-2
+version: "1.0"
+
+stages:
+  - id: stage_01
+    skill: flow-design-analyst
+    depends_on: []
+    checkpoint: false
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/flow/index.md"
+      validation_script: "scripts/flow_lint.py"
+      lint_exit_code: 0
+
+  - id: stage_02
+    skill: sequence-design-analyst
+    depends_on: [stage_01]
+    checkpoint: true
+    completion_criteria:
+      required_outputs:
+        - "Docs/life-2/diagrams/sequence/index.md"
+      validation_script: "scripts/validate_syntax.py"
+      lint_exit_code: 0
+```
+
+## Variable Resolution
+
+Pipeline runner supports `{}` placeholders:
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `{pipeline_name}` | uml-documentation | Current pipeline name |
+| `{project}` | life-2 | Project identifier |
+| `{input_base}` | Docs/life-1/ | Base input directory |
+| `{output_base}` | Docs/life-2/ | Base output directory |
+| `{stage_id}` | stage_01 | Current stage ID |
+
+## Design Principles
+
+1. **Separation of Concerns**:
+   - `pipeline.yaml` → controls ORDER
+   - `SKILL.md` → controls CONTRACT
+
+2. **DAG-Ready**: Dependencies form a DAG (Directed Acyclic Graph). Parallel execution can be added in v2+.
+
+3. **Checkpoint**: Set `checkpoint: true` to pause after a stage for user review.
+
+```
+
+### knowledge/skills-registry.md
+```md
+# Skills Registry — skills.yaml Format
+
+> Source: arc-1.md §3.3, pipeline-commands.md
+
+---
+
+## Overview
+
+Skills registry provides metadata about available skills. Pipeline runner queries this to validate skill existence and get skill contracts.
+
+## skills.yaml Schema
+
+```yaml
+skills:
+  - name: string              # Skill name (kebab-case)
+    description: string        # What the skill does
+    path: string             # Path to SKILL.md
+    input_contract:           # What this skill expects
+      - type: file|directory
+        path: string
+        required: boolean
+    output_contract:          # What this skill produces
+      - type: file|directory
+        path: string
+        format: string
+```
+
+## Example
+
+```yaml
+skills:
+  - name: flow-design-analyst
+    description: Analyzes requirements and generates flow diagrams
+    path: .claude/skills/flow-design-analyst/SKILL.md
+    input_contract:
+      - type: file
+        path: Docs/life-2/specs/requirements.md
+        required: true
+    output_contract:
+      - type: directory
+        path: Docs/life-2/diagrams/flow/
+        format: markdown
+
+  - name: sequence-design-analyst
+    description: Generates UML sequence diagrams
+    path: .claude/skills/sequence-design-analyst/SKILL.md
+    input_contract:
+      - type: directory
+        path: Docs/life-2/diagrams/flow/
+        required: true
+    output_contract:
+      - type: directory
+        path: Docs/life-2/diagrams/sequence/
+        format: markdown
+```
+
+## Query Methods
+
+### Find Skill by Name
+
+```python
+def find_skill(skills_yaml, skill_name):
+    for skill in skills_yaml.get('skills', []):
+        if skill['name'] == skill_name:
+            return skill
+    return None
+```
+
+### Validate Skill Exists
+
+```python
+def validate_skill_exists(skills_yaml, skill_name):
+    skill = find_skill(skills_yaml, skill_name)
+    if not skill:
+        raise SkillNotFoundError(f"Skill '{skill_name}' not found")
+    return skill
+```
+
+### Get Skill Contract
+
+```python
+def get_skill_contract(skills_yaml, skill_name):
+    skill = find_skill(skills_yaml, skill_name)
+    return {
+        'input': skill.get('input_contract', []),
+        'output': skill.get('output_contract', [])
+    }
+```
+
+## Skill Path Resolution
+
+Pipeline runner searches in order:
+
+1. `.claude/skills/{skill_name}/SKILL.md`
+2. `.agent/skills/{skill_name}/SKILL.md`
+3. `.codex/skills/{skill_name}/SKILL.md`
+
+```
+
+### scripts/spawn_skill.py
+```py
+#!/usr/bin/env python3
+"""
+Spawn sub-agent for specific skill
+
+Usage:
+    python spawn_skill.py <task-input.json>
+"""
+
+import sys
+import json
+import subprocess
+from pathlib import Path
+
+
+def spawn_subagent(task_input: dict) -> dict:
+    """Spawn sub-agent to execute skill"""
+
+    skill_name = task_input['skill_name']
+    skill_path = task_input.get('skill_path')
+    input_data = task_input.get('input', {})
+    output_dir = task_input.get('output', {}).get('target_dir')
+
+    # Build prompt for sub-agent
+    prompt = f"""Execute skill: {skill_name}
+
+Task Input:
+{json.dumps(input_data, indent=2)}
+
+Output Directory: {output_dir}
+
+Read the skill definition from: {skill_path}
+Execute the skill and write results to the designated output directory.
+"""
+
+    # This would be replaced with actual Task tool invocation
+    # For now, return the task spec
+    return {
+        'status': 'SPAWNED',
+        'skill': skill_name,
+        'prompt': prompt
+    }
+
+
+def find_skill_path(skill_name: str) -> str:
+    """Find skill SKILL.md path"""
+
+    search_paths = [
+        f'.claude/skills/{skill_name}/SKILL.md',
+        f'.agent/skills/{skill_name}/SKILL.md',
+        f'.codex/skills/{skill_name}/SKILL.md',
+    ]
+
+    for path in search_paths:
+        if Path(path).exists():
+            return path
+
+    return None
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: spawn_skill.py <task-input.json>")
+        sys.exit(1)
+
+    path = sys.argv[1]
+
+    with open(path, 'r') as f:
+        task_input = json.load(f)
+
+    # Find skill path
+    skill_path = task_input.get('skill_path')
+    if not skill_path:
+        skill_path = find_skill_path(task_input['skill_name'])
+
+    if not skill_path:
+        print(f"❌ Skill not found: {task_input['skill_name']}")
+        sys.exit(1)
+
+    task_input['skill_path'] = skill_path
+
+    # Spawn sub-agent
+    result = spawn_subagent(task_input)
+
+    print(f"✅ Spawned: {result['skill']}")
+    print(f"   Prompt length: {len(result['prompt'])} chars")
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+### scripts/resume_pipeline.py
+```py
+#!/usr/bin/env python3
+"""
+Resume pipeline from checkpoint or failure
+
+Usage:
+    python resume_pipeline.py <_queue.json>
+"""
+
+import sys
+import json
+from pathlib import Path
+
+
+def load_queue(path: str) -> dict:
+    """Load _queue.json"""
+    with open(path, 'r') as f:
+        return json.load(f)
+
+
+def find_failed_stage(queue: dict) -> str | None:
+    """Find first failed stage"""
+    for stage_id, stage in queue.get('stages', {}).items():
+        if stage.get('status') == 'FAILED':
+            return stage_id
+    return None
+
+
+def find_last_completed(queue: dict) -> str | None:
+    """Find last completed stage"""
+    completed = []
+    for stage_id, stage in queue.get('stages', {}).items():
+        if stage.get('status') == 'COMPLETED':
+            completed.append(stage_id)
+    return completed[-1] if completed else None
+
+
+def reset_pipeline(queue: dict) -> dict:
+    """Reset pipeline to resume from last completed stage"""
+    last_completed = find_last_completed(queue)
+
+    if not last_completed:
+        # Start fresh
+        for stage_id in queue.get('stages', {}):
+            queue['stages'][stage_id]['status'] = 'PENDING'
+        return queue
+
+    # Reset stages after last completed
+    reset_after = False
+    for stage_id in queue.get('stages', {}):
+        if reset_after:
+            queue['stages'][stage_id]['status'] = 'PENDING'
+        if stage_id == last_completed:
+            reset_after = True
+
+    return queue
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: resume_pipeline.py <_queue.json>")
+        sys.exit(1)
+
+    path = sys.argv[1]
+
+    try:
+        queue = load_queue(path)
+
+        # Show status
+        print(f"📊 Pipeline Status: {queue.get('pipeline_name')}")
+
+        failed = find_failed_stage(queue)
+        if failed:
+            print(f"   ⚠️ Failed stage: {failed}")
+
+        last = find_last_completed(queue)
+        if last:
+            print(f"   ✅ Last completed: {last}")
+
+        # Ask to reset
+        print("\nReset pipeline to resume from last completed? [y/n]", end=' ')
+
+        # For automation, just reset
+        queue = reset_pipeline(queue)
+
+        # Save
+        with open(path, 'w') as f:
+            json.dump(queue, f, indent=2)
+
+        print("✅ Pipeline reset for resume")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+### scripts/parse_pipeline.py
+```py
+#!/usr/bin/env python3
+"""
+Parse and validate pipeline.yaml
+
+Usage:
+    python parse_pipeline.py <pipeline.yaml>
+"""
+
+import sys
+import yaml
+import json
+from pathlib import Path
+
+
+def load_pipeline_config(path: str) -> dict:
+    """Load and validate pipeline.yaml"""
+    with open(path, 'r') as f:
+        config = yaml.safe_load(f)
+
+    required_fields = ['pipeline_name', 'stages']
+    for field in required_fields:
+        if field not in config:
+            raise ValueError(f"Missing required field: {field}")
+
+    # Validate stages
+    for stage in config['stages']:
+        if 'id' not in stage:
+            raise ValueError("Stage missing 'id' field")
+        if 'skill' not in stage:
+            raise ValueError(f"Stage {stage['id']} missing 'skill' field")
+
+    return config
+
+
+def find_runnable_stages(config: dict, completed: list) -> list:
+    """Find stages that can run (dependencies satisfied)"""
+    runnable = []
+
+    for stage in config['stages']:
+        stage_id = stage['id']
+
+        # Skip already completed
+        if stage_id in completed:
+            continue
+
+        # Check dependencies
+        depends_on = stage.get('depends_on', [])
+        if all(dep in completed for dep in depends_on):
+            runnable.append(stage)
+
+    return runnable
+
+
+def resolve_variables(config: dict, context: dict) -> dict:
+    """Resolve {} placeholders in config"""
+    config_str = json.dumps(config)
+
+    for key, value in context.items():
+        placeholder = f"{{{key}}}"
+        config_str = config_str.replace(placeholder, str(value))
+
+    return json.loads(config_str)
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: parse_pipeline.py <pipeline.yaml>")
+        sys.exit(1)
+
+    path = sys.argv[1]
+
+    try:
+        config = load_pipeline_config(path)
+        print(f"✅ Pipeline loaded: {config['pipeline_name']}")
+        print(f"   Stages: {len(config['stages'])}")
+
+        # Show stages
+        for stage in config['stages']:
+            deps = stage.get('depends_on', [])
+            print(f"   - {stage['id']}: {stage['skill']} (depends: {deps})")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+### scripts/validate_stage.py
+```py
+#!/usr/bin/env python3
+"""
+Validate stage output
+
+Usage:
+    python validate_stage.py <task-input.json>
+"""
+
+import sys
+import json
+import subprocess
+from pathlib import Path
+
+
+def validate_stage(task_input: dict) -> dict:
+    """Run validation script and check exit code"""
+
+    validation = task_input.get('validation', {})
+    script = validation.get('script')
+    expected_exit = validation.get('expected_exit_code', 0)
+    required_outputs = validation.get('required_outputs', [])
+
+    # Check required outputs exist
+    missing = []
+    for output_path in required_outputs:
+        if not Path(output_path).exists():
+            missing.append(output_path)
+
+    if missing:
+        return {
+            'status': 'FAIL',
+            'error': 'Missing outputs',
+            'details': missing
+        }
+
+    # Run validation script if provided
+    if script:
+        try:
+            result = subprocess.run(
+                ['python', script],
+                capture_output=True,
+                timeout=60
+            )
+            exit_code = result.returncode
+
+            if exit_code != expected_exit:
+                return {
+                    'status': 'FAIL',
+                    'error': f'Validation script failed with exit code {exit_code}',
+                    'stdout': result.stdout.decode(),
+                    'stderr': result.stderr.decode()
+                }
+
+        except subprocess.TimeoutExpired:
+            return {
+                'status': 'FAIL',
+                'error': 'Validation script timeout'
+            }
+        except Exception as e:
+            return {
+                'status': 'FAIL',
+                'error': str(e)
+            }
+
+    return {
+        'status': 'PASS',
+        'validated_outputs': required_outputs
+    }
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: validate_stage.py <task-input.json>")
+        sys.exit(1)
+
+    path = sys.argv[1]
+
+    with open(path, 'r') as f:
+        task_input = json.load(f)
+
+    result = validate_stage(task_input)
+
+    if result['status'] == 'PASS':
+        print("✅ Validation passed")
+        sys.exit(0)
+    else:
+        print(f"❌ Validation failed: {result.get('error')}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
+```

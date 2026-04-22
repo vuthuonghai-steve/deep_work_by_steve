@@ -1,0 +1,346 @@
+metadata:
+  artifact: activity-diagram-rule-set
+  version: 1.9.0
+  owner: activity-diagram-design-analyst
+  generated_date: "2026-02-15"
+  loop_tracker:
+    start_n: 0
+    current_n: 9
+    target_n: 9
+    status: completed
+  source_of_truth:
+    - resources/activity-diagram-research.md
+    - resources/clean-architecture-notes.md
+    - resources/refactor-risk-patterns.md
+  execution_proof_runs:
+    - run_id: proof-run-20260216-004605
+      iteration: 0
+      timestamp_utc: "2026-02-15T17:46:05.006857+00:00"
+      action: validation-only
+    - run_id: proof-run-20260216-004605
+      iteration: 1
+      timestamp_utc: "2026-02-15T17:46:05.244246+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 2
+      timestamp_utc: "2026-02-15T17:46:05.497348+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 3
+      timestamp_utc: "2026-02-15T17:46:05.753583+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 4
+      timestamp_utc: "2026-02-15T17:46:06.010442+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 5
+      timestamp_utc: "2026-02-15T17:46:06.265437+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 6
+      timestamp_utc: "2026-02-15T17:46:06.520617+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 7
+      timestamp_utc: "2026-02-15T17:46:06.783144+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 8
+      timestamp_utc: "2026-02-15T17:46:07.042776+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 9
+      timestamp_utc: "2026-02-15T17:46:07.304114+00:00"
+      action: metadata-proof-update
+schema_contract:
+  required_rule_fields:
+    - id
+    - category
+    - title
+    - applicable_modes
+    - severity_default
+    - detect_if
+    - evidence_required
+    - message
+    - suggestion
+    - trace_sources
+  allowed_categories:
+    - control_flow
+    - decision_logic
+    - parallelism
+    - responsibility
+    - exception_flow
+    - clean_architecture
+  allowed_severity:
+    - critical
+    - major
+    - minor
+required_nodes_checks:
+  - id: RN-01
+    node_type: initial_node
+    required: true
+    severity_if_missing: critical
+    check_logic: diagram_must_have_at_least_one_explicit_start
+    trace_sources:
+      - resources/activity-diagram-research.md#2.2
+  - id: RN-02
+    node_type: final_node
+    required: true
+    severity_if_missing: major
+    check_logic: all_primary_paths_must_reach_final_or_defined_terminal_state
+    trace_sources:
+      - resources/activity-diagram-research.md#3.2
+  - id: RN-03
+    node_type: decision_guards
+    required: true
+    severity_if_missing: major
+    check_logic: each_decision_outgoing_branch_must_define_guard_condition_or_else
+    trace_sources:
+      - resources/activity-diagram-research.md#2.3
+  - id: RN-04
+    node_type: exception_or_alternative_path
+    required: true
+    severity_if_missing: major
+    check_logic: use_case_with_validation_or_failure_must_show_error_or_retry_path
+    trace_sources:
+      - resources/activity-diagram-research.md#3.3
+      - resources/refactor-risk-patterns.md#3.5
+  - id: RN-05
+    node_type: swimlane_partition
+    required: true
+    severity_if_missing: major
+    check_logic: actor_application_domain_external_responsibility_should_be_partitioned
+    trace_sources:
+      - resources/clean-architecture-notes.md#3.1
+      - resources/activity-diagram-research.md#2.2
+  - id: RN-06
+    node_type: merge_after_or_decision
+    required: conditional
+    severity_if_missing: critical
+    check_logic: if_branches_are_or_semantics_and_converge_then_explicit_merge_is_required
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.1
+  - id: RN-07
+    node_type: join_after_parallel_fork
+    required: conditional
+    severity_if_missing: critical
+    check_logic: synchronized_parallel_flows_started_by_fork_must_have_join_or_terminal_policy
+    trace_sources:
+      - resources/activity-diagram-research.md#2.1
+      - resources/refactor-risk-patterns.md#3.3
+rules:
+  - id: CF-01
+    category: control_flow
+    title: missing_merge_after_decision_creates_implicit_and
+    applicable_modes:
+      - A
+      - B
+    severity_default: critical
+    detect_if: two_or_more_decision_branches_merge_directly_into_one_action_without_merge_node
+    evidence_required:
+      - decision_node_with_multiple_outgoing_branches
+      - converged_action_without_merge
+    message:
+      Converged branches without merge can imply AND token waiting and deadlock
+      risk.
+    suggestion:
+      Insert explicit merge node before converged action when business semantics
+      are OR.
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.1
+  - id: CF-02
+    category: control_flow
+    title: no_explicit_terminal_state_for_primary_or_error_paths
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: one_or_more_paths_end_without_final_node_or_defined_terminal_policy
+    evidence_required:
+      - path_without_terminal
+    message:
+      Path termination is ambiguous and implementers cannot infer expected end
+      state.
+    suggestion: Add final_node or explicit retry/fallback/end_error terminal.
+    trace_sources:
+      - resources/activity-diagram-research.md#3.2
+      - resources/refactor-risk-patterns.md#3.1
+  - id: DL-01
+    category: decision_logic
+    title: decision_guards_not_exhaustive
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: decision_branch_guards_do_not_cover_else_case_or_leave_unhandled_condition
+    evidence_required:
+      - decision_node
+      - incomplete_guard_set
+    message: Non-exhaustive guards cause hidden branches and implementation ambiguity.
+    suggestion: Add else branch or complete condition coverage aligned to business rules.
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.2
+      - resources/activity-diagram-research.md#2.3
+  - id: DL-02
+    category: decision_logic
+    title: guard_names_are_ambiguous_not_domain_driven
+    applicable_modes:
+      - A
+      - B
+    severity_default: minor
+    detect_if: guard_uses_generic_terms_like_ok_success_without_business_condition
+    evidence_required:
+      - guard_text
+    message: Generic guard names reduce traceability to business policy.
+    suggestion: Rename guards with domain constraints, e.g. has_permission, quota_available.
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.2
+      - resources/clean-architecture-notes.md#3.2
+  - id: PL-01
+    category: parallelism
+    title: fork_used_for_choice_instead_of_parallel_execution
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: fork_splits_into_branches_where_requirement_describes_choose_one_path
+    evidence_required:
+      - fork_node
+      - textual_requirement_indicates_choice
+    message: Fork semantics imply concurrent execution, not mutually exclusive choice.
+    suggestion: Replace fork with decision node and guarded branches.
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.3
+      - resources/activity-diagram-research.md#2.1
+  - id: PL-02
+    category: parallelism
+    title: join_waits_for_unreachable_tokens
+    applicable_modes:
+      - B
+    severity_default: critical
+    detect_if: join_requires_multiple_inputs_but_upstream_flow_can_only_deliver_subset_tokens
+    evidence_required:
+      - join_node
+      - branch_reachability_analysis
+    message: Join deadlock risk due to unreachable synchronization path.
+    suggestion: Replace with merge for OR semantics or redesign upstream branching.
+    trace_sources:
+      - resources/refactor-risk-patterns.md#3.3
+  - id: RS-01
+    category: responsibility
+    title: domain_rule_placed_in_external_or_actor_lane
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: permission_or_quota_or_business_validation_logic_exists_in_actor_or_external_lane
+    evidence_required:
+      - swimlane_partition
+      - action_to_lane_mapping
+    message: Responsibility leakage breaks clean architecture separation.
+    suggestion: Move business rule evaluation to domain or application lane.
+    trace_sources:
+      - resources/clean-architecture-notes.md#3.1
+      - resources/refactor-risk-patterns.md#3.4
+  - id: RS-02
+    category: responsibility
+    title: missing_swimlane_partition_for_key_actors
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: diagram_has_actions_without_clear_actor_application_domain_external_partition
+    evidence_required:
+      - action_list_without_lane_ownership
+    message: Missing swimlane partition obscures accountability and handoff boundaries.
+    suggestion: Introduce swimlanes for actor, application, domain, and external systems.
+    trace_sources:
+      - resources/activity-diagram-research.md#2.2
+      - resources/clean-architecture-notes.md#3.1
+  - id: RS-03
+    category: clean_architecture
+    title: ui_or_persistence_driven_flow_overrides_business_use_case
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: flow_steps_are_dominated_by_ui_actions_or_db_commands_without_explicit_use_case_or_domain_rules
+    evidence_required:
+      - action_name_distribution
+      - missing_domain_decisions
+    message: Flow is implementation-driven, not business-use-case-driven.
+    suggestion: Reframe flow around use-case orchestration and domain rule checkpoints.
+    trace_sources:
+      - resources/clean-architecture-notes.md#4
+  - id: EX-01
+    category: exception_flow
+    title: happy_path_only_without_defined_error_paths
+    applicable_modes:
+      - A
+      - B
+    severity_default: critical
+    detect_if: requirement_contains_validation_or_failure_cases_but_diagram_has_only_success_path
+    evidence_required:
+      - use_case_alternative_or_exception_section
+      - no_error_branch_in_diagram
+    message: Missing exception handling can omit critical operational behavior.
+    suggestion: Add explicit error branches with retry, fallback, or failure terminal.
+    trace_sources:
+      - resources/activity-diagram-research.md#3.3
+      - resources/refactor-risk-patterns.md#3.5
+  - id: EX-02
+    category: exception_flow
+    title: exception_branch_has_unclear_post_error_policy
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: error_branch_logs_error_but_no_clear_decision_on_default_continue_or_fail_fast
+    evidence_required:
+      - exception_branch
+      - missing_post_error_policy
+    message: Error branch behavior is ambiguous after fault event.
+    suggestion: "Define explicit policy: continue_with_safe_default or fail_fast_terminal."
+    trace_sources:
+      - resources/refactor-risk-patterns.md#7.3
+  - id: CA-01
+    category: clean_architecture
+    title: business_rule_not_traceable_to_context
+    applicable_modes:
+      - A
+      - B
+    severity_default: major
+    detect_if: decision_or_action_has_no_trace_to_use_case_step_or_business_rule_identifier
+    evidence_required:
+      - context_document
+      - node_without_trace
+    message: Untraceable logic increases risk of accidental requirement drift.
+    suggestion: Attach trace tags from context to business-critical nodes.
+    trace_sources:
+      - resources/clean-architecture-notes.md#7
+  - id: CA-02
+    category: clean_architecture
+    title: technical_detail_leaks_into_domain_lane
+    applicable_modes:
+      - A
+      - B
+    severity_default: minor
+    detect_if: domain_lane_contains_framework_or_storage_specific_action_naming
+    evidence_required:
+      - domain_lane_actions
+    message: Technical implementation details leak into domain narrative.
+    suggestion:
+      Rename domain actions to business intent and move infra details to external
+      lane.
+    trace_sources:
+      - resources/clean-architecture-notes.md#4.2
+review_protocol:
+  when_confidence_below_threshold:
+    threshold: 0.7
+    action: ask_user_for_clarification
+  mandatory_output_sections:
+    - mermaid_diagram
+    - findings_by_severity
+    - assumptions_and_open_questions
+    - clean_architecture_guidance

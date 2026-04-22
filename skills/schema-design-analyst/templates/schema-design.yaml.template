@@ -1,0 +1,17 @@
+schema:
+  module: "[Module_Code]"
+  collections:
+    - slug: "[plural_name]"
+      type: "[aggregate | embedded]"
+      fields:
+        - name: "field_name"
+          type: "text" # Payload Type (text, select, relationship, array, blocks...)
+          index: true  # or false
+          relationTo: "[other_collection]" # (Sử dụng nếu relationship)
+          hasMany: false
+          required: true
+          # Nếu array/group/blocks:
+          # fields: ...
+      hooks:
+        afterChange: 
+          - "Mô tả hook logic (Compute counter, Sync ...)"

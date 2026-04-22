@@ -1,0 +1,245 @@
+# Input Schema Configuration
+
+> Schema definitions for all input document types
+
+---
+
+## Functional Requirement Schema
+
+```yaml
+type: object
+required:
+  - id
+  - title
+  - description
+  - priority
+  - module
+  - source
+properties:
+  id:
+    type: string
+    pattern: "^FR-[a-z0-9]+-\\d{3}$"
+    description: "Unique FR identifier"
+  title:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "FR title"
+  description:
+    type: string
+    minLength: 1
+    description: "Full FR description"
+  priority:
+    type: string
+    enum: [critical, high, medium, low]
+    description: "Priority level"
+  module:
+    type: string
+    pattern: "^M[1-6]$"
+    description: "Related module"
+  source:
+    type: object
+    required:
+      - file
+    properties:
+      file:
+        type: string
+        description: "Source file path"
+      line:
+        type: integer
+        description: "Line number in source"
+      section:
+        type: string
+        description: "Section name"
+  dependencies:
+    type: array
+    items:
+      type: string
+    description: "Related FR IDs"
+  tags:
+    type: array
+    items:
+      type: string
+    description: "Categorization tags"
+  originalContent:
+    type: string
+    description: "Preserved raw content"
+  createdAt:
+    type: string
+    format: date-time
+    description: "Creation timestamp"
+```
+
+---
+
+## User Story Schema
+
+```yaml
+type: object
+required:
+  - id
+  - title
+  - description
+  - acceptanceCriteria
+  - priority
+  - module
+  - source
+properties:
+  id:
+    type: string
+    pattern: "^US-M[1-6]-\\d{3}$"
+    description: "Unique US identifier"
+  title:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "Story title"
+  description:
+    type: string
+    minLength: 1
+    description: "As a/I want/so that format"
+  acceptanceCriteria:
+    type: array
+    minItems: 1
+    items:
+      type: string
+    description: "List of acceptance criteria"
+  priority:
+    type: string
+    enum: [must-have, should-have, could-have, won't-have]
+    description: "Priority level"
+  module:
+    type: string
+    pattern: "^M[1-6]$"
+    description: "Related module"
+  source:
+    type: object
+    required:
+      - file
+    properties:
+      file:
+        type: string
+      line:
+        type: integer
+      section:
+        type: string
+  labels:
+    type: array
+    items:
+      type: string
+  assignee:
+    type: string
+  storyPoints:
+    type: integer
+    minimum: 1
+    maximum: 21
+  originalContent:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+```
+
+---
+
+## Use Case Schema
+
+```yaml
+type: object
+required:
+  - id
+  - name
+  - actor
+  - preconditions
+  - postconditions
+  - flow
+  - module
+  - source
+properties:
+  id:
+    type: string
+    pattern: "^UC-M[1-6]-\\d{3}$"
+    description: "Unique UC identifier"
+  name:
+    type: string
+    minLength: 1
+    maxLength: 200
+    description: "Use case name"
+  actor:
+    type: string
+    description: "Primary actor"
+  preconditions:
+    type: array
+    minItems: 1
+    items:
+      type: string
+    description: "Prerequisites"
+  postconditions:
+    type: array
+    minItems: 1
+    items:
+      type: string
+    description: "Expected outcomes"
+  flow:
+    type: object
+    required:
+      - main
+    properties:
+      main:
+        type: array
+        items:
+          type: object
+          required:
+            - step
+            - action
+          properties:
+            step:
+              type: integer
+            action:
+              type: string
+            actor:
+              type: string
+      alternative:
+        type: array
+        items:
+          type: object
+          properties:
+            condition:
+              type: string
+            steps:
+              type: array
+              items:
+                type: integer
+  module:
+    type: string
+    pattern: "^M[1-6]$"
+  source:
+    type: object
+    required:
+      - file
+    properties:
+      file:
+        type: string
+      line:
+        type: integer
+      section:
+        type: string
+  originalContent:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+```
+
+---
+
+## Document Type Detection Rules
+
+| Pattern | Document Type |
+|---------|--------------|
+| filename contains "user-story" or "us-" | User Story |
+| filename contains "use-case" or "uc-" | Use Case |
+| filename contains "fr" or "functional" | Functional Requirement |
+| content starts with "FR" | Functional Requirement |
+| content starts with "US" | User Story |
+| content starts with "UC" | Use Case |

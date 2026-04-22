@@ -1,0 +1,134 @@
+metadata:
+  artifact: activity-diagram-severity-matrix
+  version: 1.9.0
+  generated_date: "2026-02-15"
+  loop_tracker:
+    start_n: 0
+    current_n: 9
+    target_n: 9
+    status: completed
+  companion_rule_set: data/rules.yaml
+  execution_proof_runs:
+    - run_id: proof-run-20260216-004605
+      iteration: 0
+      timestamp_utc: "2026-02-15T17:46:05.006857+00:00"
+      action: validation-only
+    - run_id: proof-run-20260216-004605
+      iteration: 1
+      timestamp_utc: "2026-02-15T17:46:05.244246+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 2
+      timestamp_utc: "2026-02-15T17:46:05.497348+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 3
+      timestamp_utc: "2026-02-15T17:46:05.753583+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 4
+      timestamp_utc: "2026-02-15T17:46:06.010442+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 5
+      timestamp_utc: "2026-02-15T17:46:06.265437+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 6
+      timestamp_utc: "2026-02-15T17:46:06.520617+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 7
+      timestamp_utc: "2026-02-15T17:46:06.783144+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 8
+      timestamp_utc: "2026-02-15T17:46:07.042776+00:00"
+      action: metadata-proof-update
+    - run_id: proof-run-20260216-004605
+      iteration: 9
+      timestamp_utc: "2026-02-15T17:46:07.304114+00:00"
+      action: metadata-proof-update
+severity_levels:
+  critical:
+    definition: can_break_business_correctness_or_create_deadlock_or_unrecoverable_flow
+    score_penalty: 20
+    response_sla: immediate_fix_before_approval
+    examples:
+      - CF-01
+      - PL-02
+      - EX-01
+      - RN-01
+  major:
+    definition: high_risk_of_wrong_implementation_or_missing_important_behavior
+    score_penalty: 10
+    response_sla: fix_in_current_iteration_if_scope_allows
+    examples:
+      - DL-01
+      - PL-01
+      - RS-01
+      - RS-02
+      - EX-02
+      - CA-01
+      - RN-02
+      - RN-03
+      - RN-04
+      - RN-05
+  minor:
+    definition: readability_or_modeling_quality_issue_with_lower_immediate_operational_impact
+    score_penalty: 4
+    response_sla: fix_or_document_as_deferred_with_reason
+    examples:
+      - DL-02
+      - CA-02
+escalation_rules:
+  - id: ESC-01
+    condition: same_rule_reappears_in_2_consecutive_refactor_cycles
+    escalate_to: one_level_higher
+    rationale: repeated_issue_indicates_systemic_gap
+  - id: ESC-02
+    condition: major_issue_affects_core_business_rule_auth_payment_permission_quota
+    escalate_to: critical
+    rationale: business_safety_priority
+  - id: ESC-03
+    condition: multiple_minor_issues_over_5_in_single_diagram
+    escalate_to: major
+    rationale: cumulative_clarity_debt_impacts_implementation
+  - id: ESC-04
+    condition: missing_required_node_check_with_id_RN-06_or_RN-07
+    escalate_to: critical
+    rationale: merge_join_errors_can_deadlock
+quality_score_model:
+  max_score: 100
+  formula: score = 100 - (critical_count*20) - (major_count*10) - (minor_count*4)
+  floor: 0
+  quality_bands:
+    - band: excellent
+      range: 90-100
+      guidance: ready_for_builder_with_minimal_changes
+    - band: acceptable
+      range: 75-89
+      guidance: proceed_with_targeted_fixes
+    - band: risky
+      range: 60-74
+      guidance: major_refactor_recommended_before_builder
+    - band: blocked
+      range: 0-59
+      guidance: redesign_required_before_proceeding
+required_nodes_policy:
+  RN-01: critical
+  RN-02: major
+  RN-03: major
+  RN-04: major
+  RN-05: major
+  RN-06: critical
+  RN-07: critical
+review_gate:
+  pass_conditions:
+    - critical_count_equals_0
+    - all_required_nodes_policy_checks_pass
+    - unresolved_clarification_questions_less_than_or_equal_3
+  fail_conditions:
+    - critical_count_greater_than_0
+    - missing_required_nodes_include_RN-01_or_RN-06_or_RN-07
+    - evidence_trace_coverage_below_80_percent

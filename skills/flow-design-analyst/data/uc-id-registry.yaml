@@ -1,0 +1,375 @@
+# UC-ID Registry — KLTN Project
+# Source: Tổng hợp từ Docs/life-2/diagrams/UseCase/ (index.md + M1-M6)
+# Purpose: Tra cứu nhanh UC-ID + keyword mapping cho Phase 0 DETECT
+# Format: module → [{ id, name, actors, keywords[], spec_file, uc_file }]
+
+M1:
+  - id: UC01
+    name: "Đăng ký tài khoản"
+    actors: [Guest]
+    fr: FR-1
+    keywords:
+      - "đăng ký"
+      - "tạo tài khoản"
+      - "tạo account"
+      - "register"
+      - "sign up"
+      - "create account"
+      - "registration"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC02
+    name: "Đăng nhập Email/Password"
+    actors: [Member]
+    fr: FR-1
+    keywords:
+      - "đăng nhập"
+      - "login"
+      - "sign in"
+      - "xác thực"
+      - "authenticate"
+      - "đăng nhập email"
+      - "email login"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC03
+    name: "Đăng nhập OAuth (Google)"
+    actors: [Guest, OAuthProvider]
+    fr: FR-1
+    keywords:
+      - "google login"
+      - "đăng nhập google"
+      - "oauth"
+      - "social login"
+      - "google sign in"
+      - "đăng nhập mạng xã hội"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC04
+    name: "Đăng xuất"
+    actors: [Member]
+    fr: FR-1
+    keywords:
+      - "đăng xuất"
+      - "logout"
+      - "sign out"
+      - "thoát tài khoản"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC05
+    name: "Quên mật khẩu / Reset Password"
+    actors: [Guest]
+    fr: FR-1
+    keywords:
+      - "quên mật khẩu"
+      - "reset password"
+      - "forgot password"
+      - "đặt lại mật khẩu"
+      - "password recovery"
+      - "khôi phục mật khẩu"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC06
+    name: "Quản lý hồ sơ cá nhân"
+    actors: [Member]
+    fr: FR-2
+    keywords:
+      - "hồ sơ"
+      - "profile"
+      - "chỉnh hồ sơ"
+      - "sửa hồ sơ"
+      - "cập nhật thông tin"
+      - "edit profile"
+      - "update profile"
+      - "bio"
+      - "avatar"
+      - "ảnh đại diện"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+  - id: UC07
+    name: "Xem hồ sơ công khai"
+    actors: [Guest, Member]
+    fr: FR-2
+    keywords:
+      - "xem hồ sơ người khác"
+      - "trang cá nhân"
+      - "public profile"
+      - "view profile"
+      - "user page"
+      - "trang công khai"
+    spec_file: "Docs/life-2/specs/m1-auth-profile-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m1-auth-profile.md"
+
+M2:
+  - id: UC08
+    name: "Tạo bài viết"
+    actors: [Member]
+    fr: FR-3
+    keywords:
+      - "tạo bài"
+      - "viết bài"
+      - "post bài"
+      - "đăng bài"
+      - "create post"
+      - "write post"
+      - "new post"
+      - "publish"
+      - "đăng"
+    spec_file: "Docs/life-2/specs/m2-content-engine-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m2-content-engine.md"
+
+  - id: UC09
+    name: "Chỉnh sửa/Xóa bài viết"
+    actors: [Member]
+    fr: FR-3
+    keywords:
+      - "sửa bài"
+      - "chỉnh bài"
+      - "edit post"
+      - "cập nhật bài"
+      - "update post"
+      - "modify post"
+      - "xóa bài"
+      - "delete post"
+      - "remove post"
+    spec_file: "Docs/life-2/specs/m2-content-engine-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m2-content-engine.md"
+
+  - id: UC10
+    name: "Thiết lập quyền riêng tư bài viết"
+    actors: [Member]
+    fr: FR-3
+    keywords:
+      - "quyền riêng tư"
+      - "privacy"
+      - "bài công khai"
+      - "bài riêng tư"
+      - "post privacy"
+      - "visibility"
+      - "public post"
+      - "private post"
+      - "friends only"
+    spec_file: "Docs/life-2/specs/m2-content-engine-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m2-content-engine.md"
+
+M3:
+  - id: UC11
+    name: "Xem news feed"
+    actors: [Member]
+    fr: FR-4
+    keywords:
+      - "feed"
+      - "bảng tin"
+      - "news feed"
+      - "xem bài viết"
+      - "home"
+      - "timeline"
+      - "view posts"
+      - "trang chủ"
+    spec_file: "Docs/life-2/specs/m3-discovery-feed-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m3-discovery-feed.md"
+
+  - id: UC12
+    name: "Tìm kiếm nội dung/người dùng/tag"
+    actors: [Member, Guest]
+    fr: FR-7
+    keywords:
+      - "tìm kiếm"
+      - "search"
+      - "tìm người"
+      - "tìm bài"
+      - "find"
+      - "lookup"
+      - "discover"
+      - "search user"
+      - "search post"
+      - "tìm tag"
+    spec_file: "Docs/life-2/specs/m3-discovery-feed-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m3-discovery-feed.md"
+
+  - id: UC13
+    name: "Autocomplete Search"
+    actors: [Member, Guest]
+    fr: FR-7
+    keywords:
+      - "gợi ý tìm kiếm"
+      - "autocomplete"
+      - "search suggest"
+      - "search hint"
+      - "gợi ý"
+      - "suggest"
+    spec_file: "Docs/life-2/specs/m3-discovery-feed-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m3-discovery-feed.md"
+
+M4:
+  - id: UC14
+    name: "Like/Unlike bài viết"
+    actors: [Member]
+    fr: FR-5
+    keywords:
+      - "like"
+      - "thích bài"
+      - "unlike"
+      - "bỏ thích"
+      - "react"
+      - "heart"
+      - "yêu thích"
+    spec_file: "Docs/life-2/specs/m4-engagement-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m4-engagement-connections.md"
+
+  - id: UC15
+    name: "Bình luận và phản hồi lồng nhau"
+    actors: [Member]
+    fr: FR-5
+    keywords:
+      - "bình luận"
+      - "comment"
+      - "phản hồi"
+      - "reply"
+      - "nested comment"
+      - "discussion"
+      - "trả lời"
+    spec_file: "Docs/life-2/specs/m4-engagement-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m4-engagement-connections.md"
+
+  - id: UC16
+    name: "Chia sẻ bài viết"
+    actors: [Member]
+    fr: FR-5
+    keywords:
+      - "chia sẻ bài"
+      - "share"
+      - "repost"
+      - "share post"
+      - "chia sẻ"
+    spec_file: "Docs/life-2/specs/m4-engagement-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m4-engagement-connections.md"
+
+  - id: UC17
+    name: "Follow/Unfollow thành viên"
+    actors: [Member]
+    fr: FR-10
+    keywords:
+      - "follow"
+      - "theo dõi"
+      - "unfollow"
+      - "bỏ theo dõi"
+      - "subscribe"
+      - "following"
+      - "kết bạn"
+    spec_file: "Docs/life-2/specs/m4-engagement-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m4-engagement-connections.md"
+
+  - id: UC18
+    name: "Block người dùng"
+    actors: [Member]
+    fr: FR-10
+    keywords:
+      - "chặn"
+      - "block"
+      - "chặn người dùng"
+      - "mute"
+      - "block user"
+      - "cấm"
+    spec_file: "Docs/life-2/specs/m4-engagement-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m4-engagement-connections.md"
+
+M5:
+  - id: UC19
+    name: "Lưu/Bỏ lưu bài viết (Bookmark)"
+    actors: [Member]
+    fr: FR-6
+    keywords:
+      - "bookmark"
+      - "lưu bài"
+      - "bỏ lưu"
+      - "save"
+      - "unsave"
+      - "save post"
+      - "lưu"
+    spec_file: "Docs/life-2/specs/m5-bookmarking-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m5-bookmarking.md"
+
+  - id: UC20
+    name: "Quản lý collection bookmark"
+    actors: [Member]
+    fr: FR-6
+    keywords:
+      - "collection bookmark"
+      - "quản lý bookmark"
+      - "nhóm bookmark"
+      - "manage bookmark"
+      - "bookmark collection"
+      - "organize bookmarks"
+      - "folder bookmark"
+    spec_file: "Docs/life-2/specs/m5-bookmarking-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m5-bookmarking.md"
+
+M6:
+  - id: UC21
+    name: "Nhận thông báo realtime"
+    actors: [Member]
+    fr: FR-8
+    keywords:
+      - "thông báo"
+      - "notification"
+      - "realtime notification"
+      - "alert"
+      - "push notification"
+      - "bell"
+      - "nhận thông báo"
+    spec_file: "Docs/life-2/specs/m6-notifications-moderation-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m6-notifications-moderation.md"
+
+  - id: UC22
+    name: "Đánh dấu đã đọc thông báo"
+    actors: [Member]
+    fr: FR-8
+    keywords:
+      - "đọc thông báo"
+      - "mark read"
+      - "mark as read"
+      - "xem thông báo"
+      - "read notification"
+      - "view notification"
+      - "đánh dấu đã đọc"
+    spec_file: "Docs/life-2/specs/m6-notifications-moderation-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m6-notifications-moderation.md"
+
+  - id: UC23
+    name: "Báo cáo vi phạm"
+    actors: [Member]
+    fr: FR-9
+    keywords:
+      - "báo cáo vi phạm"
+      - "report"
+      - "tố cáo"
+      - "flag"
+      - "abuse"
+      - "report violation"
+      - "report post"
+      - "report user"
+    spec_file: "Docs/life-2/specs/m6-notifications-moderation-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m6-notifications-moderation.md"
+
+  - id: UC24
+    name: "Kiểm duyệt / Xem xét báo cáo vi phạm"
+    actors: [Admin]
+    fr: FR-9
+    keywords:
+      - "kiểm duyệt"
+      - "moderation"
+      - "duyệt báo cáo"
+      - "admin review"
+      - "review report"
+      - "moderate"
+      - "admin action"
+      - "xử lý vi phạm"
+    spec_file: "Docs/life-2/specs/m6-notifications-moderation-spec.md"
+    uc_file: "Docs/life-2/diagrams/UseCase/use-case-m6-notifications-moderation.md"

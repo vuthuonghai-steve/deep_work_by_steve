@@ -1,0 +1,95 @@
+# layout-rules.yaml — Static Layout Rules for ui-pencil-drawer
+# Source: pencil-mcp-agent-rules.md §III + design.md §3
+# Usage: Load in Phase 2 (wireframe generation) for default spacing values.
+#        Reference in Phase 3 (drawing) for canvas sizing decisions.
+
+# --- Gap (flex spacing between children) ---
+layout:
+  # Default gap between sibling components in a section
+  # Use when spec doesn't specify — covers 90% of cases
+  gap_default: 24
+
+  # Tight gap — for dense content areas (tags, chips, icon+text pairs)
+  gap_tight: 8
+
+  # Medium gap — form fields, list items
+  gap_medium: 16
+
+  # Loose gap — card grids, section separators
+  gap_loose: 40
+
+# --- Padding (internal spacing of frames) ---
+padding:
+  # Small — compact components (chips, badges, small cards)
+  sm: 16
+
+  # Medium — standard sections, modals
+  md: 24
+
+  # Large — hero areas, page-level padding
+  lg: 32
+
+  # Extra large — landing/onboarding sections
+  xl: 48
+
+# --- Screen Widths (device breakpoints) ---
+screens:
+  # Mobile first — default for M1-M6 Steve Void screens
+  mobile: 375
+
+  # Tablet — if spec mentions responsive
+  tablet: 768
+
+  # Desktop — admin or wide-layout screens
+  desktop: 1440
+
+# --- Frame Naming Convention ---
+naming:
+  # Pattern for screen frames in STi.pen canvas
+  # Example: m1/login, m2/create-post, m3/feed
+  frame_pattern: "{module-code}/{screen-name}"
+
+  # Name of the component library frame in STi.pen
+  # Find via: batch_get({patterns: [{name: "Lib-Component"}]})
+  lib_frame_name: "Lib-Component"
+
+  # Suffix for placeholder frames (during construction)
+  placeholder_suffix: "-placeholder"
+
+  # Wireframe blueprint file output pattern
+  wireframe_output: "Docs/life-2/ui/wireframes/{module}-{screen}-wireframe.md"
+
+# --- Execution Limits ---
+limits:
+  # Maximum operations per single batch_design call (Pencil hard limit)
+  # Source: pencil-mcp-agent-rules.md §II Rule 3 "25-Ops Safety"
+  batch_ops_max: 25
+
+  # Maximum retries per screen before escalating
+  # Source: design.md §2.2 Phase 3 rule
+  retry_max: 2
+
+  # Number of consecutive screen failures before triggering escalation
+  # Source: design.md §2.3 G-Fail-Fast guardrail
+  fail_consecutive_before_escalate: 2
+
+  # Maximum component slots per single screen blueprint
+  # Screens with more should be split into sub-sections
+  max_components_per_screen: 20
+
+# --- Drawing Defaults ---
+drawing:
+  # Draw only default state unless spec mentions additional states
+  # Source: design.md §2.2 Phase 1 + wireframe-format-draft.md §4
+  default_state_only: true
+
+  # Padding around each screen frame when placed on canvas
+  # Used as 'padding' argument in find_empty_space_on_canvas
+  canvas_placement_padding: 80
+
+  # Default layout direction for screen root frames
+  screen_root_layout: "vertical"
+
+  # Apply placeholder: true on screen root during construction
+  # Must set placeholder: false when batch is complete
+  use_placeholder_on_start: true

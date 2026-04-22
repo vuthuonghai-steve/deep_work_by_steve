@@ -1,0 +1,29 @@
+# Module Map routing classes
+# Dùng để Agent skill ánh xạ các Module input của người dùng sang các Contract tương ứng
+# (Kết quả từ schema class-diagram-analyst)
+
+modules:
+  M1:
+    name: "Auth & Profile"
+    contract_file: "Docs/life-2/diagrams/class-diagrams/m1-auth-profile/class-m1-auth.yaml"
+    flow_dir: "Docs/life-2/diagrams/flow/m1-auth-profile/"
+    output_md: "Docs/life-2/database/schema-design/m1-auth-schema.md"
+    output_yaml: "Docs/life-2/database/schema-design/m1-auth-schema.yaml"
+  M2:
+    name: "Content Engine"
+    contract_file: "Docs/life-2/diagrams/class-diagrams/m2-content-engine/class-m2-content.yaml"
+    flow_dir: "Docs/life-2/diagrams/flow/m2-content-engine/"
+    output_md: "Docs/life-2/database/schema-design/m2-content-schema.md"
+    output_yaml: "Docs/life-2/database/schema-design/m2-content-schema.yaml"
+  M3:
+    name: "Discovery & Feed"
+    contract_file: "Docs/life-2/diagrams/class-diagrams/m3-discovery/class-m3-discovery.yaml"
+    flow_dir: "Docs/life-2/diagrams/flow/m3-discovery/"
+    output_md: "Docs/life-2/database/schema-design/m3-discovery-schema.md"
+    output_yaml: "Docs/life-2/database/schema-design/m3-discovery-schema.yaml"
+  M4:
+    name: "Social Engagement"
+    contract_file: "Docs/life-2/diagrams/class-diagrams/m4-engagement/class-m4-engagement.yaml"
+    flow_dir: "Docs/life-2/diagrams/flow/m4-engagement/"
+    output_md: "Docs/life-2/database/schema-design/m4-engagement-schema.md"
+    output_yaml: "Docs/life-2/database/schema-design/m4-engagement-schema.yaml"

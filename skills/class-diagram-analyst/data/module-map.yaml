@@ -1,0 +1,82 @@
+# Module Map — class-diagram-analyst
+# Source: design.md §Appendix A — Entity Inventory (Pre-classified)
+# Usage: type_resolver.py, extract_entities.py đọc file này để biết module nào có entity nào
+# QUAN TRỌNG: M3 = value_object (không có MongoDB collection riêng) [CHỐT Q4-B]
+#             post_tags, post_media = Embedded trong Post [CHỐT Q5]
+
+M1:
+  name: "Auth & Profile"
+  entities:
+    - slug: users
+      aggregate_root: true
+      notes: "Core entity — nhiều FK từ posts, comments, likes, connections trỏ vào"
+
+M2:
+  name: "Content Engine"
+  entities:
+    - slug: posts
+      aggregate_root: true
+      notes: "Có ranking_score, denormalized counters (likesCount, commentsCount, sharesCount)"
+    - slug: media
+      aggregate_root: true
+      notes: "PayloadCMS Upload collection riêng"
+    - slug: tags
+      aggregate_root: true
+      notes: "Nhỏ nhưng là Root vì nhiều post → nhiều tag (N:N), query tags độc lập"
+    - slug: post_tags
+      aggregate_root: false
+      embed_in: posts
+      notes: "Join table → nhúng vào Post.tags[] dưới dạng ObjectId[]"
+    - slug: post_media
+      aggregate_root: false
+      embed_in: posts
+      notes: "Join table → nhúng vào Post.mediaItems[] dưới dạng ObjectId[]"
+
+M3:
+  name: "Discovery Feed"
+  type: value_object
+  entities:
+    - slug: FeedQuery
+      aggregate_root: false
+      notes: "Không có MongoDB collection. Value object mô tả query params và feed assembly logic. Stereotype: <<ValueObject>>"
+  module_note: "No MongoDB collection for M3. Cross-module query strategy only."
+
+M4:
+  name: "Engagement & Connections"
+  entities:
+    - slug: comments
+      aggregate_root: true
+      notes: "Có parent_comment_id (threaded comments). user_id trỏ vào users"
+    - slug: likes
+      aggregate_root: true
+      notes: "Unique compound index: (post_id, user_id). Có timestamps riêng."
+    - slug: connections
+      aggregate_root: true
+      notes: "Unique compound index: (follower_id, following_id). Query followers/following độc lập."
+    - slug: shares
+      aggregate_root: true
+      assumption: true
+      notes: "[ASSUMPTION] Thiếu Entity Dictionary trong ER. Provisional fields: id, post_id, user_id, created_at (tương tự likes)"
+
+M5:
+  name: "Bookmarking"
+  entities:
+    - slug: bookmark_collections
+      aggregate_root: true
+      notes: "has_default flag. Query bookmark collections của user độc lập."
+    - slug: bookmarks
+      aggregate_root: true
+      notes: "Unique compound index: (user_id, post_id). Query bookmarks của user độc lập."
+
+M6:
+  name: "Notifications & Moderation"
+  entities:
+    - slug: notifications
+      aggregate_root: true
+      notes: "Polymorphic Pattern: entity_type + entity_id. Nhiều loại notification."
+    - slug: reports
+      aggregate_root: true
+      notes: "Polymorphic Pattern: target_type + target_id. target = post | comment | user."
+    - slug: audit_logs
+      aggregate_root: true
+      notes: "Append-Only Pattern. access_control: update=nobody, delete=nobody."

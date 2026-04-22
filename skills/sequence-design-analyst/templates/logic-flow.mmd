@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant A
+    participant B
+    participant C
+
+    A ->> B: complexOperation
+    activate B
+    
+    B ->> C: checkStatus
+    activate C
+    C -->> B: status
+    deactivate C
+
+    alt condition 1
+        B ->> A: returnResult1
+    else condition 2
+        loop retry loop
+            B ->> C: retryTask
+        end
+        B ->> A: returnResult2
+    else error
+        B -->> A: throwError
+    end
+
+    deactivate B

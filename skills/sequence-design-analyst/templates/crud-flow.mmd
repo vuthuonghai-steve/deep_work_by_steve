@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant U as User
+    participant Page as Page/Component
+    participant Service as ServiceName
+    participant Payload
+    participant MongoDB
+
+    U->>Page: submitForm(data)
+    activate Page
+    Page ->> Service: executeAction(data)
+    activate Service
+    
+    Service ->> Payload: payload.find/create/update
+    activate Payload
+    Payload ->> MongoDB: database_op
+    activate MongoDB
+    MongoDB -->> Payload: record
+    deactivate MongoDB
+    Payload -->> Service: doc
+    deactivate Payload
+
+    Note over Service: Data Mapping (DTO)
+    Service -->> Page: response
+    deactivate Service
+    Page -->> U: renderUI
+    deactivate Page

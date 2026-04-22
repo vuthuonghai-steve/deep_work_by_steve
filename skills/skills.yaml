@@ -1,0 +1,656 @@
+# Skills Registry - Pipeline Configuration
+# Location: .claude/skills/skills.yaml
+# Purpose: Central registry for all Claude Code skills with pipeline metadata
+
+version: "1.0"
+last_updated: "2026-03-01"
+
+# ============================================================
+# META SKILLS (Skill Creation Suite)
+# ============================================================
+
+skills:
+  # ─────────────────────────────────────────────────────────
+  # Meta Skills - Skill Creation Suite
+  # ─────────────────────────────────────────────────────────
+
+  - name: skill-architect
+    path: .claude/skills/skill-architect
+    status: active
+    description: Senior Architect thiết kế kiến trúc Agent Skill mới. Phân tích yêu cầu theo 3 Pillars/7 Zones framework.
+    category: meta
+    pipeline:
+      stage_order: 1
+      input_contract:
+        - type: directory
+          path: ".skill-context/{skill-name}"
+          required: false
+      output_contract:
+        - type: file
+          path: ".skill-context/{skill-name}/design.md"
+          format: markdown
+      dependencies: []
+      successor_hints:
+        - skill: skill-planner
+          needs: [design.md]
+
+  - name: skill-planner
+    path: .claude/skills/skill-planner
+    status: active
+    description: Senior Planner tạo kế hoạch triển khai chi tiết từ design.md. Phân tích 3 tầng kiến thức.
+    category: meta
+    pipeline:
+      stage_order: 2
+      input_contract:
+        - type: file
+          path: ".skill-context/{skill-name}/design.md"
+          required: true
+      output_contract:
+        - type: file
+          path: ".skill-context/{skill-name}/todo.md"
+          format: markdown
+      dependencies:
+        - skill-architect
+      successor_hints:
+        - skill: skill-builder
+          needs: [design.md, todo.md]
+
+  - name: skill-builder
+    path: .claude/skills/skill-builder
+    status: active
+    description: Senior Implementation Engineer triển khai skill từ design + plan. Kiểm soát chất lượng qua Placeholder scale.
+    category: meta
+    pipeline:
+      stage_order: 3
+      input_contract:
+        - type: file
+          path: ".skill-context/{skill-name}/design.md"
+          required: true
+        - type: file
+          path: ".skill-context/{skill-name}/todo.md"
+          required: true
+      output_contract:
+        - type: directory
+          path: ".agent/skills/{skill-name}"
+          format: directory
+      dependencies:
+        - skill-planner
+
+  - name: skill-creator
+    path: .claude/skills/skill-creator
+    status: active
+    description: Hướng dẫn tạo skill mới hoặc cập nhật skill hiện có. Skill tổng hợp cho người mới bắt đầu.
+    category: meta
+    pipeline:
+      stage_order: 0
+      input_contract: []
+      output_contract: []
+      dependencies: []
+
+  # ─────────────────────────────────────────────────────────
+  # UML/Diagram Skills (Life-2)
+  # ─────────────────────────────────────────────────────────
+
+  - name: input-normalizer
+    path: .claude/skills/input-normalizer
+    status: active
+    description: Normalizes và standardizes input data cho UML/Diagrams pipeline. Chuẩn hóa FR, User Stories, Use Cases thành JSON format với traceability metadata.
+    category: preprocessing
+    pipeline:
+      stage_order: 0.5
+      input_contract:
+        - type: directory
+          path: "Docs/life-1/{module}"
+          required: true
+      output_contract:
+        - type: directory
+          path: "Docs/life-2/normalization"
+          format: directory
+      dependencies: []
+      successor_hints:
+        - skill: flow-design-analyst
+          needs: [normalized files]
+
+  - name: global-system-planner
+    path: .claude/skills/global-system-planner
+    status: active
+    description: Master System Planner. Phân tích ngữ cảnh tổng thể từ Functional Requirements, sinh ra Global Blueprint cho quá trình UML Generation.
+    category: uml
+    pipeline:
+      stage_order: 0
+      input_contract:
+        - type: directory
+          path: "Docs/life-1"
+          required: true
+      output_contract:
+        - type: file
+          path: "Docs/life-2/module-blueprint.md"
+          format: markdown
+      validation:
+        script: null
+        expected_exit_code: 0
+      dependencies: []
+      successor_hints:
+        - skill: flow-design-analyst
+          needs: [module-blueprint.md]
+
+  - name: flow-design-analyst
+    path: .claude/skills/flow-design-analyst
+    status: active
+    description: Chuyên gia thiết kế Business Process Flow Diagram theo chuẩn 3-lane Swimlane (User/System/DB).
+    category: uml
+    pipeline:
+      stage_order: 1
+      input_contract:
+        - type: directory
+          path: "Docs/life-1/{module}"
+          required: true
+      output_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+          format: markdown
+      validation:
+        script: null
+        expected_exit_code: 0
+      dependencies: []
+      successor_hints:
+        - skill: sequence-design-analyst
+          needs: [flow.md]
+        - skill: activity-diagram-design-analyst
+          needs: [flow.md]
+
+  - name: sequence-design-analyst
+    path: .claude/skills/sequence-design-analyst
+    status: active
+    description: Chuyên gia thiết kế Sequence Diagram (UML) chuẩn Mermaid. Tự động nghiên cứu codebase.
+    category: uml
+    pipeline:
+      stage_order: 2
+      input_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+          required: false
+        - type: file
+          path: "Docs/life-2/api/api-spec.md"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+          format: markdown
+      dependencies:
+        - flow-design-analyst
+      successor_hints:
+        - skill: class-diagram-analyst
+          needs: [sequence.md]
+
+  - name: class-diagram-analyst
+    path: .claude/skills/class-diagram-analyst
+    status: active
+    description: Chuyên gia phân tích Class Diagram theo chuẩn dual-format (Mermaid + YAML Contract) cho PayloadCMS/MongoDB.
+    category: uml
+    pipeline:
+      stage_order: 3
+      input_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+          required: false
+        - type: file
+          path: "Docs/life-2/database/schema-design.md"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/class/{module}-class.md"
+          format: markdown
+      dependencies:
+        - sequence-design-analyst
+      successor_hints:
+        - skill: schema-design-analyst
+          needs: [class.md]
+
+  - name: activity-diagram-design-analyst
+    path: .claude/skills/activity-diagram-design-analyst
+    status: active
+    description: Chuyên gia phân tích và thiết kế Activity Diagram (High-Fidelity) theo Clean Architecture (B-U-E).
+    category: uml
+    pipeline:
+      stage_order: 4
+      input_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/activity/{module}-activity.md"
+          format: markdown
+      dependencies:
+        - flow-design-analyst
+      successor_hints:
+        - skill: schema-design-analyst
+          needs: [activity.md]
+
+  - name: schema-design-analyst
+    path: .claude/skills/schema-design-analyst
+    status: active
+    description: Chuyên gia thiết kế Database Schema cho PayloadCMS/MongoDB. Tạo YAML contract và ER Diagram.
+    category: database
+    pipeline:
+      stage_order: 5
+      input_contract:
+        - type: file
+          path: "Docs/life-2/diagrams/class/{module}-class.md"
+          required: false
+        - type: file
+          path: "Docs/life-2/diagrams/activity/{module}-activity.md"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/database/schema-{module}.yaml"
+          format: yaml
+        - type: file
+          path: "Docs/life-2/diagrams/er/{module}-er.md"
+          format: markdown
+      dependencies:
+        - class-diagram-analyst
+        - activity-diagram-design-analyst
+
+  - name: ui-architecture-analyst
+    path: .claude/skills/ui-architecture-analyst
+    status: active
+    description: Trích xuất UI Screen Specs từ Schema và Diagrams. Bridge giữa database logic và UI component specs.
+    category: ui
+    pipeline:
+      stage_order: 6
+      input_contract:
+        - type: file
+          path: "Docs/life-2/database/schema-{module}.yaml"
+          required: false
+        - type: file
+          path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/ui/specs/{module}-ui-spec.md"
+          format: markdown
+      dependencies:
+        - schema-design-analyst
+      successor_hints:
+        - skill: ui-pencil-drawer
+          needs: [ui-spec.md]
+
+  - name: ui-pencil-drawer
+    path: .claude/skills/ui-pencil-drawer
+    status: active
+    description: Tự động vẽ UI screens trong Pencil canvas từ module spec files. Đọc spec → tạo blueprint → vẽ wireframe.
+    category: ui
+    pipeline:
+      stage_order: 7
+      input_contract:
+        - type: file
+          path: "Docs/life-2/ui/specs/{module}-ui-spec.md"
+          required: true
+        - type: file
+          path: "Docs/life-2/ui/wireframes/{module}.pen"
+          required: false
+      output_contract:
+        - type: file
+          path: "Docs/life-2/ui/wireframes/{module}.pen"
+          format: pen
+      validation:
+        script: null
+        expected_exit_code: 0
+      dependencies:
+        - ui-architecture-analyst
+
+  # ─────────────────────────────────────────────────────────
+  # Implementation Skills (Life-3)
+  # ─────────────────────────────────────────────────────────
+
+  - name: build-crud-admin-page
+    path: .claude/skills/build-crud-admin-page
+    status: active
+    description: Xây dựng trang quản lý CRUD cho PayloadCMS collection. List view + Form view.
+    category: implementation
+    pipeline:
+      stage_order: 10
+      input_contract:
+        - type: file
+          path: "src/collections/{collection}.ts"
+          required: false
+      output_contract:
+        - type: directory
+          path: "src/components/screens/{collection}"
+          format: directory
+      dependencies: []
+
+  - name: error-response-system
+    path: .claude/skills/error-response-system
+    status: active
+    description: Chuẩn hóa Error Response cho API. Type-safe error codes, Vietnamese messages, automatic validation.
+    category: implementation
+    pipeline:
+      stage_order: 11
+      input_contract: []
+      output_contract:
+        - type: directory
+          path: "src/lib/errors"
+          format: directory
+      dependencies: []
+
+  - name: api-from-ui
+    path: .claude/skills/api-from-ui
+    status: active
+    description: Xây dựng custom API endpoint từ UI đang hoạt động. Phân tích screen → thiết kế DTO → tạo API.
+    category: implementation
+    pipeline:
+      stage_order: 12
+      input_contract:
+        - type: directory
+          path: "src/components/screens/{module}"
+          required: true
+      output_contract:
+        - type: file
+          path: "src/app/api/{module}/route.ts"
+          format: typescript
+      dependencies: []
+
+  - name: api-integration
+    path: .claude/skills/api-integration
+    status: active
+    description: Tích hợp API backend vào frontend. Nghiên cứu endpoint, phân tích request/response, ghep API.
+    category: implementation
+    pipeline:
+      stage_order: 13
+      input_contract:
+        - type: file
+          path: "src/app/api/{module}/route.ts"
+          required: true
+      output_contract:
+        - type: file
+          path: "src/lib/api/{module}.ts"
+          format: typescript
+      dependencies: []
+
+  # ─────────────────────────────────────────────────────────
+  # Utility Skills
+  # ─────────────────────────────────────────────────────────
+
+  - name: task-planner
+    path: .claude/skills/task-planner
+    status: active
+    description: Phân tách yêu cầu/tính năng thành các phase, task và subtask cụ thể. Tạo planning documents.
+    category: utility
+    pipeline:
+      stage_order: 0
+      input_contract: []
+      output_contract: []
+      dependencies: []
+
+  - name: prompt-improver
+    path: .claude/skills/prompt-improver
+    status: active
+    description: Cải thiện và tối ưu hóa prompt cho AI Agent. Phân tích prompt hiện tại, xác định vấn đề.
+    category: utility
+    pipeline:
+      stage_order: 0
+      input_contract: []
+      output_contract: []
+      dependencies: []
+
+  - name: typescript-error-explainer
+    path: .claude/skills/typescript-error-explainer
+    status: active
+    description: Giải thích lỗi TypeScript bằng tiếng Việt. Giải thích type, generic, inference.
+    category: utility
+    pipeline:
+      stage_order: 0
+      input_contract: []
+      output_contract: []
+      dependencies: []
+
+  - name: screen-structure-checker
+    path: .claude/skills/screen-structure-checker
+    status: active
+    description: Kiểm tra cấu trúc thư mục screens theo kiến trúc quản lý tập trung. Audit naming convention.
+    category: utility
+    pipeline:
+      stage_order: 0
+      input_contract: []
+      output_contract: []
+      dependencies: []
+
+# ============================================================
+# PIPELINE DEFINITIONS
+# ============================================================
+
+pipelines:
+  uml-generation:
+    name: UML Generation Pipeline
+    description: Tự động tạo tài liệu UML từ Functional Requirements
+    pipeline_awareness:
+      enabled: true
+      include_predecessor_outputs: true
+      include_global_context: true
+
+    global_context:
+      project: life-2
+      input_base: Docs/life-1
+      output_base: Docs/life-2
+
+    stages:
+      - skill: global-system-planner
+        id: stage_00
+        depends_on: []
+        checkpoint: true
+        input_contract:
+          - type: directory
+            path: "Docs/life-1"
+            required: true
+        output_contract:
+          - type: file
+            path: "Docs/life-2/module-blueprint.md"
+            format: markdown
+      - skill: input-normalizer
+        id: stage_00_5
+        depends_on: [stage_00]
+        checkpoint: false
+        input_contract:
+          - type: directory
+            path: "Docs/life-1/{module}"
+            required: true
+        output_contract:
+          - type: directory
+            path: "Docs/life-2/normalization"
+            format: directory
+      - skill: flow-design-analyst
+        id: stage_01
+        depends_on: [stage_00, stage_00_5]
+        checkpoint: false
+        input_contract:
+          - type: directory
+            path: "Docs/life-1/{module}"
+            required: true
+        output_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+            format: markdown
+      - skill: sequence-design-analyst
+        id: stage_02
+        depends_on: [stage_01]
+        checkpoint: true
+        input_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+            format: markdown
+      - skill: class-diagram-analyst
+        id: stage_03
+        depends_on: [stage_02]
+        checkpoint: false
+        input_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/class/{module}-class.md"
+            format: markdown
+      - skill: activity-diagram-design-analyst
+        id: stage_04
+        depends_on: [stage_01]
+        checkpoint: false
+        input_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/flow/{module}-flow.md"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/activity/{module}-activity.md"
+            format: markdown
+      - skill: schema-design-analyst
+        id: stage_05
+        depends_on: [stage_03, stage_04]
+        checkpoint: true
+        input_contract:
+          - type: file
+            path: "Docs/life-2/diagrams/class/{module}-class.md"
+            required: false
+          - type: file
+            path: "Docs/life-2/diagrams/activity/{module}-activity.md"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/database/schema-{module}.yaml"
+            format: yaml
+          - type: file
+            path: "Docs/life-2/diagrams/er/{module}-er.md"
+            format: markdown
+      - skill: ui-architecture-analyst
+        id: stage_06
+        depends_on: [stage_05]
+        checkpoint: false
+        input_contract:
+          - type: file
+            path: "Docs/life-2/database/schema-{module}.yaml"
+            required: false
+          - type: file
+            path: "Docs/life-2/diagrams/sequence/{module}-sequence.md"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/ui/specs/{module}-ui-spec.md"
+            format: markdown
+      - skill: ui-pencil-drawer
+        id: stage_07
+        depends_on: [stage_06]
+        checkpoint: false
+        input_contract:
+          - type: file
+            path: "Docs/life-2/ui/specs/{module}-ui-spec.md"
+            required: true
+          - type: file
+            path: "Docs/life-2/ui/wireframes/{module}.pen"
+            required: false
+        output_contract:
+          - type: file
+            path: "Docs/life-2/ui/wireframes/{module}.pen"
+            format: pen
+    execution:
+      mode: sequential
+      max_retries: 2
+      continue_on_error: false
+      timeout_per_stage: 1800
+
+  skill-creation:
+    name: Skill Creation Pipeline
+    description: Tạo skill mới từ yêu cầu đến implementation
+    pipeline_awareness:
+      enabled: true
+      include_predecessor_outputs: true
+      include_global_context: true
+
+    global_context:
+      project: skill-ecosystem
+      input_base: .skill-context
+      output_base: .agent/skills
+
+    stages:
+      - skill: skill-architect
+        id: stage_01
+        depends_on: []
+        checkpoint: true
+        input_contract:
+          - type: directory
+            path: ".skill-context/{skill-name}"
+            required: false
+        output_contract:
+          - type: file
+            path: ".skill-context/{skill-name}/design.md"
+            format: markdown
+      - skill: skill-planner
+        id: stage_02
+        depends_on: [stage_01]
+        checkpoint: true
+        input_contract:
+          - type: file
+            path: ".skill-context/{skill-name}/design.md"
+            required: true
+        output_contract:
+          - type: file
+            path: ".skill-context/{skill-name}/todo.md"
+            format: markdown
+      - skill: skill-builder
+        id: stage_03
+        depends_on: [stage_02]
+        checkpoint: false
+        input_contract:
+          - type: file
+            path: ".skill-context/{skill-name}/design.md"
+            required: true
+          - type: file
+            path: ".skill-context/{skill-name}/todo.md"
+            required: true
+        output_contract:
+          - type: directory
+            path: ".agent/skills/{skill-name}"
+            format: directory
+    execution:
+      mode: sequential
+      max_retries: 2
+      continue_on_error: false
+      timeout_per_stage: 1800
+
+# ============================================================
+# CATEGORY GROUPS
+# ============================================================
+
+categories:
+  meta:
+    description: Skills cho việc tạo và quản lý skill mới
+    color: purple
+
+  preprocessing:
+    description: Skills tiền xử lý và chuẩn hóa dữ liệu đầu vào
+    color: cyan
+
+  uml:
+    description: Skills tạo UML diagrams và tài liệu kỹ thuật
+    color: blue
+
+  database:
+    description: Skills thiết kế database schema
+    color: green
+
+  ui:
+    description: Skills thiết kế và vẽ UI
+    color: orange
+
+  implementation:
+    description: Skills triển khai code (Life-3)
+    color: red
+
+  utility:
+    description: Skills tiện ích hỗ trợ
+    color: gray2

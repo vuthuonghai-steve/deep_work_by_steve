@@ -1,0 +1,69 @@
+{
+  "_comment": "BUILT-IN DEFAULTS — Bundled sẵn trong skill, không cần file ngoài. Dùng khi không tìm thấy shared-types.json hoặc project-types.json.",
+  "_version": "1.0.0",
+  "_source": "Derived from PayloadCMS v3 Official Docs + Mermaid v10+ Docs",
+
+  "allowed_field_types": [
+    "text",
+    "email",
+    "number",
+    "boolean",
+    "date",
+    "select",
+    "json",
+    "richText",
+    "relationship",
+    "upload",
+    "array",
+    "group",
+    "point",
+    "blocks"
+  ],
+
+  "mermaid_type_map": {
+    "text": "String",
+    "email": "String",
+    "number": "Number",
+    "boolean": "Boolean",
+    "date": "DateTime",
+    "select": "String",
+    "json": "JSON",
+    "richText": "String",
+    "relationship": "ObjectId",
+    "upload": "ObjectId",
+    "array": "Array",
+    "group": "Object",
+    "point": "Float[]",
+    "blocks": "Array"
+  },
+
+  "aggregate_root_patterns": [
+    "aggregate_root",
+    "embedded_document",
+    "computed_counter",
+    "polymorphic",
+    "unique_compound",
+    "append_only",
+    "value_object"
+  ],
+
+  "access_control_actors": [
+    "anyone",
+    "authenticated",
+    "owner",
+    "admin",
+    "moderator",
+    "system",
+    "nobody"
+  ],
+
+  "lifecycle_hooks": [
+    "beforeValidate",
+    "beforeChange",
+    "afterChange",
+    "beforeRead",
+    "afterRead",
+    "beforeDelete",
+    "afterDelete"
+  ]
+}

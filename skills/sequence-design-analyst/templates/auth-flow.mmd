@@ -1,0 +1,33 @@
+sequenceDiagram
+    actor User
+    participant Screen as AuthScreen
+    participant AuthService
+    participant Payload
+    participant DB
+
+    User ->> Screen: inputCredentials(email, pwd)
+    activate Screen
+    Screen ->> AuthService: login(email, pwd)
+    activate AuthService
+    
+    AuthService ->> Payload: payload.login(collection, data)
+    activate Payload
+    Payload ->> DB: findOne({email})
+    activate DB
+    DB -->> Payload: userRecord
+    deactivate DB
+
+    alt success
+        Payload -->> AuthService: { user, token }
+        AuthService ->> AuthService: setSession(token)
+        AuthService -->> Screen: { ok: true }
+        Screen -->> User: redirect(/dashboard)
+    else invalid
+        Payload -->> AuthService: AuthError
+        AuthService -->> Screen: { ok: false, error }
+        Screen -->> User: showErrorMessage
+    end
+
+    deactivate Payload
+    deactivate AuthService
+    deactivate Screen

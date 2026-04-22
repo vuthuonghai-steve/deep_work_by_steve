@@ -1,0 +1,123 @@
+# Field Mappings Configuration
+
+> Field name mappings for normalizing input documents to standard format
+
+---
+
+## Functional Requirement Mappings
+
+| Standard Field | Aliases | Description |
+|---------------|---------|-------------|
+| id | FR_ID, fr_id, requirement_id, req_id | Unique identifier |
+| title | name, requirement_name, title, subject | FR title |
+| description | content, detail, details, requirement_detail, body | Full description |
+| priority | importance, level, prio, severity | Priority level |
+| module | component, feature_area, module_name | Related module |
+| source | origin, reference, source_file | Source reference |
+| dependencies | related, requires, depends_on | Related FRs |
+| tags | labels, categories, keywords | Categorization |
+
+---
+
+## User Story Mappings
+
+| Standard Field | Aliases | Description |
+|---------------|---------|-------------|
+| id | US_ID, us_id, story_id, story_number | Unique identifier |
+| title | story_title, name, heading | Story title |
+| description | summary, narrative, as_a_i_want | Story description |
+| acceptanceCriteria | ac, criteria, conditions, acceptance,验收标准 | Acceptance criteria |
+| priority | importance, story_priority, rank | Priority level |
+| module | feature, area, module_name | Related module |
+| source | origin, reference, source_file | Source reference |
+| labels | tags, markers, badges | Story labels |
+| assignee | owner, owner_name, responsible | Responsible person |
+| storyPoints | points, effort, estimate | Complexity estimate |
+
+---
+
+## Use Case Mappings
+
+| Standard Field | Aliases | Description |
+|---------------|---------|-------------|
+| id | UC_ID, uc_id, case_id, usecase_id | Unique identifier |
+| name | case_name, use_case_name, scenario_name | Use case name |
+| actor | user, actor_name, participant, stakeholder | Primary actor |
+| preconditions | precond, precondition, requirements,前置条件 | Prerequisites |
+| postconditions | postcond, postcondition, results, results,后置条件 | Expected outcomes |
+| flow | steps, flow_steps, process, procedure | Flow steps |
+| module | feature, area, module_name | Related module |
+| source | origin, reference, source_file | Source reference |
+
+---
+
+## Priority Normalization
+
+| Input Value | Normalized Value |
+|-------------|------------------|
+| critical, Critical, CRITICAL, CRIT, P0 | critical |
+| high, High, HIGH, H, P1, important, Important | high |
+| medium, Medium, MEDIUM, M, P2, normal, Normal | medium |
+| low, Low, LOW, L, P3, minor, Minor | low |
+| must-have, Must-Have, MUST_HAVE | must-have |
+| should-have, Should-Have, SHOULD_HAVE | should-have |
+| could-have, Could-Have, COULD_HAVE | could-have |
+| won't-have, Won't-Have, WONT_HAVE | won't-have |
+
+---
+
+## Module Normalization
+
+| Input Value | Normalized Value |
+|-------------|------------------|
+| m1, M1, module1, auth, Auth, authentication | M1 |
+| m2, M2, module2, content, Content, posts | M2 |
+| m3, M3, module3, discovery, Discovery, feed | M3 |
+| m4, M4, module4, engagement, Engagement, likes | M4 |
+| m5, M5, module5, bookmarking, Bookmarking, bookmarks | M5 |
+| m6, M6, module6, notifications, Notifications, moderation | M6 |
+
+---
+
+## Document Type Detection Patterns
+
+### File Name Patterns
+
+```yaml
+functional_requirement:
+  - "*fr*"
+  - "*functional*requirement*"
+  - "*requirement*"
+
+user_story:
+  - "*us-*"
+  - "*user-story*"
+  - "*user_story*"
+  - "*story*"
+
+use_case:
+  - "*uc-*"
+  - "*use-case*"
+  - "*use_case*"
+  - "*uc*"
+```
+
+### Content Start Patterns
+
+```yaml
+functional_requirement:
+  - "^FR[0-9]"
+  - "^Requirement[:\s]"
+  - "^FR-"
+
+user_story:
+  - "^US[0-9]"
+  - "^User Story[:\s]"
+  - "^As a,"
+  - "^US-"
+
+use_case:
+  - "^UC[0-9]"
+  - "^Use Case[:\s]"
+  - "^UC-"
+```

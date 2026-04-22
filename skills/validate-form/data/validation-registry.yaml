@@ -1,0 +1,52 @@
+# Validation Registry Template
+# Lưu trữ các validation đã tạo để tái sử dụng
+# Location: {project}/.validate/validation-registry.yaml
+
+# Schema version
+version: "1.0"
+created: "2026-03-17"
+updated: "2026-03-17"
+
+# Validations theo collection
+validations: {}
+
+# Reusable validators
+reusableValidators: {}
+
+# Domain mappings
+domainMappings:
+  auth:
+    collections:
+      - users
+      - customers
+      - devices
+    validationFile: src/validations/validation.auth.ts
+
+  commerce:
+    collections:
+      - products
+      - categories
+      - tags
+      - reviews
+    validationFile: src/validations/validation.commerce.ts
+
+  orders:
+    collections:
+      - orders
+      - payment-sessions
+      - assignments
+    validationFile: src/validations/validation.orders.ts
+
+  stores:
+    collections:
+      - stores
+      - inventory
+      - bank-accounts
+    validationFile: src/validations/validation.stores.ts
+
+  marketing:
+    collections:
+      - vouchers
+      - campaigns
+      - notifications
+    validationFile: src/validations/validation.marketing.ts
