@@ -1,0 +1,477 @@
+# Component Hierarchy Analyzer - Hướng dẫn sử dụng
+
+> Skill: component-hierarchy-analyzer
+> Version: 1.0.0
+> Ngày tạo: 2026-04-24
+
+---
+
+## 1. Giới thiệu
+
+**Component Hierarchy Analyzer** là một skill AI giúp phân tích cấu trúc component hierarchy trong các dự án React/React Native. Skill này thực thi script `generate-component-hierarchy.ts` (Bun script) và chuyển đổi output dạng ASCII tree thành JSON có cấu trúc để AI dễ dàng tiêu thụ.
+
+### Mục đích sử dụng
+- Kiểm tra cấu trúc component hierarchy
+- Debug vấn đề layout UI
+- Hiểu mối quan hệ giữa các component
+- Phân tích dependency giữa components
+- Xem layout classes/styles của từng component
+
+---
+
+## 2. Yêu cầu môi trường
+
+### 2.1 Bắt buộc (Required)
+
+**Bun Runtime**:
+- Bun (JavaScript/TypeScript runtime)
+- Cài đặt: `curl -fsSL https://bun.sh/install | bash`
+- Kiểm tra: `bun --version`
+
+**Python 3.7+**:
+- Python 3.7 hoặc cao hơn
+- Cài đặt: Theo hệ điều hành (apt, brew, chocolatey, etc.)
+- Kiểm tra: `python3 --version`
+
+**Script generate-component-hierarchy.ts**:
+- File TypeScript script được cung cấp sẵn trong skill (assets/generate-component-hierarchy.ts)
+- Skill sẽ tự động copy script vào project root khi cần
+- Hoặc người dùng có thể copy thủ công: `cp .windsurf/skills/component-hierarchy-analyzer/assets/generate-component-hierarchy.ts ./`
+
+### 2.2 Tùy chọn (Optional)
+
+**Python packages** (nếu cần mở rộng):
+- Không yêu cầu packages bên ngoài (chỉ dùng standard library)
+- Nếu cần Handlebars cho template: `pip install jinja2` hoặc `pip install pybars3`
+
+---
+
+## 3. Cách Setup
+
+### 3.1 Cài đặt Bun
+
+```bash
+# Linux/macOS
+curl -fsSL https://bun.sh/install | bash
+
+# Windows (PowerShell)
+powershell -c "irm bun.sh/install.ps1 | iex"
+
+# Kiểm tra cài đặt
+bun --version
+```
+
+### 3.2 Cài đặt Python
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install python3 python3-pip
+
+# macOS (Homebrew)
+brew install python3
+
+# Windows (Chocolatey)
+choco install python
+
+# Kiểm tra cài đặt
+python3 --version
+```
+
+### 3.3 Script generate-component-hierarchy.ts
+
+Script được cung cấp sẵn trong skill tại `assets/generate-component-hierarchy.ts`.
+
+**Tự động (khuyến nghị)**:
+- Khi skill được invoke, AI sẽ tự động kiểm tra và copy script vào project root nếu chưa tồn tại
+- Không cần thao tác thủ công
+
+**Thủ công (tùy chọn)**:
+```bash
+# Copy từ skill assets vào project root
+cp .windsurf/skills/component-hierarchy-analyzer/assets/generate-component-hierarchy.ts ./
+```
+
+**Verify script đã được copy**:
+```bash
+ls -la generate-component-hierarchy.ts
+```
+
+### 3.4 Cấu trúc thư mục skill
+
+```
+.windsurf/skills/component-hierarchy-analyzer/
+├── SKILL.md                              # Main skill definition
+├── assets/
+│   └── generate-component-hierarchy.ts   # Bun script (được copy vào project root khi cần)
+├── knowledge/
+│   ├── script-reference.md               # CLI options, executable discovery
+│   └── json-schema.md                    # JSON output schema
+├── scripts/
+│   ├── execute-script.py                 # Execute Bun script
+│   └── parse-output.py                   # Parse ASCII to JSON
+├── templates/
+│   └── json-output.template              # JSON output template
+├── data/
+│   └── default-config.yaml               # Default configuration
+└── loop/
+    ├── input-clarification-checklist.md  # Input validation rules
+    └── output-validation-checklist.md    # Output validation rules
+```
+
+---
+
+## 4. Cách sử dụng cho người dùng
+
+### 4.1 Request cơ bản
+
+```
+User: "Show me the component hierarchy for the home screen"
+```
+
+AI sẽ:
+1. Đánh giá confidence score (60% - thiếu src/entry)
+2. Hỏi clarifying questions
+3. Sau khi có đủ thông tin, thực thi script
+4. Trả về JSON với cấu trúc component hierarchy
+
+### 4.2 Request với đủ thông tin
+
+```
+User: "Analyze Button component with full scope in apps/mobile/src"
+```
+
+AI sẽ:
+1. Đánh giá confidence score (90%)
+2. Auto-run với defaults cho entry/alias
+3. Thực thi: `bun generate-component-hierarchy.ts --focus Button --scope full --src apps/mobile/src`
+4. Trả về JSON
+
+### 4.3 Các tham số có thể cung cấp
+
+| Tham số | Mô tả | Mặc định | Ví dụ |
+|---------|-------|---------|-------|
+| `src` | Source directory | `apps/mobile/src` | `src`, `frontend/src` |
+| `entry` | Entry file path | `apps/mobile/src/app/_layout.tsx` | `src/app/_layout.tsx` |
+| `focus` | Component name để focus | null | `HomeScreen`, `Button` |
+| `scope` | Focus mode | `down` | `up`, `full`, `down` |
+| `layoutOnly` | Chỉ show layout signals | `false` | `true`/`false` |
+| `alias` | Path alias mappings | `@=apps/mobile/src` | `@=src`, `@components=src/components` |
+
+### 4.4 Giải thích các scope mode
+
+- **`up`**: Chỉ show ancestors (cha) → target (con collapsed)
+  - Dùng khi muốn biết component này được import từ đâu
+- **`full`**: Show ancestors → target → full subtree
+  - Dùng khi muốn xem toàn bộ context
+- **`down`**: Target as root → full subtree (mặc định)
+  - Dùng khi chỉ quan tâm component và con của nó
+
+---
+
+## 5. Cách Model AI sử dụng skill
+
+### 5.1 Boot Sequence (Mandatory)
+
+Khi skill được invoke, AI PHẢI đọc các file sau trước khi bắt đầu:
+
+1. `knowledge/script-reference.md` - CLI options, executable discovery
+2. `data/default-config.yaml` - Default args, allowed scopes, confidence threshold
+3. `loop/input-clarification-checklist.md` - Input validation rules
+
+### 5.2 Workflow Progress Tracker
+
+AI phải copy checklist này vào response và mark progress:
+
+```markdown
+### [component-hierarchy-analyzer] Progress:
+- [ ] Phase 1: Input Clarification
+- [ ] Phase 2: Argument Mapping → [⏸️ Gate: Confirmation if needed]
+- [ ] Phase 3: Script Execution
+- [ ] Phase 4: Output Parsing & JSON Conversion
+- [ ] Phase 5: Validation & Delivery
+```
+
+### 5.3 Phase 1: Input Clarification
+
+**Extract parameters**:
+- `src`, `entry`, `focus`, `scope`, `layoutOnly`, `alias`
+
+**Score confidence**:
+- Base: 0%
+- Has src: +25%
+- Has entry: +25%
+- Has component name: +20%
+- Has valid scope: +20%
+- Has alias: +10%
+
+**Apply confidence gate**:
+- >= 70% + read-only → auto-run
+- < 70% → ask clarifying questions
+
+### 5.4 Phase 2: Argument Mapping
+
+Build command:
+```bash
+bun generate-component-hierarchy.ts \
+  --src <src> \
+  --entry <entry> \
+  --focus <focus> \
+  --scope <scope> \
+  --layoutOnly \
+  --alias <key=value>
+```
+
+Validate:
+- Scope phải là `up`, `full`, hoặc `down`
+- Resolve absolute paths
+- Format alias as `key=value`
+
+### 5.5 Phase 3: Script Execution
+
+Check availability:
+- Verify `bun` in PATH
+- Check if `generate-component-hierarchy.ts` exists at project root
+- If missing → copy from skill assets: `cp .windsurf/skills/component-hierarchy-analyzer/assets/generate-component-hierarchy.ts ./`
+- If assets also missing → report blocker with setup instructions
+
+Execute:
+- Run with subprocess, timeout 30s
+- Capture stdout, stderr, exit code
+- Working directory = project root
+
+Handle results:
+- Exit 0 → Proceed to Phase 4
+- Exit 1 → Parse stderr, provide suggestions
+- Timeout → Report timeout
+
+### 5.6 Phase 4: Output Parsing & JSON Conversion
+
+Read: `knowledge/json-schema.md`
+
+Parse ASCII tree:
+- Format: `[ComponentName] - filePath (layout)`
+- Tree chars: `├──`, `└──`, indentation
+- Markers: `↺` (recursive), `★` (ancestor)
+
+Convert to JSON:
+- Build hierarchical tree
+- Include query, metadata, warnings, errors
+- Handle edge cases (empty, unparseable, recursive)
+
+### 5.7 Phase 5: Validation & Delivery
+
+Read: `loop/output-validation-checklist.md`
+
+Validate:
+- Required fields: query, root, metadata
+- Root fields: name, type, filePath, depth, relationship, children
+- Type validation: screen, component, framework, layout, provider, unknown
+- Depth consistency
+
+Deliver:
+- Pass → Return JSON
+- Fail → Return partial JSON with errors
+- Fallback → Include rawOutput
+
+---
+
+## 6. Output JSON Structure
+
+### 6.1 Success Output
+
+```json
+{
+  "query": {
+    "src": "apps/mobile/src",
+    "entry": "apps/mobile/src/app/_layout.tsx",
+    "focus": null,
+    "scope": "down",
+    "layoutOnly": false,
+    "alias": { "@": "apps/mobile/src" }
+  },
+  "root": {
+    "name": "RootComponent",
+    "type": "screen",
+    "filePath": "apps/mobile/src/app/_layout.tsx",
+    "depth": 0,
+    "relationship": "root",
+    "layout": "flex flex-1",
+    "module": null,
+    "recursive": false,
+    "duplicate": false,
+    "children": [...]
+  },
+  "metadata": {
+    "command": "bun generate-component-hierarchy.ts",
+    "exitCode": 0,
+    "parserVersion": "0.1.0",
+    "sourceFormat": "ascii-tree"
+  },
+  "warnings": [],
+  "errors": []
+}
+```
+
+### 6.2 Fallback Output (Parse Fail)
+
+```json
+{
+  "query": { ... },
+  "rawOutput": "[RootComponent] - apps/mobile/src/app/_layout.tsx\n└── [Stack]",
+  "metadata": { ... },
+  "warnings": [],
+  "errors": ["Parse error: Unexpected format at line 2"]
+}
+```
+
+---
+
+## 7. Ví dụ sử dụng thực tế
+
+### 7.1 Debug layout issue
+
+```
+User: "Why is the Button component not showing correctly in HomeScreen?"
+AI: "I'll analyze the component hierarchy to understand the layout structure."
+AI: [Executes: bun generate-component-hierarchy.ts --focus HomeScreen --scope down --layoutOnly]
+AI: [Returns JSON with layout classes]
+AI: "Based on the hierarchy, Button has `bg-blue-500` but parent has `overflow-hidden`. Try removing overflow or adjusting z-index."
+```
+
+### 7.2 Understand component relationships
+
+```
+User: "Show me all components that use the Button component"
+AI: "I'll analyze the hierarchy to find Button usage."
+AI: [Executes: bun generate-component-hierarchy.ts --focus Button --scope up]
+AI: [Returns JSON with ancestor chain]
+AI: "Button is used in: HomeScreen, ProfileScreen, SettingsScreen"
+```
+
+### 7.3 Analyze new screen structure
+
+```
+User: "I just created LoginScreen, show me its component structure"
+AI: "I'll analyze the LoginScreen hierarchy."
+AI: [Executes: bun generate-component-hierarchy.ts --focus LoginScreen --scope full]
+AI: [Returns JSON with full subtree]
+AI: "LoginScreen contains: TextInput, Button, Text, and uses expo-router Stack"
+```
+
+---
+
+## 8. Troubleshooting
+
+### 8.1 Bun not found
+
+**Error**: `bun: command not found`
+
+**Solution**:
+```bash
+curl -fsSL https://bun.sh/install | bash
+# Restart terminal or source .bashrc
+source ~/.bashrc
+```
+
+### 8.2 Script not found
+
+**Error**: `Error: Script not found at generate-component-hierarchy.ts`
+
+**Solution**:
+- Skill sẽ tự động copy từ assets: `cp .windsurf/skills/component-hierarchy-analyzer/assets/generate-component-hierarchy.ts ./`
+- Hoặc copy thủ công nếu auto-copy fails
+- Verify script đã được copy: `ls -la generate-component-hierarchy.ts`
+
+### 8.3 Invalid scope
+
+**Error**: `Error: --scope must be one of up, full, down`
+
+**Solution**:
+- Sử dụng một trong: `up`, `full`, `down`
+- Kiểm tra `data/default-config.yaml` cho allowed scopes
+
+### 8.4 Entry file missing
+
+**Error**: `Cannot determine root component for nonexistent.tsx`
+
+**Solution**:
+- Kiểm tra đường dẫn entry file
+- Sử dụng `--rootComponent` flag nếu script không thể tự động detect
+- Hoặc cung cấp entry file đúng
+
+### 8.5 Parse error
+
+**Error**: `[warn] skipping unparseable file {path}: {error}`
+
+**Solution**:
+- File có syntax error, script sẽ tiếp tục với các file khác
+- Kiểm tra file được report trong stderr
+- Fix syntax error trong file đó
+
+### 8.6 Timeout
+
+**Error**: `Command timed out after 30s`
+
+**Solution**:
+- Giảm scope (dùng `up` thay vì `full`)
+- Focus vào component cụ thể thay vì toàn bộ project
+- Tăng timeout trong `data/default-config.yaml` nếu cần
+
+---
+
+## 9. Runtime Guardrails
+
+### AI KHÔNG được phép:
+- Execute nếu script reference chưa được load
+- Execute nếu executable path chưa được verify
+- Execute nếu input validation fails (confidence < 70%)
+- Đoán file paths khi input ambiguous
+- Execute commands có side effects (script này read-only)
+- Return JSON mà không có `errors` field khi parsing/execution fails
+
+### AI LUÔN phải:
+- Validate input trước khi map arguments
+- Run commands ở read-only mode
+- Include `errors` và `warnings` trong output JSON khi fallback
+- Report specific error messages với actionable suggestions
+
+---
+
+## 10. Tài liệu tham khảo
+
+- **SKILL.md**: Main skill definition với workflow đầy đủ
+- **knowledge/script-reference.md**: Chi tiết CLI options và error handling
+- **knowledge/json-schema.md**: JSON schema và validation rules
+- **data/default-config.yaml**: Configuration defaults
+- **loop/input-clarification-checklist.md**: Input validation rules
+- **loop/output-validation-checklist.md**: Output validation rules
+
+---
+
+## 11. FAQ
+
+**Q: Skill này có hoạt động với React Native không?**
+A: Có, skill được thiết kế cho cả React và React Native projects.
+
+**Q: Script có modify files không?**
+A: Không, script là read-only, chỉ đọc files để phân tích AST.
+
+**Q: Tôi có thể dùng skill này cho non-React projects không?**
+A: Hiện tại skill được optimize cho React/React Native với JSX parsing. Có thể cần chỉnh sửa script cho các framework khác.
+
+**Q: Confidence threshold là gì?**
+A: Ngưỡng 70% để auto-run. Nếu < 70%, AI sẽ hỏi clarifying questions để tránh đoán sai.
+
+**Q: Làm sao để custom default configuration?**
+A: Chỉnh sửa `data/default-config.yaml` để thay đổi defaults, aliases, confidence threshold.
+
+---
+
+## 12. Support
+
+Nếu gặp vấn đề:
+1. Kiểm tra section Troubleshooting
+2. Xem build-log.md trong `.skill-context/component-hierarchy-analyzer/`
+3. Verify tất cả dependencies đã được cài đặt (Bun, Python)
+4. Kiểm tra script `generate-component-hierarchy.ts` có tồn tại

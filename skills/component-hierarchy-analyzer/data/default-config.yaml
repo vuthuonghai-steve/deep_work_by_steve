@@ -1,0 +1,61 @@
+# Default Configuration for component-hierarchy-analyzer
+
+# Default arguments for script execution
+defaults:
+  src: "apps/mobile/src"
+  entry: "apps/mobile/src/app/_layout.tsx"
+  scope: "down"
+  layoutOnly: false
+
+# Default path aliases
+aliases:
+  "@": "apps/mobile/src"
+
+# Allowed scope values
+allowed_scopes:
+  - "up"
+  - "full"
+  - "down"
+
+# Scope descriptions
+scope_descriptions:
+  up: "Ancestors → target (children collapsed)"
+  full: "Ancestors → target → full subtree"
+  down: "Target as root → full subtree"
+
+# Confidence threshold for auto-run (percentage)
+confidence_threshold: 70
+
+# Confidence scoring rules
+confidence_scoring:
+  has_src: 25
+  has_entry: 25
+  has_component_name: 20
+  has_valid_scope: 20
+  has_alias: 10
+
+# Script execution settings
+execution:
+  timeout_seconds: 30
+  max_retries: 1
+
+# Parser settings
+parser:
+  version: "0.1.0"
+  source_format: "ascii-tree"
+
+# Component type classification patterns
+type_patterns:
+  screen:
+    - "screen"
+    - "page"
+  layout:
+    - "layout"
+  provider:
+    - "provider"
+    - "context"
+  framework:
+    - "react-native"
+    - "react"
+    - "expo-router"
+    - "expo"
