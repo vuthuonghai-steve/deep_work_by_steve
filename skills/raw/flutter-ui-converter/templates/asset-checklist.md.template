@@ -1,0 +1,70 @@
+# Asset Checklist
+
+**Session ID**: `{session_id}`
+**Screen**: `{screen_name}`
+
+---
+
+## Images
+
+| Asset Name | Source Path | Target Path | Status | Action Required |
+|------------|-------------|-------------|--------|-----------------|
+{image_assets}
+
+---
+
+## Icons
+
+| Icon | Source Package | Target Equivalent | Mapping |
+|------|----------------|-------------------|---------|
+{icon_mappings}
+
+---
+
+## Fonts
+
+| Font Family | Source | Target | Status |
+|-------------|--------|--------|--------|
+{font_mappings}
+
+---
+
+## SVG Assets
+
+| SVG File | Source Path | Target Path | Status |
+|----------|-------------|-------------|--------|
+{svg_assets}
+
+---
+
+## Manual Actions Required
+
+### Assets to Copy
+
+```bash
+# Copy these files manually:
+{copy_commands}
+```
+
+### Pubspec.yaml Updates
+
+```yaml
+# Add to pubspec.yaml if not present:
+flutter:
+  assets:
+{asset_declarations}
+```
+
+---
+
+## Summary
+
+- **Total Assets**: `{total_assets}`
+- **Already in Target**: `{existing_count}`
+- **Need to Copy**: `{copy_count}`
+- **Icon Substitutions**: `{icon_substitution_count}`
+- **Pubspec Updates**: `{pubspec_update_count}`
+
+---
+
+**Status**: {status}

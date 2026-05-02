@@ -1,0 +1,84 @@
+# Theme Mapping
+
+**Session ID**: `{session_id}`
+**Screen**: `{screen_name}`
+
+---
+
+## Color Mappings
+
+| Source Color | Hex | Target Constant | Usage |
+|--------------|-----|-----------------|-------|
+{color_mappings}
+
+---
+
+## Text Style Mappings
+
+| Source Style | Properties | Target Style | Usage |
+|--------------|------------|--------------|-------|
+{text_style_mappings}
+
+---
+
+## Spacing & Dimensions
+
+| Source Value | Target Constant | Usage |
+|--------------|-----------------|-------|
+{spacing_mappings}
+
+---
+
+## Border Radius
+
+| Source Value | Target Constant | Usage |
+|--------------|-----------------|-------|
+{border_radius_mappings}
+
+---
+
+## Elevation/Shadow
+
+| Source Value | Target Constant | Usage |
+|--------------|-----------------|-------|
+{elevation_mappings}
+
+---
+
+## Theme Constants to Use
+
+### Colors
+```dart
+// Use these instead of hardcoded colors:
+{target_color_constants}
+```
+
+### Text Styles
+```dart
+// Use these instead of inline TextStyle:
+{target_text_style_constants}
+```
+
+### Spacing
+```dart
+// Use these instead of hardcoded padding/margin:
+{target_spacing_constants}
+```
+
+---
+
+## Hardcoded Values to Avoid
+
+❌ **Do NOT use**:
+```dart
+{hardcoded_examples}
+```
+
+✅ **Use instead**:
+```dart
+{theme_examples}
+```
+
+---
+
+**Summary**: `{total_mappings}` theme mappings identified

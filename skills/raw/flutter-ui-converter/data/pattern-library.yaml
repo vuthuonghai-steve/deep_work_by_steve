@@ -1,0 +1,24 @@
+# Pattern Library
+
+# This file stores successful conversion patterns that can be reused.
+# Patterns are added ONLY after real conversions succeed.
+
+# Schema:
+# patterns:
+#   - id: PATTERN-XXX
+#     name: Pattern Name
+#     category: state_management | asset_mapping | theme | responsive_layout | localization
+#     description: Brief description of what this pattern does
+#     example: |
+#       // Source code example
+#       SourceWidget()
+#
+#       // Target code example
+#       TargetWidget()
+#     success_rate: 0-100 (percentage based on actual usage)
+#     reusable: true | false
+#     recorded_at: YYYY-MM-DD
+
+patterns: []
+
+last_updated: 2026-04-26T09:07:00Z

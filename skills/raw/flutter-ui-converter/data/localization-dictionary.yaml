@@ -1,0 +1,169 @@
+# Localization Dictionary
+
+# Maps common hardcoded text to i18n keys.
+# Agent uses this to suggest correct localization keys.
+
+common_ui_text:
+  authentication:
+    - text: "Login"
+      key: login
+      context: Button label or screen title
+
+    - text: "Sign In"
+      key: signIn
+      context: Alternative to login
+
+    - text: "Sign Up"
+      key: signUp
+      context: Registration
+
+    - text: "Register"
+      key: register
+      context: Registration alternative
+
+    - text: "Forgot Password"
+      key: forgotPassword
+      context: Password recovery link
+
+    - text: "Reset Password"
+      key: resetPassword
+      context: Password reset action
+
+    - text: "Email"
+      key: email
+      context: Email input label
+
+    - text: "Password"
+      key: password
+      context: Password input label
+
+    - text: "Confirm Password"
+      key: confirmPassword
+      context: Password confirmation
+
+  navigation:
+    - text: "Home"
+      key: home
+      context: Home screen/tab
+
+    - text: "Profile"
+      key: profile
+      context: Profile screen/tab
+
+    - text: "Settings"
+      key: settings
+      context: Settings screen/tab
+
+    - text: "Back"
+      key: back
+      context: Back button
+
+    - text: "Next"
+      key: next
+      context: Next button
+
+    - text: "Cancel"
+      key: cancel
+      context: Cancel action
+
+    - text: "Save"
+      key: save
+      context: Save action
+
+    - text: "Delete"
+      key: delete
+      context: Delete action
+
+  messages:
+    - text: "Success"
+      key: success
+      context: Success message
+
+    - text: "Error"
+      key: error
+      context: Error message
+
+    - text: "Loading"
+      key: loading
+      context: Loading indicator
+
+    - text: "No data"
+      key: noData
+      context: Empty state
+
+    - text: "Try again"
+      key: tryAgain
+      context: Retry action
+
+  validation:
+    - text: "Required field"
+      key: requiredField
+      context: Validation error
+
+    - text: "Invalid email"
+      key: invalidEmail
+      context: Email validation
+
+    - text: "Password too short"
+      key: passwordTooShort
+      context: Password validation
+
+    - text: "Passwords don't match"
+      key: passwordsDontMatch
+      context: Password confirmation validation
+
+vietnamese_common:
+  - text: "Đăng nhập"
+    key: login
+    language: vi
+
+  - text: "Đăng ký"
+    key: signUp
+    language: vi
+
+  - text: "Quên mật khẩu"
+    key: forgotPassword
+    language: vi
+
+  - text: "Trang chủ"
+    key: home
+    language: vi
+
+  - text: "Cài đặt"
+    key: settings
+    language: vi
+
+  - text: "Lưu"
+    key: save
+    language: vi
+
+  - text: "Hủy"
+    key: cancel
+    language: vi
+
+  - text: "Xóa"
+    key: delete
+    language: vi
+
+interpolation_patterns:
+  - pattern: "Hello, {name}"
+    key: helloUser
+    parameters: [name]
+    example: "S.of(context).helloUser(userName)"
+
+  - pattern: "Welcome back, {name}"
+    key: welcomeBack
+    parameters: [name]
+    example: "S.of(context).welcomeBack(state.userName)"
+
+  - pattern: "{count} items"
+    key: itemCount
+    parameters: [count]
+    example: "S.of(context).itemCount(items.length)"
+
+usage_notes:
+  - "If text not found in dictionary, create TODO comment: // TODO: i18n - add key 'suggested_key'"
+  - "For Vietnamese text, suggest both English key and Vietnamese translation"
+  - "For interpolated text, identify variables and suggest parameterized i18n call"
+
+last_updated: 2026-04-26T07:47:00Z
