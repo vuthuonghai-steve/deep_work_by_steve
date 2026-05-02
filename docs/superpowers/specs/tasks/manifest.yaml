@@ -1,0 +1,92 @@
+# manifest.yaml — AI-First Skill Suite Redesign Task Index
+# Master spec: ../2026-05-03-ai-first-skill-suite-redesign.md
+
+project:
+  name: "AI-First Skill Suite Redesign"
+  spec_version: "3.0.0"
+  created: "2026-05-03"
+  scope: "skill-architect, skill-planner, skill-builder"
+
+milestones:
+  - id: "M0"
+    title: "Foundation + Schema"
+    file: "M0-foundation.yaml"
+    spec_sections: [2, 3.1, 4.1, 4.2, 4.4]
+    deliverable: "_shared/ với schemas, fixtures, framework.md"
+    depends_on: []
+    status: "pending"
+
+  - id: "M1"
+    title: "Validators"
+    file: "M1-validators.yaml"
+    spec_sections: [6, 9.3]
+    deliverable: "_shared/validators/ với 3 Python scripts"
+    depends_on: ["M0"]
+    status: "pending"
+
+  - id: "M2"
+    title: "Fix P0/P1 trong 3 SKILL.md"
+    file: "M2-skill-fixes.yaml"
+    spec_sections: [3.2, 5, 7]
+    deliverable: 3 SKILL.md portable, không hardcode
+    depends_on: ["M0"]
+    status: "pending"
+
+  - id: "M3"
+    title: "Artifact Templates + Context Scripts"
+    file: "M3-templates.yaml"
+    spec_sections: [4.1, 4.2, 4.3]
+    deliverable: Templates có YAML frontmatter, init_context.py"
+    depends_on: ["M0", "M1"]
+    status: "pending"
+
+  - id: "M4"
+    title: "Feedback Loop + Cleanup"
+    file: "M4-feedback.yaml"
+    spec_sections: [8, 9, 11]
+    deliverable: Feedback mechanism, cleaned repo, e2e verify"
+    depends_on: ["M1", "M2", "M3"]
+    status: "pending"
+
+execution_order:
+  parallel:
+    - ["M0"]                    # M0 chạy đầu, không có dependency
+  sequential:
+    - ["M1", "M2"]              # M1, M2 có thể chạy song song sau M0
+    - ["M3"]                    # M3 cần M0 + M1
+    - ["M4"]                    # M4 cần tất cả
+
+target_structure: |
+  <skills-root>/
+  ├── _shared/
+  │   ├── knowledge/framework.md
+  │   ├── schemas/
+  │   │   ├── design.schema.yaml
+  │   │   ├── todo.schema.yaml
+  │   │   └── build-log.schema.yaml
+  │   ├── fixtures/
+  │   │   ├── good/  (design.md, todo.md, build-log.md)
+  │   │   └── bad/   (design.md, todo.md, build-log.md)
+  │   └── validators/
+  │       ├── schema_validator.py
+  │       ├── trace_validator.py
+  │       └── handoff_validator.py
+  ├── skill-architect/
+  │   ├── SKILL.md
+  │   ├── knowledge/architect.md
+  │   ├── templates/design.md.template
+  │   ├── scripts/init_context.py
+  │   └── loop/design-checklist.md
+  ├── skill-planner/
+  │   ├── SKILL.md
+  │   ├── knowledge/architect.md
+  │   ├── templates/todo.md.template
+  │   ├── loop/plan-checklist.md
+  │   └── scripts/validate-todo.py
+  └── skill-builder/
+      ├── SKILL.md
+      ├── knowledge/architect.md
+      ├── scripts/validate_skill.py
+      └── loop/
+          ├── build-checklist.md
+          └── build-log.md

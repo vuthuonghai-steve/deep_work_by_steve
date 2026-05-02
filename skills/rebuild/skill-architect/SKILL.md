@@ -25,32 +25,42 @@ triggers:
   - "vẽ sơ đồ mermaid"
   - "khởi tạo context skill"
   - "thiết kế kiến trúc skill"
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+    - path: "../_shared/knowledge/framework.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/architect.md"
+      base: "skill_dir"
+      load_when: "Phase requiring domain knowledge"
+    - path: "knowledge/visualization-guidelines.md"
+      base: "skill_dir"
+      load_when: "Phase 3: Design & Output"
+    - path: "scripts/init_context.py"
+      base: "skill_dir"
+      load_when: "After Phase 1 confirm"
+    - path: "loop/design-checklist.md"
+      base: "skill_dir"
+      load_when: "Before deliver (Quality Gate)"
+    - path: "templates/design.md.template"
+      base: "skill_dir"
+      load_when: "When writing design.md output"
+  tier3:
+    - path: "references/examples/design-*.md"
+      base: "skill_dir"
+      load_when: "When needing reference examples"
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> Bạn **BẮT BUỘC PHẢI** sử dụng tool `Read` hoặc `Glob` hoặc `Bash` (ls) để QUÉT VÀ ĐỌC TRỰC TIẾP nội dung các file trong các thư mục `knowledge/`, `templates/`, `scripts/` hoặc `loop/` của bạn TRƯỚC KHI bắt đầu làm bất cứ nhiệm vụ nào.
+> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
+> Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
 
 ---
-
-## Progressive Disclosure
-
-### Tier 1: Always Load (Required)
-- **SKILL.md** (this file) - luôn được load
-
-### Tier 2: Required Knowledge (BẮT BUỘC phải đọc)
-Liệt kê các file trong knowledge/ mà skill cần:
-- @.claude/skills/skill-architect/knowledge/architect.md - Architect-specific workflow
-
-### Tier 3: Optional (load when needed)
-Các file trong loop/, templates/, scripts/:
-- @.claude/skills/skill-architect/loop/design-checklist.md - Quality checklist
-- @.claude/skills/skill-architect/templates/design.md.template - Design template
-
----
-
 # Skill Architect — Senior Design Architect
 
 ## 🎯 Mission & Persona Scope
@@ -66,7 +76,7 @@ Act as a **Senior Skill Architect** (design-only role). Analyze user requirement
 | File | Vai trò | Đọc khi nào |
 |------|---------|-------------|
 | `knowledge/architect.md` | Framework reference + Architect-specific workflow | **Bắt buộc — Boot** |
-| `../../_shared/knowledge/framework.md` | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot** |
+| `../_shared/knowledge/framework.md` | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot** |
 | `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid | **Bắt buộc — trước Phase 3** |
 | `references/examples/design-*.md` | Sample design.md hoàn chỉnh | Tham khảo khi viết design mới |
 | `scripts/init_context.py` | Khởi tạo `.skill-context/{skill-name}/` | **Chạy một lần — sau Phase 1 confirm** |
@@ -79,12 +89,13 @@ Act as a **Senior Skill Architect** (design-only role). Analyze user requirement
 
 Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với user:
 
-1. **Read** `../../_shared/knowledge/framework.md` — hiểu đầy đủ 7 Zones, Pipeline Flow, Anti-hallucination.
-2. **Read** `knowledge/architect.md` — hiểu Architect-specific workflow và design sections.
+1. **Check** `../_shared/` tồn tại. Nếu chưa có → `scripts/init_context.py` tự động giải nén từ `references/_shared.zip` để tạo `../_shared/`. Sau đó read `../_shared/knowledge/framework.md`.
+2. **Read** `knowledge/architect.md` — hiểu Architect-specific workflow (Tier 2, load khi cần domain knowledge).
 3. **Check** context directory: có `.skill-context/{skill-name}/` chưa?
    - **CHƯA CÓ** → Chạy `scripts/init_context.py {skill-name}` sau khi xác định skill-name từ user.
    - **ĐÃ CÓ** → Đọc `design.md` hiện tại để tiếp tục từ chỗ dở, KHÔNG chạy lại script.
 4. **Proceed** to Phase 1.
+5. Tier 2/3 files được load theo từng Phase (xem `knowledge/architect.md` cho chi tiết).
 
 > ⚠️ **Lưu ý quan trọng**: `init_context.py` tạo `design.md`, `todo.md`, `build-log.md` với nội dung template rỗng. Đây là scaffolding; nội dung thực sự do Architect (design.md), Planner (todo.md), và Builder (build-log.md) điền vào.
 

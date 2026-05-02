@@ -18,29 +18,31 @@ pipeline:
   successor_hints:
     - skill: skill-builder
       needs: [design.md, todo.md]
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+    - path: "../_shared/knowledge/framework.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/architect.md"
+      base: "skill_dir"
+      load_when: "Step READ (audit design.md)"
+    - path: "knowledge/skill-packaging.md"
+      base: "skill_dir"
+      load_when: "Step ANALYZE (3-tier breakdown)"
+  tier3:
+    - path: "loop/plan-checklist.md"
+      base: "skill_dir"
+      load_when: "Before deliver (Quality Gate)"
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> Bạn **BẮT BUỘC PHẢI** sử dụng tool `Read` hoặc `Glob` hoặc `Bash` (ls) để QUÉT VÀ ĐỌC TRỰC TIẾP nội dung các file trong các thư mục `knowledge/`, `templates/`, `scripts/` hoặc `loop/` của bạn TRƯỚC KHI bắt đầu làm bất cứ nhiệm vụ nào.
+> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
+> Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
-
----
-
-## Progressive Disclosure
-
-### Tier 1: Always Load (Required)
-- **SKILL.md** (this file) - luôn được load
-
-### Tier 2: Required Knowledge (BẮT BUỘC phải đọc)
-Liệt kê các file trong knowledge/ mà skill cần:
-- @.claude/skills/skill-planner/knowledge/architect.md - Planner-specific workflow
-- @.claude/skills/skill-planner/knowledge/skill-packaging.md - 3 Tiers model
-
-### Tier 3: Optional (load when needed)
-Các file trong loop/, templates/, scripts/:
-- @.claude/skills/skill-planner/loop/plan-checklist.md - Quality checklist
 
 ---
 
@@ -58,17 +60,16 @@ This skill ONLY plans — it does NOT write implementation code or design archit
 ## Mandatory Boot Sequence
 
 1. Read this `SKILL.md` file.
-2. Read `../../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Naming, Anti-hallucination).
-3. Read `knowledge/architect.md` — Planner-specific workflow and steps.
-4. Read `knowledge/skill-packaging.md` — 3 Tiers model, conversion checklist.
-5. Determine the skill name from user input or context.
-6. Proceed to Step READ.
+2. Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Naming, Anti-hallucination).
+3. Determine the skill name from user input or context.
+4. Proceed to Step READ.
+5. Tier 2/3 files (`knowledge/architect.md`, `knowledge/skill-packaging.md`, `loop/plan-checklist.md`) được load theo Step tương ứng trong workflow.
 
 ## Step READ — Đọc Input & Audit Tài nguyên
 
 Read all available input sources and audit current state:
 
-1. **Master Design** (REQUIRED): Refer to `knowledge/architect.md` (the 7-Zone framework in `.claude/skills/skill-planner/knowledge/architect.md`) and read `.skill-context/{skill-name}/design.md` to understand the overarching standards.
+1. **Master Design** (REQUIRED): Refer to `knowledge/architect.md` (the 7-Zone framework reference) and read `.skill-context/{skill-name}/design.md` to understand the overarching standards.
    
 2. **design.md** (REQUIRED): Read `.skill-context/{skill-name}/design.md`.
    - Extract Zone Mapping (§3) and Capability Map (§2) as the primary analysis targets.
@@ -195,7 +196,7 @@ Present the completed todo.md to the user for review.
 ## Guardrails
 
 | G1 | Trace required      | Every item in todo.md MUST trace back to `design.md §N`            |
-| G2 | Label sources       | Mark `[TỪ DESIGN]` / `[GỢI Ý]` / `[TỪ AUDIT CUSTOM]`              |
+| G2 | Label sources       | Mark `[TỪ DESIGN §N]` / `[GỢI Ý BỔ SUNG]` / `[TỪ AUDIT TÀI NGUYÊN]` |
 | G3 | No inventing        | Only DECOMPOSE the design — do NOT add new requirements            |
 | G4 | List, don't do      | List knowledge needed → user prepares. Do NOT search/generate      |
 | G5 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
@@ -206,8 +207,8 @@ Present the completed todo.md to the user for review.
 - If `design.md` not found → Report error, suggest running Skill Architect first.
 - If design.md Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping. Cannot plan."
 - If knowledge file not found → Report: "Missing knowledge file. Cannot proceed. Please ensure the skill is properly installed."
-  - Required: `.claude/skills/skill-planner/knowledge/skill-packaging.md`
-  - Required: `.claude/skills/skill-planner/knowledge/architect.md`
+  - Required: `knowledge/skill-packaging.md` (relative to skill root)
+  - Required: `knowledge/architect.md` (relative to skill root)
 - If information is unclear → Write to Notes section with `[CẦN LÀM RÕ]` tag.
 - If user asks to write code → Decline. Suggest using `skill-builder` instead.
 

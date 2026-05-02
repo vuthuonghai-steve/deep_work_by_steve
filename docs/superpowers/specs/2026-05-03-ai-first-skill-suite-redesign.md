@@ -215,8 +215,10 @@ handoff:
       design_zone_mapping_covered: true  # Every file in design.md zone_mapping has task
       dependencies_valid: true       # All depends_on IDs exist
       no_clarification_blockers: true    # No [CẦN LÀM RÕ] blockers remain
+      phase0_done: true              # All PREPARE tasks done/skipped
+      prerequisites_ready: true      # All prerequisites status: ready
     optional:
-      prerequisites_met: true
+      build_tasks_valid: true        # PH1+ tasks have valid structure (may be pending)
   validator: "_shared/validators/handoff_validator.py --stage planner-to-builder"
 ```
 
@@ -260,13 +262,7 @@ handoff:
 ---
 skill_schema_version: "3.0.0"
 artifact_type: "design"
-skill_name: "example-skill"
-generated_by: "skill-architect"
-generated_at: "2026-05-03T10:00:00Z"
-stage: "architect"
-status: "ready_for_planner"
-
-skill_name: "example-skill"           # Tên skill đang được thiết kế
+skill_name: "example-skill"           # pattern: ^[a-z0-9-]+$
 generated_by: "skill-architect"
 generated_at: "2026-05-03T10:00:00Z"  # ISO 8601
 stage: "architect"                    # Enum: architect | planner | builder
@@ -280,39 +276,42 @@ canonical_source:
 
 zone_mapping:
   core:
+    zone_required: true
     files:
       - path: "SKILL.md"
-        required: true
+        file_required: true
         content_type: "orchestration"
   knowledge:
+    zone_required: true
     files:
       - path: "knowledge/domain.md"
-        required: true
+        file_required: true
         content_type: "reference"
     notes: "Domain-specific knowledge only. Shared framework in _shared/"
   scripts:
+    zone_required: false
     files: []                         # Explicit empty = zone not needed
-    required: false
-    content_type: "automation"
   templates:
+    zone_required: false
     files:
       - path: "templates/output.template"
-        required: false
+        file_required: false
         content_type: "format"
   data:
+    zone_required: false
     files:
       - path: "data/config.yaml"
-        required: false
+        file_required: false
         content_type: "config"
   loop:
+    zone_required: true
     files:
       - path: "loop/checklist.md"
-        required: true
+        file_required: true
         content_type: "verify"
   assets:
+    zone_required: false
     files: []
-    required: false
-    content_type: "static"
 
 progressive_disclosure:
   tier1:              # Always load at boot
@@ -355,16 +354,10 @@ handoff:
       zone_mapping_complete: true
       required_sections_present: true
       no_blockers: true
-
-validation:
-  schema_path: "_shared/schemas/design.schema.yaml"
-  trace_tags:
-    design: "^\\[TỪ DESIGN §[0-9]+(\\.[0-9]+)?\\]$"
-    suggestion: "[GỢI Ý BỔ SUNG]"
-    clarification: "[CẦN LÀM RÕ]"
-    resource_audit: "[TỪ AUDIT TÀI NGUYÊN]"
 ---
 ```
+
+> **Note**: Không có `validation` field trong artifact. Validator tự chọn schema dựa trên `artifact_type`. Trace tags được define trong schema files (`_shared/schemas/*.schema.yaml`), không để artifact tự khai báo.
 
 **Markdown body** vẫn giữ narrative sections (§1-§12) nhưng là explanation, KHÔNG phải source-of-truth cho contract data. Tuy nhiên, body vẫn phải có required headings để đảm bảo human-readable completeness:
 
@@ -403,7 +396,7 @@ phases:
         priority: "critical"
         trace: "[TỪ AUDIT TÀI NGUYÊN]"
         depends_on: []
-        status: "done"
+        status: "done"               # Planner đã audit xong
         file_target: "resources/domain.md"
         acceptance_criteria:
           - "File exists and content > 100 lines"
@@ -418,7 +411,7 @@ phases:
         priority: "critical"
         trace: "[TỪ DESIGN §3]"
         depends_on: ["T0.1"]
-        status: "pending"
+        status: "pending"            # Builder mới là bên thực thi → pending là hợp lệ
         file_target: "SKILL.md"
         acceptance_criteria:
           - "YAML frontmatter valid per design.schema.yaml"
@@ -436,26 +429,21 @@ handoff:
   next_stage: "builder"
   ready_condition:
     required:
-      blockers_empty: true
-      required_priorities_done: ["critical"]
-      schema_valid: true
-      design_zones_covered: true
-
-validation:
-  schema_path: "_shared/schemas/todo.schema.yaml"
-  trace_tags:
-    design: "^\\[TỪ DESIGN §[0-9]+(\\.[0-9]+)?\\]$"
-    suggestion: "[GỢI Ý BỔ SUNG]"
-    clarification: "[CẦN LÀM RÕ]"
-    resource_audit: "[TỪ AUDIT TÀI NGUYÊN]"
+      blockers_empty: true           # Không có unresolved blockers
+      phase0_done: true              # Phase PREPARE (audit/resource) đã hoàn thành
+      prerequisites_ready: true      # Prerequisites đã ready
+      schema_valid: true             # Frontmatter pass schema
+      design_zones_covered: true     # Mỗi file trong design zone_mapping có task
 ---
 ```
+
+> **Note**: Build tasks (`PH1+`) có thể `status: "pending"` trong handoff Planner → Builder. Builder là bên thực thi chúng. `ready_condition` kiểm tra **preparation** đã xong, không yêu cầu build tasks done.
 
 #### 4.2.2 Bad Example (validator FAIL — blockers unresolved)
 
 ```yaml
 # ❌ Sẽ FAIL planner-to-builder validator
-# Lý do: blockers có resolved: false, critical task vẫn pending
+# Lý do: blockers có resolved: false, phase0 chưa done
 ---
 skill_schema_version: "3.0.0"
 artifact_type: "todo"
@@ -471,17 +459,25 @@ blockers:
     blocks_tasks: ["T1.1"]
 
 phases:
+  - id: "PH0"
+    name: "PREPARE"
+    tasks:
+      - id: "T0.1"
+        priority: "critical"
+        status: "pending"        # ← Phase PREPARE chưa done
+
   - id: "PH1"
+    name: "BUILD_CORE"
     tasks:
       - id: "T1.1"
         priority: "critical"
-        status: "pending"        # ← Critical task vẫn pending
+        trace: "[TỪ DESIGN §3]"
+        status: "pending"        # ← Hợp lệ cho Builder, nhưng PH0 chưa done
 
 # Validator output:
 # FAIL: blockers_empty = false (B1 unresolved)
-# FAIL: required_priorities_done = false (T1.1 still pending)
+# FAIL: phase0_done = false (T0.1 still pending)
 ---
-```
 ```
 
 ### 4.3 `build-log.md` — Frontmatter Template
@@ -518,28 +514,18 @@ execution_trace:
     status: "success"
     notes: "Domain content written"
 
-# Feedback loop: summary trong build-log, canonical file trong .skill-context/
+# Feedback: summary snapshot. Canonical lifecycle file = .skill-context/{name}/feedback.yaml
 feedback_to_planner: []
 feedback_to_architect: []
 
 quality_metrics:
   placeholder_ratio: 0.05
-  zone_coverage: 0.92
-  blocker_count: 0
   critical_tasks_done: true
   validator_pass: true
-
-handoff:
-  next_stage: null
-  deliverable: ".skill-context/{skill-name}/output/"
-  ready_condition:
-    required:
-      all_critical_tasks_done: true
-      build_log_valid: true
-      validator_pass: true
-      placeholder_ratio_below_0.1: true
 ---
 ```
+
+> **Note**: build-log không có `handoff` field (Builder là stage cuối). Feedback summary trong build-log là snapshot, canonical lifecycle quản lý trong `feedback.yaml`.
 
 #### 4.3.2 Bad Example (validator FAIL — build incomplete)
 
@@ -586,9 +572,13 @@ required:
   - artifact_type
   - skill_name
   - generated_by
+  - generated_at
   - stage
   - status
+  - canonical_source
   - zone_mapping
+  - progressive_disclosure
+  - required_sections
   - handoff
 properties:
   skill_schema_version:
@@ -603,41 +593,58 @@ properties:
   generated_by:
     type: string
     const: "skill-architect"
+  generated_at:
+    type: string
+    format: "date-time"
   stage:
     type: string
     const: "architect"
   status:
     type: string
     enum: ["in_progress", "ready_for_planner", "blocked"]
+  canonical_source:
+    type: object
+    required: ["zone_mapping", "progressive_disclosure"]
+    properties:
+      zone_mapping: { type: string, const: "frontmatter.zone_mapping" }
+      progressive_disclosure: { type: string, const: "frontmatter.progressive_disclosure" }
   zone_mapping:
     type: object
     required: ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"]
     patternProperties:
       "^[a-z_]+$":
         type: object
-        required: ["files"]
+        required: ["files", "zone_required"]
         properties:
           files:
             type: array
             items:
               type: object
-              required: ["path"]
+              required: ["path", "file_required"]
               properties:
                 path:
                   type: string
-                  pattern: "^[^/].*[^/]$"  # No absolute paths, no trailing slash
-                required:
+                  not:
+                    pattern: "(^|/)\\.\\.(/|$)"  # No .. segments
+                  pattern: "^[^/].*[^/]$"         # No absolute paths, no trailing slash
+                file_required:
                   type: boolean
                 content_type:
                   type: string
-          required:
+          zone_required:
             type: boolean
   progressive_disclosure:
     type: object
+    required: ["tier1"]
     properties:
       tier1:
         type: array
-        items: { type: string }
+        items:
+          type: object
+          required: ["path", "base"]
+          properties:
+            path: { type: string }
+            base: { type: string, enum: ["skills_root", "skill_dir"] }
       tier2:
         type: array
         items:
@@ -652,6 +659,10 @@ properties:
         items:
           type: object
           required: ["path", "base", "load_when"]
+          properties:
+            path: { type: string }
+            base: { type: string, enum: ["skills_root", "skill_dir"] }
+            load_when: { type: string }
   required_sections:
     type: array
     items: { type: string }
@@ -692,9 +703,13 @@ required:
   - artifact_type
   - skill_name
   - generated_by
+  - generated_at
   - stage
   - status
+  - trace_to_design
   - phases
+  - blockers
+  - prerequisites
   - handoff
 properties:
   skill_schema_version:
@@ -703,12 +718,23 @@ properties:
   artifact_type:
     type: string
     const: "todo"
+  skill_name:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+  generated_by:
+    type: string
+    const: "skill-planner"
+  generated_at:
+    type: string
+    format: "date-time"
   stage:
     type: string
     const: "planner"
   status:
     type: string
     enum: ["in_progress", "ready_for_builder", "blocked"]
+  trace_to_design:
+    type: string
   phases:
     type: array
     items:
@@ -744,17 +770,44 @@ properties:
               status:
                 type: string
                 enum: ["pending", "in_progress", "done", "skipped"]
+              file_target:
+                type: string
+              acceptance_criteria:
+                type: array
+                items: { type: string }
   blockers:
     type: array
     items:
       type: object
-      required: ["id", "type", "resolved"]
+      required: ["id", "type", "description", "resolved"]
       properties:
         id: { type: string }
         type:
           type: string
           enum: ["CLARIFICATION_NEEDED", "DESIGN_CONFLICT", "RESOURCE_MISSING"]
+        description: { type: string }
+        raised_by: { type: string }
+        trace: { type: string }
+        blocks_tasks:
+          type: array
+          items: { type: string }
         resolved: { type: boolean }
+        resolution: { type: ["string", "null"] }
+  prerequisites:
+    type: array
+    items:
+      type: object
+      required: ["item", "tier", "status"]
+      properties:
+        item: { type: string }
+        tier:
+          type: string
+          enum: ["domain", "technical", "packaging"]
+        status:
+          type: string
+          enum: ["ready", "missing", "thin"]
+        resource_file: { type: string }
+        action_if_missing: { type: string }
   handoff:
     type: object
     required: ["next_stage", "ready_condition"]
@@ -770,9 +823,8 @@ properties:
             type: object
             properties:
               blockers_empty: { type: boolean, const: true }
-              required_priorities_done:
-                type: array
-                items: { type: string, enum: ["critical"] }
+              phase0_done: { type: boolean, const: true }
+              prerequisites_ready: { type: boolean, const: true }
               schema_valid: { type: boolean, const: true }
               design_zones_covered: { type: boolean, const: true }
 additionalProperties: false
@@ -788,9 +840,14 @@ type: object
 required:
   - skill_schema_version
   - artifact_type
+  - skill_name
+  - generated_by
+  - generated_at
   - stage
   - status
   - execution_trace
+  - feedback_to_planner
+  - feedback_to_architect
   - quality_metrics
 properties:
   skill_schema_version:
@@ -799,6 +856,15 @@ properties:
   artifact_type:
     type: string
     const: "build-log"
+  skill_name:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+  generated_by:
+    type: string
+    const: "skill-builder"
+  generated_at:
+    type: string
+    format: "date-time"
   stage:
     type: string
     const: "builder"
@@ -812,13 +878,18 @@ properties:
       required: ["timestamp", "task_id", "action", "status"]
       properties:
         timestamp: { type: string, format: "date-time" }
+        phase: { type: string }
         task_id: { type: string }
         action:
           type: string
           enum: ["CREATE_FILE", "MODIFY_FILE", "VALIDATE", "RUN_SCRIPT"]
+        file: { type: string }
         status:
           type: string
           enum: ["success", "failed", "skipped"]
+        notes: { type: string }
+        validator: { type: string }
+        error: { type: string }
         decision:
           type: string
           enum: ["CONTINUE", "STOP_AND_REPORT", "RETRY"]
@@ -831,10 +902,11 @@ properties:
     required: ["placeholder_ratio", "critical_tasks_done", "validator_pass"]
     properties:
       placeholder_ratio: { type: number, minimum: 0, maximum: 1 }
+      zone_coverage: { type: number, minimum: 0, maximum: 1 }
+      blocker_count: { type: number, minimum: 0 }
       critical_tasks_done: { type: boolean }
       validator_pass: { type: boolean }
 additionalProperties: false
-```
 ```
 
 ---
@@ -957,7 +1029,10 @@ planner_to_builder:
     - "All depends_on IDs exist in task list"
     - "Every file in design.md zone_mapping has at least one task"
     - "No blockers with resolved: false"
+    - "All PH0 (PREPARE) tasks have status: done or skipped"
+    - "All prerequisites have status: ready"
     - "priority values are in enum [critical, high, medium, low]"
+    - "Build tasks (PH1+) may be pending — Builder is the executor"
   trace_checks:
     - "All trace values match defined patterns"
     - "No [CẦN LÀM RÕ] blockers remain unresolved"
@@ -1071,11 +1146,10 @@ progressive_disclosure:
 
 > **Single source of truth**: `.skill-context/{skill-name}/feedback.yaml`
 >
-> Không dùng 2 nguồn (build-log.md + feedback/*.yaml) song song.
-> Quy tắc:
-> - `build-log.md` frontmatter chứa **summary** feedback (latest snapshot, read-only log)
-> - `feedback.yaml` là **canonical file** cho lifecycle management (raised -> acknowledged -> resolved)
-> - Khi feedback thay đổi status, Builder cập nhật CẢ HAI file để giữ sync
+> Quy tắc rõ ràng:
+> - `feedback.yaml` là **canonical file**. Builder chỉ update file này khi raise/resolve feedback.
+> - `build-log.md` frontmatter `feedback_to_planner`/`feedback_to_architect` là **read-only snapshot** do validator hoặc build-log generator tự tạo từ `feedback.yaml`. Builder KHÔNG update build-log feedback fields trực tiếp.
+> - Không có sync risk vì chỉ có 1 nguồn ghi (feedback.yaml), 1 nguồn đọc (build-log snapshot).
 
 ### 8.2 Feedback Artifact
 
@@ -1177,7 +1251,7 @@ Validator reports FAIL:
 
 trace_validation:
   method: "regex_match_from_schema"
-  source: "frontmatter.validation.trace_tags"
+  source: "_shared/schemas/*.schema.yaml"
   typo_protection: "Validator catches any tag not matching defined patterns"
 ```
 

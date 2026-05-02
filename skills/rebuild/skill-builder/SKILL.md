@@ -17,31 +17,37 @@ pipeline:
       format: directory
   dependencies:
     - skill-planner
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+    - path: "../_shared/knowledge/framework.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/architect.md"
+      base: "skill_dir"
+      load_when: "Phase 1: PREPARE & Evaluate"
+    - path: "knowledge/build-guidelines.md"
+      base: "skill_dir"
+      load_when: "Phase 3: BUILD phase"
+    - path: "knowledge/anthropic-skill-standards.md"
+      base: "skill_dir"
+      load_when: "Phase 3: BUILD phase (SKILL.md writing)"
+  tier3:
+    - path: "loop/build-checklist.md"
+      base: "skill_dir"
+      load_when: "Phase 4: VERIFY (Quality Gate)"
+    - path: "loop/build-log.md"
+      base: "skill_dir"
+      load_when: "Phase 5: DELIVER"
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> Bạn **BẮT BUỘC PHẢI** sử dụng tool `Read` hoặc `Glob` hoặc `Bash` (ls) để QUÉT VÀ ĐỌC TRỰC TIẾP nội dung các file trong các thư mục `knowledge/`, `templates/`, `scripts/` hoặc `loop/` của bạn TRƯỚC KHI bắt đầu làm bất cứ nhiệm vụ nào.
+> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
+> Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
-
----
-
-## Progressive Disclosure
-
-### Tier 1: Always Load (Required)
-- **SKILL.md** (this file) - luôn được load
-
-### Tier 2: Required Knowledge (BẮT BUỘC phải đọc)
-Liệt kê các file trong knowledge/ mà skill cần:
-- @.claude/skills/skill-builder/knowledge/architect.md - Builder-specific workflow
-- @.claude/skills/skill-builder/knowledge/build-guidelines.md - Content writing rules
-- @.claude/skills/skill-builder/knowledge/anthropic-skill-standards.md - SKILL.md standards
-
-### Tier 3: Optional (load when needed)
-Các file trong loop/, templates/, scripts/:
-- @.claude/skills/skill-builder/loop/build-checklist.md - Quality checklist
-- @.claude/skills/skill-builder/loop/build-log.md - Build log template
 
 ---
 
@@ -67,22 +73,22 @@ Copy this checklist into your response and mark progress:
 ## Phase 1: PREPARE & Evaluate
 
 **Before starting:**
-- Read [../../_shared/knowledge/framework.md](../../_shared/knowledge/framework.md) — **Shared** framework (7 Zones, Pipeline, Anti-hallucination)
-- Read @.claude/skills/skill-builder/knowledge/architect.md — Builder-specific workflow
+- Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Anti-hallucination)
+- Read `knowledge/architect.md` — Builder-specific workflow (Tier 2)
 
 Read all inputs and assess feasibility:
 
-- Read [../../.skill-context/{skill-name}/design.md](../../.skill-context/{skill-name}/design.md) (Architecture).
-- Read [../../.skill-context/{skill-name}/todo.md](../../.skill-context/{skill-name}/todo.md) (Execution Plan).
-- Read [../../.skill-context/{skill-name}/resources/](../../.skill-context/{skill-name}/resources/) (Domain Data).
-- Read [../../.skill-context/{skill-name}/data/](../../.skill-context/{skill-name}/data/) if present.
-- Read [../../.skill-context/{skill-name}/loop/](../../.skill-context/{skill-name}/loop/) if present.
+- Read `.skill-context/{skill-name}/design.md` (Architecture).
+- Read `.skill-context/{skill-name}/todo.md` (Execution Plan).
+- Read `.skill-context/{skill-name}/resources/` (Domain Data).
+- Read `.skill-context/{skill-name}/data/` if present.
+- Read `.skill-context/{skill-name}/loop/` if present.
 - Build context inventory: classify as `Critical` (design.md, todo.md, resources/*, data/*) or `Supportive` (loop/*).
 - **The Stance**: Audit design, identify phi logic, build mental model of phases.
 
 ## Phase 2: CLARIFY (Closing the Loop)
 
-Scan `todo.md` for `[CẦU LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into [../../.skill-context/{skill-name}/design.md](../../.skill-context/{skill-name}/design.md) §Clarifications.
+Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into `.skill-context/{skill-name}/design.md` §Clarifications.
 
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
@@ -90,8 +96,8 @@ Scan `todo.md` for `[CẦU LÀM RÕ]` or logic flaws. Ask user clarification (Ma
 
 **Before starting:** Read:
 
-- @.claude/skills/skill-builder/knowledge/build-guidelines.md — Content writing rules
-- @.claude/skills/skill-builder/knowledge/anthropic-skill-standards.md — **Required for SKILL.md files**
+- `knowledge/build-guidelines.md` — Content writing rules
+- `knowledge/anthropic-skill-standards.md` — **Required for SKILL.md files**
 
 Execute `todo.md` phase by phase:
 
@@ -107,14 +113,13 @@ Execute `todo.md` phase by phase:
 
 Run quality gates:
 
-- `python scripts/validate_skill.py . --design ../../../.skill-context/{skill-name}/design.md --log`
-- `python scripts/validate_skill.py . --design ../../../.skill-context/{skill-name}/design.md --log --strict-context`
-- Apply @.claude/skills/skill-builder/loop/build-checklist.md.
+- Run `scripts/validate_skill.py` với design.md và todo.md
+- Apply `loop/build-checklist.md`.
 - **Placeholder Density**: <5 PASS, 5-9 WARNING, 10+ FAIL.
 
 ## Phase 5: DELIVER
 
-Finalize @.claude/skills/skill-builder/loop/build-log.md. Present results in [../../.skill-context/{skill-name}/build-log.md](../../.skill-context/{skill-name}/build-log.md). Ensure mandatory sections:
+Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/build-log.md`. Ensure mandatory sections:
 
 - `## Resource Inventory`
 - `## Resource Usage Matrix`
@@ -138,13 +143,13 @@ Finalize @.claude/skills/skill-builder/loop/build-log.md. Present results in [..
 ## Error Policy
 
 If critical command fails:
-1. Append error to @.claude/skills/skill-builder/loop/build-log.md.
+1. Append error to `loop/build-log.md`.
 2. Use **AskUserQuestion** to notify blockage.
 3. **STOP** all tasks. Exit session.
 
 ## Scripts & Tools
 
-- Validator: @.claude/skills/skill-builder/scripts/validate_skill.py
+- Validator: `scripts/validate_skill.py` (relative to skill root)
 
 ## Examples
 

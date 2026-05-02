@@ -137,32 +137,11 @@ After writing todo.md:
 
 ---
 
-## Anti-Hallucination Rules (from skill-packaging.md)
-
-| Rule | Description |
-|------|-------------|
-| AH1 | Every task MUST trace to source |
-| AH2 | Only decompose, don't add requirements |
-| AH3 | Don't guess domain knowledge |
-| AH4 | Always label sources |
-| AH5 | Verify resources before completion |
-
-### Trace Tags
-
-```
-[TỪ DESIGN §N]        — From design.md section N
-[GỢI Ý BỔ SUNG]       — Suggested by Planner
-[TỪ AUDIT TÀI NGUYÊN] — Resource was missing
-[CẦN LÀM RÕ]         — Needs user clarification
-```
-
----
-
 ## Guardrails
 
 | G1 | Trace required — Every item in todo.md MUST trace back to design.md §N |
 |----|-------|
-| G2 | Label sources — Mark [TỪ DESIGN] / [GỢI Ý] / [TỪ AUDIT CUSTOM] |
+| G2 | Label sources — Mark [TỪ DESIGN §N] / [GỢI Ý BỔ SUNG] / [TỪ AUDIT TÀI NGUYÊN] |
 | G3 | No inventing — Only DECOMPOSE the design |
 | G4 | List, don't do — List knowledge needed → user prepares |
 | G5 | Ground in design.md — design.md is the ONLY ground truth |

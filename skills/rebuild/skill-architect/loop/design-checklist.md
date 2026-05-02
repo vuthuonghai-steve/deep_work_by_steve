@@ -5,18 +5,18 @@
 
 ---
 
-## ✅ Structure Check — 10 Sections
+## ✅ Structure Check — 10 Sections (required_sections from schema)
 
-- [ ] §1 Problem Statement: rõ ràng (Pain Point + Người dùng + Lý do)
-- [ ] §2 Capability Map: đủ 3 Pillars (Knowledge / Process / Guardrails)
-- [ ] §3 Zone Mapping: đúng format chuẩn (có cột "Files cần tạo" với tên file thực)
-- [ ] §4 Folder Structure: có Mermaid mindmap, phản ánh đúng §3
-- [ ] §5 Execution Flow: có Mermaid sequence hoặc flowchart
-- [ ] §6 Interaction Points: ít nhất 1 điểm tương tác bắt buộc
-- [ ] §7 Progressive Disclosure Plan: phân biệt rõ Tier 1 (mandatory) và Tier 2 (conditional)
-- [ ] §8 Risks & Blind Spots: ít nhất 3 risks kèm mitigation cụ thể
-- [ ] §9 Open Questions: không để trống (ghi "Không có" nếu đã giải quyết hết)
-- [ ] §10 Metadata: có skill-name, date, status
+- [ ] §1 problem_statement: rõ ràng (Pain Point + Người dùng + Lý do)
+- [ ] §2 capability_map: đủ 3 Pillars (Knowledge / Process / Guardrails)
+- [ ] §3 zone_mapping: đúng format chuẩn (có cột "Files cần tạo" với tên file thực)
+- [ ] §4 folder_structure: có Mermaid mindmap, phản ánh đúng §3
+- [ ] §5 execution_flow: có Mermaid sequence hoặc flowchart
+- [ ] §6 interaction_points: ít nhất 1 điểm tương tác bắt buộc
+- [ ] §7 progressive_disclosure: phân biệt rõ Tier 1 (mandatory) và Tier 2 (conditional)
+- [ ] §8 risks: ít nhất 3 risks kèm mitigation cụ thể
+- [ ] §9 open_questions: không để trống (ghi "Không có" nếu đã giải quyết hết)
+- [ ] §10 metadata: có skill-name, date, status
 
 ---
 

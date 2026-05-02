@@ -34,7 +34,7 @@ Read all inputs and assess feasibility:
 
 ### Phase 2: CLARIFY (Closing the Loop)
 
-Scan `todo.md` for `[CẦU LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into design.md §Clarifications.
+Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into design.md §Clarifications.
 
 → **[⏸️ Gate]**: Wait for user clarification before proceeding
 

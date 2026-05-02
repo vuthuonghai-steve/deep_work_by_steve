@@ -1,0 +1,94 @@
+# M4-feedback.yaml — Feedback Loop + Cleanup
+# Spec sections: 8 (Feedback Mechanism), 9 (Error Handling), 11 (Success Criteria)
+# Deliverable: Feedback mechanism, cleaned repo, e2e verify
+
+milestone:
+  id: "M4"
+  title: "Feedback Loop + Cleanup"
+  description: "Thêm feedback mechanism, document blocking rules, cleanup repo, chạy end-to-end verification."
+  spec_ref: "Lines 1320-1329"
+  deliverable: "Feedback mechanism, cleaned repo"
+  depends_on: ["M1", "M2", "M3"]
+
+tasks:
+  - id: "M4.1"
+    title: "Verify feedback lifecycle trong build-log template"
+    type: "validate"
+    file: "skills/rebuild/skill-builder/loop/build-log.md.template"
+    spec_ref: "L1324, L1147-1152"
+    description: "Verify build-log template đã có feedback_to_planner/architect arrays (từ M3.3). Thêm comment lifecycle: canonical trong feedback.yaml, build-log chỉ là read-only snapshot."
+    acceptance_criteria:
+      - "build-log template CÓ sẵn feedback_to_planner: [] (từ M3.3)"
+      - "build-log template CÓ sẵn feedback_to_architect: [] (từ M3.3)"
+      - "Comment ghi rõ: 'Snapshot từ feedback.yaml. Builder KHÔNG update trực tiếp.'"
+      - "Không tạo duplicate fields"
+    status: "pending"
+
+  - id: "M4.2"
+    title: "Tạo feedback.yaml template"
+    type: "create"
+    file: "skills/rebuild/_shared/templates/feedback.yaml.template"
+    spec_ref: "L1325, L1143-1180"
+    description: "Template cho canonical feedback lifecycle file. Status machine: raised → acknowledged → resolved → wont_fix."
+    acceptance_criteria:
+      - "Có skill_schema_version, artifact_type: feedback"
+      - "Status enum: raised | acknowledged | resolved | wont_fix"
+      - "Có example feedback items với feedback_to field"
+      - "Single source of truth: .skill-context/{skill-name}/feedback.yaml"
+    status: "pending"
+
+  - id: "M4.3"
+    title: "Document blocking rules trong framework.md"
+    type: "modify"
+    file: "skills/rebuild/_shared/knowledge/framework.md"
+    spec_ref: "L1326, L1157-1207"
+    description: "Thêm blocking rules vào framework.md: STOP_AND_REPORT, CONTINUE_WITH_FLAG, scenarios cho 3 roles."
+    acceptance_criteria:
+      - "Có 3 blocking scenarios: builder→planner, builder→architect, planner→architect"
+      - "Mỗi scenario có action, status, continue_when"
+      - "Reference feedback.yaml lifecycle"
+    status: "pending"
+
+  - id: "M4.4"
+    title: "Xóa __pycache__/ và stale artifacts"
+    type: "cleanup"
+    file: "skills/rebuild/"
+    spec_ref: "L1327"
+    description: "Dọn dẹp: __pycache__/, .pyc files, stale .skill-context test artifacts."
+    acceptance_criteria:
+      - "Không còn __pycache__/ trong skills/rebuild/"
+      - "Không còn .pyc files"
+      - "Test artifacts đã xóa"
+    status: "pending"
+
+  - id: "M4.5"
+    title: "End-to-end verify: copy sang temp dir + validator"
+    type: "validate"
+    file: "skills/rebuild/"
+    spec_ref: "L1328, L1332-1361"
+    description: "Copy toàn bộ skills/rebuild/ sang temp dir. Chạy tất cả validators trên tất cả fixtures. Verify success criteria từ spec."
+    acceptance_criteria:
+      - "Copy sang /tmp/test-rebuild-e2e/"
+      - "schema_validator trên 6 fixtures: 3 PASS, 3 FAIL"
+      - "handoff_validator --stage design-to-planner good/design.md → PASS"
+      - "handoff_validator --stage planner-to-builder good/todo.md → PASS"
+      - "handoff_validator --stage builder-complete good/build-log.md → PASS"
+      - "Không có hardcoded @.claude/skills/ trong runtime instructions"
+      - "framework.md tồn tại tại _shared/knowledge/framework.md"
+      - "3 SKILL.md dùng relative paths"
+      - "[CẦN LÀM RÕ] scan đúng (không phải [CẦU LÀM RÕ])"
+    status: "pending"
+
+verify:
+  method: "Full end-to-end verification"
+  commands:
+    - "cp -r skills/rebuild/ /tmp/test-rebuild-e2e/"
+    - "cd /tmp/test-rebuild-e2e/"
+    - "python _shared/validators/schema_validator.py --schema _shared/schemas/design.schema.yaml _shared/fixtures/good/design.md"
+    - "python _shared/validators/schema_validator.py --schema _shared/schemas/todo.schema.yaml _shared/fixtures/good/todo.md"
+    - "python _shared/validators/schema_validator.py --schema _shared/schemas/build-log.schema.yaml _shared/fixtures/good/build-log.md"
+    - "python _shared/validators/handoff_validator.py --stage design-to-planner _shared/fixtures/good/design.md"
+    - "python _shared/validators/handoff_validator.py --stage planner-to-builder _shared/fixtures/good/todo.md"
+    - "python _shared/validators/handoff_validator.py --stage builder-complete _shared/fixtures/good/build-log.md"
+    - "grep -r '@.claude/skills/' skill-*/SKILL.md  # expect: no results"
+    - "grep -r 'CẦU LÀM RÕ' .  # expect: no results"
