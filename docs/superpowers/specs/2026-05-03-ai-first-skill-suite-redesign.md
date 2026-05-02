@@ -240,16 +240,31 @@ handoff:
 
 ---
 
-## 4. Artifact Schemas
+## 4. Artifact Contracts — Schema vs Template
 
-### 4.1 `design.md` — Full Frontmatter Schema
+> **Quan trọng**: Tách rõ 2 loại file:
+>
+> | Loại | Path | Purpose | Format |
+> |-----|------|---------|--------|
+> | **JSON Schema** | `_shared/schemas/*.schema.yaml` | Validator rules (machine-readable) | JSON Schema Draft-07 |
+> | **Artifact Template** | `skill-*/templates/*.template` | Frontmatter example (human-readable) | YAML frontmatter + Markdown |
+>
+> Schema dùng để **validate**. Template dùng để **scaffold**. Hai file này có liên quan nhưng KHÔNG giống nhau.
+
+### 4.1 `design.md` — Frontmatter Template
+
+> **File**: `skill-architect/templates/design.md.template`
+> **JSON Schema**: `_shared/schemas/design.schema.yaml` (viết riêng, không lặp ở đây)
 
 ```yaml
-# _shared/schemas/design.schema.yaml
 ---
 skill_schema_version: "3.0.0"
 artifact_type: "design"
-schema_kind: "json_schema_draft_07"
+skill_name: "example-skill"
+generated_by: "skill-architect"
+generated_at: "2026-05-03T10:00:00Z"
+stage: "architect"
+status: "ready_for_planner"
 
 skill_name: "example-skill"           # Tên skill đang được thiết kế
 generated_by: "skill-architect"
@@ -301,12 +316,19 @@ zone_mapping:
 
 progressive_disclosure:
   tier1:              # Always load at boot
-    - "SKILL.md"
+    - path: "SKILL.md"
+      base: "skill_dir"
   tier2:              # Load when context requires
-    - "knowledge/domain.md"
-    - "knowledge/standards.md"
+    - path: "knowledge/domain.md"
+      base: "skill_dir"
+      load_when: "Phase 1: Domain analysis"
+    - path: "knowledge/standards.md"
+      base: "skill_dir"
+      load_when: "Phase 3: Writing output"
   tier3:              # On-demand
-    - "assets/logo.png"
+    - path: "assets/logo.png"
+      base: "skill_dir"
+      load_when: "User requests visual"
 
 required_sections:
   - "1_problem_statement"
@@ -344,9 +366,21 @@ validation:
 ---
 ```
 
-**Markdown body** vẫn giữ narrative sections (§1-§12) nhưng là explanation, KHÔNG phải source-of-truth. Validator chỉ parse YAML frontmatter.
+**Markdown body** vẫn giữ narrative sections (§1-§12) nhưng là explanation, KHÔNG phải source-of-truth cho contract data. Tuy nhiên, body vẫn phải có required headings để đảm bảo human-readable completeness:
 
-### 4.2 `todo.md` — Full Frontmatter Schema
+```yaml
+body_validation:
+  contract_data_source: "frontmatter"    # Zone mapping, PD, trace → từ YAML
+  narrative_requirement: "required"       # Body phải có 10 required section headings
+  check_method: "heading_match_only"      # Validator chỉ check heading tồn tại, không parse content
+```
+
+### 4.2 `todo.md` — Frontmatter Template
+
+> **File**: `skill-planner/templates/todo.md.template`
+> **JSON Schema**: `_shared/schemas/todo.schema.yaml` (viết riêng)
+
+#### 4.2.1 Good Example (validator PASS)
 
 ```yaml
 ---
@@ -359,7 +393,6 @@ stage: "planner"
 status: "ready_for_builder"
 trace_to_design: "design.md"
 
-# Structured task graph
 phases:
   - id: "PH0"
     name: "PREPARE"
@@ -367,10 +400,10 @@ phases:
       - id: "T0.1"
         title: "Audit domain knowledge"
         zone: "knowledge"
-        priority: "critical"                # Enum: critical | high | medium | low
-        trace: "[TỪ AUDIT TÀI NGUYÊN]"     # Structured trace tag
-        depends_on: []                      # Task IDs this depends on
-        status: "pending"
+        priority: "critical"
+        trace: "[TỪ AUDIT TÀI NGUYÊN]"
+        depends_on: []
+        status: "done"
         file_target: "resources/domain.md"
         acceptance_criteria:
           - "File exists and content > 100 lines"
@@ -390,28 +423,15 @@ phases:
         acceptance_criteria:
           - "YAML frontmatter valid per design.schema.yaml"
           - "Contains all 7 zones reference"
-          - "Progressive Disclosure defined with tier1/tier2/tier3"
 
-# Blockers - AI stops here
-blockers:
-  - id: "B1"
-    type: "CLARIFICATION_NEEDED"      # Enum: CLARIFICATION_NEEDED | DESIGN_CONFLICT | RESOURCE_MISSING
-    description: "Chưa rõ output path convention"
-    raised_by: "skill-planner"
-    trace: "[CẦN LÀM RÕ]"
-    blocks_tasks: ["T1.1", "T2.1"]
-    resolved: false
-    resolution: null
+blockers: []    # Không có blocker => ready_for_builder
 
-# Prerequisites table - structured
 prerequisites:
   - item: "Domain knowledge về X"
-    tier: "domain"                     # Enum: domain | technical | packaging
-    status: "missing"                  # Enum: ready | missing | thin
+    tier: "domain"
+    status: "ready"
     resource_file: "resources/domain.md"
-    action_if_missing: "Generate task T0.1"
 
-# Handoff to Builder
 handoff:
   next_stage: "builder"
   ready_condition:
@@ -419,7 +439,7 @@ handoff:
       blockers_empty: true
       required_priorities_done: ["critical"]
       schema_valid: true
-      design_zones_covered: true       # Every zone_mapping file has task
+      design_zones_covered: true
 
 validation:
   schema_path: "_shared/schemas/todo.schema.yaml"
@@ -431,7 +451,45 @@ validation:
 ---
 ```
 
-### 4.3 `build-log.md` — Full Frontmatter Schema
+#### 4.2.2 Bad Example (validator FAIL — blockers unresolved)
+
+```yaml
+# ❌ Sẽ FAIL planner-to-builder validator
+# Lý do: blockers có resolved: false, critical task vẫn pending
+---
+skill_schema_version: "3.0.0"
+artifact_type: "todo"
+skill_name: "example-skill"
+stage: "planner"
+status: "ready_for_builder"    # ← Sai: không nên là ready_for_builder
+
+blockers:
+  - id: "B1"
+    type: "CLARIFICATION_NEEDED"
+    description: "Chưa rõ output path convention"
+    resolved: false              # ← Blocker chưa resolved
+    blocks_tasks: ["T1.1"]
+
+phases:
+  - id: "PH1"
+    tasks:
+      - id: "T1.1"
+        priority: "critical"
+        status: "pending"        # ← Critical task vẫn pending
+
+# Validator output:
+# FAIL: blockers_empty = false (B1 unresolved)
+# FAIL: required_priorities_done = false (T1.1 still pending)
+---
+```
+```
+
+### 4.3 `build-log.md` — Frontmatter Template
+
+> **File**: `skill-builder/loop/build-log.md.template`
+> **JSON Schema**: `_shared/schemas/build-log.schema.yaml` (viết riêng)
+
+#### 4.3.1 Good Example (validator PASS — complete build)
 
 ```yaml
 ---
@@ -441,48 +499,38 @@ skill_name: "example-skill"
 generated_by: "skill-builder"
 generated_at: "2026-05-03T12:00:00Z"
 stage: "builder"
-status: "in_progress"
+status: "complete"
 
-# Self-reporting execution trace
 execution_trace:
   - timestamp: "2026-05-03T12:05:00Z"
     phase: "PH1"
     task_id: "T1.1"
-    action: "CREATE_FILE"             # Enum: CREATE_FILE | MODIFY_FILE | VALIDATE | RUN_SCRIPT
+    action: "CREATE_FILE"
     file: "SKILL.md"
-    status: "success"                 # Enum: success | failed | skipped
+    status: "success"
     notes: "YAML frontmatter validated"
 
   - timestamp: "2026-05-03T12:10:00Z"
     phase: "PH2"
-    task_id: "T2.3"
-    action: "VALIDATE"
-    status: "failed"
-    validator: "validate_skill.py"
-    error: "Missing ## Persona section"
-    decision: "STOP_AND_REPORT"       # Enum: CONTINUE | STOP_AND_REPORT | RETRY
+    task_id: "T2.1"
+    action: "CREATE_FILE"
+    file: "knowledge/domain.md"
+    status: "success"
+    notes: "Domain content written"
 
-# Feedback loop - structured
-feedback_to_planner:
-  - design_issue: "design.md zone_mapping missing scripts/validate.py"
-    severity: "warning"               # Enum: warning | error | info
-    suggested_fix: "Add scripts zone entry"
-    related_task: "T1.1"
-    resolved: false
+# Feedback loop: summary trong build-log, canonical file trong .skill-context/
+feedback_to_planner: []
+feedback_to_architect: []
 
-feedback_to_architect:
-  - design_issue: null                # Empty array allowed
-
-# Quality metrics
 quality_metrics:
-  placeholder_ratio: 0.05            # 5% placeholder content (target < 0.10)
-  zone_coverage: 0.92                # 92% design zones implemented
-  blocker_count: 1
+  placeholder_ratio: 0.05
+  zone_coverage: 0.92
+  blocker_count: 0
   critical_tasks_done: true
   validator_pass: true
 
 handoff:
-  next_stage: null                    # Builder is final stage
+  next_stage: null
   deliverable: ".skill-context/{skill-name}/output/"
   ready_condition:
     required:
@@ -491,6 +539,302 @@ handoff:
       validator_pass: true
       placeholder_ratio_below_0.1: true
 ---
+```
+
+#### 4.3.2 Bad Example (validator FAIL — build incomplete)
+
+```yaml
+# ❌ Sẽ FAIL builder-complete validator
+# Lý do: có STOP_AND_REPORT, validator_pass = true nhưng có failed trace
+---
+skill_schema_version: "3.0.0"
+artifact_type: "build-log"
+stage: "builder"
+status: "complete"                # ← Sai: không nên là complete
+
+execution_trace:
+  - timestamp: "2026-05-03T12:10:00Z"
+    task_id: "T2.3"
+    action: "VALIDATE"
+    status: "failed"
+    decision: "STOP_AND_REPORT"   # ← Có STOP_AND_REPORT
+
+quality_metrics:
+  placeholder_ratio: 0.05
+  critical_tasks_done: true
+  validator_pass: true             # ← Mâu thuẫn: có failed trace nhưng validator_pass = true
+
+# Validator output:
+# FAIL: execution_trace có STOP_AND_REPORT nhưng status = complete
+# FAIL: execution_trace failed nhưng validator_pass = true (mâu thuẫn)
+---
+```
+
+### 4.4 `_shared/schemas/` — Real JSON Schema Files
+
+> **Phần 4.1–4.3 là artifact templates** (example frontmatter). Dưới đây là **JSON Schema thật** để validator dùng.
+
+#### `design.schema.yaml` (JSON Schema Draft-07)
+
+```yaml
+# _shared/schemas/design.schema.yaml
+$schema: "https://json-schema.org/draft-07/schema#"
+title: "design.md frontmatter"
+type: object
+required:
+  - skill_schema_version
+  - artifact_type
+  - skill_name
+  - generated_by
+  - stage
+  - status
+  - zone_mapping
+  - handoff
+properties:
+  skill_schema_version:
+    type: string
+    const: "3.0.0"
+  artifact_type:
+    type: string
+    const: "design"
+  skill_name:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+  generated_by:
+    type: string
+    const: "skill-architect"
+  stage:
+    type: string
+    const: "architect"
+  status:
+    type: string
+    enum: ["in_progress", "ready_for_planner", "blocked"]
+  zone_mapping:
+    type: object
+    required: ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"]
+    patternProperties:
+      "^[a-z_]+$":
+        type: object
+        required: ["files"]
+        properties:
+          files:
+            type: array
+            items:
+              type: object
+              required: ["path"]
+              properties:
+                path:
+                  type: string
+                  pattern: "^[^/].*[^/]$"  # No absolute paths, no trailing slash
+                required:
+                  type: boolean
+                content_type:
+                  type: string
+          required:
+            type: boolean
+  progressive_disclosure:
+    type: object
+    properties:
+      tier1:
+        type: array
+        items: { type: string }
+      tier2:
+        type: array
+        items:
+          type: object
+          required: ["path", "base", "load_when"]
+          properties:
+            path: { type: string }
+            base: { type: string, enum: ["skills_root", "skill_dir"] }
+            load_when: { type: string }
+      tier3:
+        type: array
+        items:
+          type: object
+          required: ["path", "base", "load_when"]
+  required_sections:
+    type: array
+    items: { type: string }
+    minItems: 10
+  optional_sections:
+    type: array
+    items: { type: string }
+  handoff:
+    type: object
+    required: ["next_stage", "ready_condition"]
+    properties:
+      next_stage:
+        type: string
+        enum: ["planner"]
+      ready_condition:
+        type: object
+        required: ["required"]
+        properties:
+          required:
+            type: object
+            properties:
+              frontmatter_valid: { type: boolean, const: true }
+              zone_mapping_complete: { type: boolean, const: true }
+              required_sections_present: { type: boolean, const: true }
+              no_blockers: { type: boolean, const: true }
+additionalProperties: false
+```
+
+#### `todo.schema.yaml` (JSON Schema Draft-07)
+
+```yaml
+# _shared/schemas/todo.schema.yaml
+$schema: "https://json-schema.org/draft-07/schema#"
+title: "todo.md frontmatter"
+type: object
+required:
+  - skill_schema_version
+  - artifact_type
+  - skill_name
+  - generated_by
+  - stage
+  - status
+  - phases
+  - handoff
+properties:
+  skill_schema_version:
+    type: string
+    const: "3.0.0"
+  artifact_type:
+    type: string
+    const: "todo"
+  stage:
+    type: string
+    const: "planner"
+  status:
+    type: string
+    enum: ["in_progress", "ready_for_builder", "blocked"]
+  phases:
+    type: array
+    items:
+      type: object
+      required: ["id", "name", "tasks"]
+      properties:
+        id:
+          type: string
+          pattern: "^PH[0-9]+$"
+        name:
+          type: string
+        tasks:
+          type: array
+          items:
+            type: object
+            required: ["id", "title", "zone", "priority", "trace", "status"]
+            properties:
+              id:
+                type: string
+                pattern: "^T[0-9]+\\.[0-9]+$"
+              title: { type: string }
+              zone:
+                type: string
+                enum: ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"]
+              priority:
+                type: string
+                enum: ["critical", "high", "medium", "low"]
+              trace:
+                type: string
+              depends_on:
+                type: array
+                items: { type: string }
+              status:
+                type: string
+                enum: ["pending", "in_progress", "done", "skipped"]
+  blockers:
+    type: array
+    items:
+      type: object
+      required: ["id", "type", "resolved"]
+      properties:
+        id: { type: string }
+        type:
+          type: string
+          enum: ["CLARIFICATION_NEEDED", "DESIGN_CONFLICT", "RESOURCE_MISSING"]
+        resolved: { type: boolean }
+  handoff:
+    type: object
+    required: ["next_stage", "ready_condition"]
+    properties:
+      next_stage:
+        type: string
+        const: "builder"
+      ready_condition:
+        type: object
+        required: ["required"]
+        properties:
+          required:
+            type: object
+            properties:
+              blockers_empty: { type: boolean, const: true }
+              required_priorities_done:
+                type: array
+                items: { type: string, enum: ["critical"] }
+              schema_valid: { type: boolean, const: true }
+              design_zones_covered: { type: boolean, const: true }
+additionalProperties: false
+```
+
+#### `build-log.schema.yaml` (JSON Schema Draft-07)
+
+```yaml
+# _shared/schemas/build-log.schema.yaml
+$schema: "https://json-schema.org/draft-07/schema#"
+title: "build-log.md frontmatter"
+type: object
+required:
+  - skill_schema_version
+  - artifact_type
+  - stage
+  - status
+  - execution_trace
+  - quality_metrics
+properties:
+  skill_schema_version:
+    type: string
+    const: "3.0.0"
+  artifact_type:
+    type: string
+    const: "build-log"
+  stage:
+    type: string
+    const: "builder"
+  status:
+    type: string
+    enum: ["in_progress", "complete", "blocked"]
+  execution_trace:
+    type: array
+    items:
+      type: object
+      required: ["timestamp", "task_id", "action", "status"]
+      properties:
+        timestamp: { type: string, format: "date-time" }
+        task_id: { type: string }
+        action:
+          type: string
+          enum: ["CREATE_FILE", "MODIFY_FILE", "VALIDATE", "RUN_SCRIPT"]
+        status:
+          type: string
+          enum: ["success", "failed", "skipped"]
+        decision:
+          type: string
+          enum: ["CONTINUE", "STOP_AND_REPORT", "RETRY"]
+  feedback_to_planner:
+    type: array
+  feedback_to_architect:
+    type: array
+  quality_metrics:
+    type: object
+    required: ["placeholder_ratio", "critical_tasks_done", "validator_pass"]
+    properties:
+      placeholder_ratio: { type: number, minimum: 0, maximum: 1 }
+      critical_tasks_done: { type: boolean }
+      validator_pass: { type: boolean }
+additionalProperties: false
+```
 ```
 
 ---
@@ -595,8 +939,8 @@ design_to_planner:
   content_checks:
     - "zone_mapping: all 7 zones explicitly present (even if files: [])"
     - "zone_mapping files: valid paths (no absolute, no ..)"
-    - "progressive_disclosure: tier1 contains SKILL.md"
-    - "required_sections: all 10 present in Markdown body"
+    - "progressive_disclosure: tier1 present, paths have 'base' field"
+    - "required_sections: all 10 headings present in Markdown body (heading match only, not content parse)"
     - "handoff.next_stage == planner"
   trace_checks:
     - "No unparseable trace tags"
@@ -652,11 +996,11 @@ validation_result:
       error: "Missing zone: scripts"
       severity: "error"
       fix_hint: "Add scripts: {files: [], required: false} to zone_mapping"
-    - name: "required_sections present"
+    - name: "required_sections headings present"
       status: "fail"
-      error: "Section 8_risks not found in Markdown body"
+      error: "Heading '§8 Risks' not found in Markdown body (heading match only)"
       severity: "error"
-      fix_hint: "Add ## §8 Risks & Blind Spots section"
+      fix_hint: "Add ## §8 Risks & Blind Spots section heading"
 ```
 
 ---
@@ -696,17 +1040,26 @@ validation_result:
 
 ```yaml
 # Trong SKILL.md frontmatter:
+# Mọi path có 'base' field để xác định relative root
+# base: "skill_dir"    = relative từ SKILL.md location (skill-architect/)
+# base: "skills_root"  = relative từ <skills-root>/ (parent of skill-*/)
+
 progressive_disclosure:
-  tier1:
-    - "_shared/knowledge/framework.md"
-    - "knowledge/architect.md"
-  tier2:
-    - name: "templates/design.md.template"
+  tier1:              # Always load at boot
+    - path: "../_shared/knowledge/framework.md"
+      base: "skill_dir"
+    - path: "knowledge/architect.md"
+      base: "skill_dir"
+  tier2:              # Load when phase requires
+    - path: "templates/design.md.template"
+      base: "skill_dir"
       load_when: "Phase 3: Writing output"
-    - name: "loop/design-checklist.md"
+    - path: "loop/design-checklist.md"
+      base: "skill_dir"
       load_when: "Phase 4: Verification"
-  tier3:
-    - name: "references/examples/"
+  tier3:              # On-demand
+    - path: "references/examples/"
+      base: "skill_dir"
       load_when: "User requests example"
 ```
 
@@ -714,26 +1067,36 @@ progressive_disclosure:
 
 ## 8. Feedback Loop — Structured Mechanism
 
-### 8.1 Feedback Artifact
+### 8.1 Canonical Feedback Source
+
+> **Single source of truth**: `.skill-context/{skill-name}/feedback.yaml`
+>
+> Không dùng 2 nguồn (build-log.md + feedback/*.yaml) song song.
+> Quy tắc:
+> - `build-log.md` frontmatter chứa **summary** feedback (latest snapshot, read-only log)
+> - `feedback.yaml` là **canonical file** cho lifecycle management (raised -> acknowledged -> resolved)
+> - Khi feedback thay đổi status, Builder cập nhật CẢ HAI file để giữ sync
+
+### 8.2 Feedback Artifact
 
 ```yaml
-# feedback/{stage}-to-{stage}.yaml
-# Example: feedback/builder-to-planner.yaml
+# .skill-context/{skill-name}/feedback.yaml
 
 feedback:
-  from: "skill-builder"
-  to: "skill-planner"
   skill_name: "example-skill"
-  timestamp: "2026-05-03T13:00:00Z"
+  last_updated: "2026-05-03T13:00:00Z"
   items:
-    - type: "design_issue"            # Enum: design_issue | plan_issue | resource_gap | suggestion
+    - id: "FB1"
+      from: "skill-builder"
+      to: "skill-planner"
+      type: "design_issue"            # Enum: design_issue | plan_issue | resource_gap | suggestion
       severity: "warning"             # Enum: info | warning | error
       description: "design.md zone_mapping missing scripts/validate.py"
       evidence: "Phase 3 encountered file not in zone_mapping"
       suggested_fix: "Add scripts zone entry"
       related_task: "T1.1"
-      resolved: false
-      resolution: null
+      status: "raised"               # Enum: raised | acknowledged | resolved | wont_fix
+      resolution: null               # Filled when status = resolved or wont_fix
 ```
 
 ### 8.2 Feedback Status Machine
@@ -820,50 +1183,75 @@ trace_validation:
 
 ---
 
-## 10. Implementation Checklist
+## 10. Implementation Milestones
 
-### Phase 0: Foundation
-- [ ] Copy `_shared/knowledge/framework.md` từ `skills/raw/_shared/knowledge/framework.md` sang `skills/rebuild/_shared/knowledge/framework.md`
-- [ ] Tạo `_shared/schemas/` với 3 schema files
-- [ ] Tạo `_shared/validators/` với handoff_validator.py, schema_validator.py, trace_validator.py
+> **Milestone-based** thay vì phase-based. Mỗi milestone deliverable cụ thể, test được, merge được.
+> Bắt đầu bằng schema + fixtures trước khi sửa 3 skill để tránh validator lệch template.
 
-### Phase 1: Fix P0 Issues
-- [ ] Sửa shared framework path trong 3 SKILL.md: `../../_shared/` -> `../_shared/`
-- [ ] Gỡ hardcode `@.claude/skills/...` khỏi runtime instructions trong 3 SKILL.md
-- [ ] Thay bằng relative paths: `../_shared/knowledge/framework.md`, `knowledge/architect.md`
+### Milestone 1: Foundation + Schema (P0/P1 fix + schemas)
 
-### Phase 2: YAML Frontmatter
-- [ ] Thêm YAML frontmatter vào `design.md.template`
-- [ ] Thêm YAML frontmatter vào `todo.md.template`
-- [ ] Thêm YAML frontmatter vào `build-log.md.template`
-- [ ] Cập nhật `init_context.py` để tạo files với YAML frontmatter
+**Deliverable**: `_shared/` với schema files và fixtures, path đã fix
 
-### Phase 3: Fix P1 Issues
-- [ ] Chuẩn hóa trace tags: 4 patterns duy nhất, không biến thể
-- [ ] Sửa typo `[CẦU LÀM RÕ]` -> `[CẦN LÀM RÕ]` trong skill-builder
-- [ ] Đồng bộ section contracts: 10 required + optional
-- [ ] Tách shared contract khỏi skill-specific knowledge trong 3 knowledge/architect.md
+- [ ] Tạo `skills/rebuild/_shared/knowledge/framework.md` (copy từ `skills/raw/`)
+- [ ] Tạo `skills/rebuild/_shared/schemas/design.schema.yaml`
+- [ ] Tạo `skills/rebuild/_shared/schemas/todo.schema.yaml`
+- [ ] Tạo `skills/rebuild/_shared/schemas/build-log.schema.yaml`
+- [ ] Tạo fixtures: `_shared/fixtures/good/design.md`, `_shared/fixtures/bad/design.md`
+- [ ] Tạo fixtures: `_shared/fixtures/good/todo.md`, `_shared/fixtures/bad/todo.md`
+- [ ] Tạo fixtures: `_shared/fixtures/good/build-log.md`, `_shared/fixtures/bad/build-log.md`
 
-### Phase 4: Validators
-- [ ] Implement handoff_validator.py cho 3 stages
-- [ ] Implement schema_validator.py (YAML compliance)
-- [ ] Implement trace_validator.py (tag patterns)
-- [ ] Chạy validator trên fixtures tốt/xấu để verify
+**Verify**: Schema files parse được, fixtures good/bad hợp lý
 
-### Phase 5: Progressive Disclosure
-- [ ] Sửa boot sequence trong 3 SKILL.md: chỉ load Tier 1
-- [ ] Thêm progressive_disclosure metadata vào SKILL.md frontmatter
-- [ ] Xóa directive yêu cầu quét tất cả files upfront
+### Milestone 2: Validators (schema + trace + handoff)
 
-### Phase 6: Feedback Loop
-- [ ] Tạo `feedback/` directory structure
-- [ ] Thêm feedback fields vào build-log.md
-- [ ] Document blocking rules trong framework.md
+**Deliverable**: `_shared/validators/` với 3 Python scripts
 
-### Phase 7: Cleanup & Verify
+- [ ] Tạo `schema_validator.py` — validate YAML frontmatter against schema
+- [ ] Tạo `trace_validator.py` — validate trace tags against patterns
+- [ ] Tạo `handoff_validator.py` — validate handoff readiness per stage
+- [ ] Chạy validator trên good fixtures → PASS
+- [ ] Chạy validator trên bad fixtures → FAIL đúng lỗi
+
+**Verify**: `handoff_validator.py --stage design-to-planner _shared/fixtures/good/design.md` → PASS
+
+### Milestone 3: Fix P0 + P1 trong 3 SKILL.md
+
+**Deliverable**: 3 SKILL.md portable, không hardcode
+
+- [ ] Sửa shared framework path: `../../_shared/` → `../_shared/` trong 3 SKILL.md
+- [ ] Gỡ hardcode `@.claude/skills/...` khỏi Progressive Disclosure trong 3 SKILL.md
+- [ ] Thay bằng relative paths
+- [ ] Sửa typo `[CẦU LÀM RÕ]` → `[CẦN LÀM RÕ]` trong skill-builder
+- [ ] Chuẩn hóa trace tags: 4 patterns duy nhất
+- [ ] Sửa boot sequence: chỉ load Tier 1, bỏ directive "quét tất cả files upfront"
+- [ ] Thêm `progressive_disclosure` metadata vào 3 SKILL.md frontmatter
+- [ ] Tách shared contract khỏi 3 `knowledge/architect.md` (chỉ giữ workflow riêng)
+
+**Verify**: Copy `skills/rebuild/` sang thư mục tạm → tất cả path resolve đúng
+
+### Milestone 4: Artifact Templates + Context Scripts
+
+**Deliverable**: Templates có YAML frontmatter, `init_context.py` tạo artifact đúng
+
+- [ ] Cập nhật `design.md.template` — thêm YAML frontmatter đúng schema
+- [ ] Cập nhật `todo.md.template` — thêm YAML frontmatter đúng schema
+- [ ] Cập nhật `build-log.md.template` — thêm YAML frontmatter đúng schema
+- [ ] Cập nhật `init_context.py` — tạo files với YAML frontmatter
+- [ ] Cập nhật `design-checklist.md` — sync với 10 required + optional sections
+- [ ] Cập nhật `plan-checklist.md` — sync với todo schema
+- [ ] Cập nhật `build-checklist.md` — sync với build-log schema
+
+**Verify**: Chạy `init_context.py test-skill` → frontmatter pass schema validator
+
+### Milestone 5: Feedback Loop + Cleanup
+
+**Deliverable**: Feedback mechanism, cleaned repo
+
+- [ ] Thêm `feedback_to_planner`/`feedback_to_architect` vào build-log template (summary)
+- [ ] Tạo template cho `feedback.yaml` (canonical lifecycle file)
+- [ ] Document blocking rules trong `_shared/knowledge/framework.md`
 - [ ] Xóa `__pycache__/` và stale artifacts
-- [ ] Verify: copy toàn bộ `skills/rebuild/` sang thư mục tạm, tất cả path resolve đúng
-- [ ] Verify: validator chạy trên design.md/todo.md/build-log.md mẫu
+- [ ] End-to-end verify: copy sang temp dir → validator chạy tất cả fixtures
 
 ---
 
