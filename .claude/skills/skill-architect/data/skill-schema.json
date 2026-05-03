@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill Design Schema v3.1",
+  "description": "Schema for validating design.md frontmatter and structure",
+  "type": "object",
+  "required": [
+    "skill_schema_version",
+    "artifact_type",
+    "skill_name",
+    "generated_by",
+    "generated_at",
+    "stage",
+    "status",
+    "zone_mapping",
+    "progressive_disclosure",
+    "required_sections",
+    "handoff"
+  ],
+  "properties": {
+    "skill_schema_version": {
+      "type": "string",
+      "enum": ["3.0.0", "3.1.0"],
+      "description": "Schema version"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": ["design"],
+      "description": "Type of artifact"
+    },
+    "skill_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "Kebab-case skill name"
+    },
+    "generated_by": {
+      "type": "string",
+      "enum": ["skill-architect"],
+      "description": "Generator skill"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["architect", "planner", "builder"],
+      "description": "Pipeline stage"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "complete", "draft"],
+      "description": "Design status"
+    },
+    "zone_mapping": {
+      "type": "object",
+      "required": ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"],
+      "properties": {
+        "core": { "$ref": "#/definitions/zone" },
+        "knowledge": { "$ref": "#/definitions/zone" },
+        "scripts": { "$ref": "#/definitions/zone" },
+        "templates": { "$ref": "#/definitions/zone" },
+        "data": { "$ref": "#/definitions/zone" },
+        "loop": { "$ref": "#/definitions/zone" },
+        "assets": { "$ref": "#/definitions/zone" }
+      }
+    },
+    "progressive_disclosure": {
+      "type": "object",
+      "required": ["tier1", "tier2"],
+      "properties": {
+        "tier1": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tier_file" },
+          "minItems": 1
+        },
+        "tier2": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tier_file" }
+        },
+        "tier3": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/tier_file" }
+        }
+      }
+    },
+    "required_sections": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 10
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["next_stage", "ready_condition"],
+      "properties": {
+        "next_stage": {
+          "type": "string",
+          "enum": ["planner", "builder"]
+        },
+        "ready_condition": {
+          "type": "object",
+          "required": ["required"],
+          "properties": {
+            "required": {
+              "type": "object",
+              "properties": {
+                "frontmatter_valid": { "type": "boolean" },
+                "zone_mapping_complete": { "type": "boolean" },
+                "required_sections_present": { "type": "boolean" },
+                "no_blockers": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "zone": {
+      "type": "object",
+      "required": ["files", "zone_required"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "file_required", "content_type"],
+            "properties": {
+              "path": { "type": "string" },
+              "file_required": { "type": "boolean" },
+              "content_type": { "type": "string" }
+            }
+          }
+        },
+        "zone_required": { "type": "boolean" }
+      }
+    },
+    "tier_file": {
+      "type": "object",
+      "required": ["path", "base"],
+      "properties": {
+        "path": { "type": "string" },
+        "base": { "type": "string" },
+        "load_when": { "type": "string" }
+      }
+    }
+  }
+}
