@@ -1,162 +1,96 @@
-# PLANNER FRAMEWORK — Planner's Knowledge Base
+# Planner Framework Reference
 
-> **Usage**: Read at boot time
-> **Shared Source**: `../../_shared/knowledge/framework.md`
+> **Usage**: Load at boot (Tier 1)
+> **Source**: Adapted from `../../_shared/knowledge/framework.md` — planner-specific extracts only
 
 ---
 
-## Quick Reference
+## Pipeline Flow
 
-For complete framework details (7 Zones, Pipeline Flow, Naming Conventions, Anti-hallucination), see:
 ```
-../../_shared/knowledge/framework.md
+skill-architect  →  skill-planner  →  skill-builder
+    [design.md]        [todo.md]         [skill files]
+```
+
+**Planner consumes**:
+- §3 Zone Mapping → decompose into tasks
+- §7 Progressive Disclosure → plan Tier loading
+- §8 Risks → create mitigation tasks
+- §6 Interaction Points → tasks for templates/prompts
+
+---
+
+## Zone Mapping Contract
+
+When reading `design.md §3`, follow this format:
+
+| Zone | Purpose | Files Column |
+|------|---------|-------------|
+| Core | SKILL.md — persona, workflow, guardrails | Required |
+| Knowledge | Domain references, standards | Usually required |
+| Scripts | Automation tools | As needed |
+| Templates | Output format templates | As needed |
+| Data | Config, schemas | As needed |
+| Loop | Checklists, verify rules | Usually required |
+| Assets | Images, icons | Rarely |
+
+**Rules**:
+- "Files cần tạo" column → direct input for task creation
+- "Không cần" → skip that zone entirely
+- Builder MUST NOT add files not in §3 (without documented rationale)
+
+---
+
+## Anti-Hallucination Rules
+
+| Rule | Description | Violation |
+|------|-------------|-----------|
+| AH1 | Every task MUST trace to source | Task without [TỪ DESIGN §N] |
+| AH2 | Only decompose, don't add requirements | New requirement not in design.md |
+| AH3 | Don't guess domain knowledge | Writing domain content without resources |
+| AH4 | Always label sources | No [TỪ DESIGN] / [GỢI Ý] distinction |
+| AH5 | Verify resources before completion | Planning complete with missing critical resources |
+
+### Trace Tags
+
+```
+[TỪ DESIGN §N]      — From design.md section N
+[GỢI Ý BỔ SUNG]     — Planner suggestion, not in design.md
+[TỪ AUDIT TÀI NGUYÊN] — Resource was missing
+[CẦN LÀM RÕ]        — Needs user clarification
 ```
 
 ---
 
-## Planner-Specific Workflow
-
-### Mandatory Boot Sequence
-
-1. Read this `architect.md` file
-2. Read `knowledge/skill-packaging.md` — the skill packaging framework (3 tiers, conversion checklist, anti-hallucination)
-3. Determine the skill name from user input or context
-4. Proceed to Step READ
-
----
-
-## Step READ — Input & Resource Audit
-
-Read all available input sources:
-
-1. **Master Design** (REQUIRED):
-   - Reference `../../_shared/knowledge/framework.md` for standards
-   - Read `.skill-context/{skill-name}/design.md`
-
-2. **design.md** (REQUIRED):
-   - Extract Zone Mapping (§3) and Capability Map (§2) as primary analysis targets
-
-3. **Audit resources/** (IF EXISTS):
-   - List all files in `.skill-context/{skill-name}/resources/`
-   - For each file: Read filename and content
-   - **Evaluative Audit**: Judge if content is "Thin" or "Rich"
-
-4. **Context prompt** (IF EXISTS): Integrate user instructions
-
----
-
-## Step ANALYZE — 3 Tiers & Knowledge Audit
-
-Apply 3-tier knowledge model from `knowledge/skill-packaging.md`:
-
-### Tier Analysis for Each Zone
+## 3-Tier Knowledge Model
 
 | Tier | Name | Question | Audit |
 |------|------|----------|-------|
-| **1** | **Domain** | What domain knowledge is needed? | Check `resources/`. If missing → TASK. If exists → PRE-REQ ✅ |
-| **2** | **Technical** | What tools/syntax needed? | Check technical docs |
-| **3** | **Packaging** | How to map to agent zone? | Generate Tasks from §3 |
-
-### Apply Conversion Checklist
-
-For each Zone in **design.md §3 Zone Mapping** (read `Files cần tạo` column):
-
-1. **Tier 1 — Domain Audit**:
-   - Audit `resources/` folder
-   - Status: ✅ if exists, ⬜ if missing
-   - If missing → Generate TASK: "Soạn thảo tài liệu domain tại resources/{topic}.md"
-
-2. **Tier 2 — Technical**:
-   - Check needed tools/docs
-   - Generate pre-requisite if missing
-
-3. **Tier 3 — Packaging**:
-   - Generate explicit Tasks to create files from §3
+| 1 | Domain | What domain knowledge needed? | Audit resources/. Missing → TASK |
+| 2 | Technical | What tools/syntax needed? | Missing docs → pre-req |
+| 3 | Packaging | How to map to agent zone? | Generate Tasks from §3 |
 
 ---
 
-## Step WRITE — Output todo.md
+## Naming Conventions
 
-Write analysis to `.skill-context/{skill-name}/todo.md`
-
-### Required Sections
-
-```markdown
-## 1. Pre-requisites
-Table: #, Tài liệu/Kiến thức, Tier, Mục đích, Trace, Status
-
-## 2. Phase Breakdown
-Table: #, Task, Priority, Est. Hours, Dependencies, Trace
-Must include "Phase 0: Resource Preparation" for missing domain docs
-
-## 3. Knowledge & Resources Needed
-
-## 4. Definition of Done
-
-## 5. Notes
-Items from design.md §9 → migrate here with [CẦN LÀM RÕ]
-
-## 6. Builder Feedback Integration
-```
-
-### Task Format
-```
-- [ ] Task description [TỪ DESIGN §N] hoặc [TỪ AUDIT TÀI NGUYÊN]
-```
-
-### Priority Guidelines
-
-| Priority | When |
-|----------|------|
-| **Critical** | Blocks other tasks or core functionality |
-| **High** | Important, do early |
-| **Medium** | Standard tasks |
-| **Low** | Nice-to-have, can do later |
-
-### Dependency Detection
-- Task A depends on Task B when:
-  - Task A needs output of Task B
-  - Task A references file created by Task B
-  - Task A must happen after Task B
+| Zone | Pattern | Example |
+|------|---------|---------|
+| knowledge/ | `domain-topic.md` | `uml-rules.md` |
+| scripts/ | `action-target.py` | `validate-todo.py` |
+| templates/ | `output-format.template` | `todo.md.template` |
+| loop/ | `purpose-checklist.md` | `plan-checklist.md` |
+| data/ | `config-name.yaml` | `todo-schema.json` |
 
 ---
 
-## Step VERIFY — Quality Check
+## Quality Gates
 
-After writing todo.md:
+### Planner → Builder Gate
+- All §3 files mapped to specific tasks
+- Pre-requisites table complete
+- Resource audit shows "Rich" status for critical items
+- Phase breakdown has priorities and dependencies
+- Confidence score >= 70
 
-1. **Resource Integrity Check**:
-   - Match Pre-requisites table with `resources/` actual state
-   - If any Crucial resource has Status: ⬜ → Notify user
-
-2. **Contract Traceability**:
-   - All files in §3 "Files cần tạo" mapped to specific tasks
-
-3. **DoD Verification**:
-   - All essential files included in Definition of Done
-
----
-
-## Guardrails
-
-| G1 | Trace required — Every item in todo.md MUST trace back to design.md §N |
-|----|-------|
-| G2 | Label sources — Mark [TỪ DESIGN §N] / [GỢI Ý BỔ SUNG] / [TỪ AUDIT TÀI NGUYÊN] |
-| G3 | No inventing — Only DECOMPOSE the design |
-| G4 | List, don't do — List knowledge needed → user prepares |
-| G5 | Ground in design.md — design.md is the ONLY ground truth |
-| G6 | **Resource Gate** — Planner only marks complete when resources/ is ready |
-
----
-
-## Error Handling
-
-- If design.md not found → Report error, suggest running Skill Architect first
-- If Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping"
-- If knowledge file not found → Report: Missing knowledge file
-- If unclear → Write to Notes with [CẦN LÀM RÕ]
-- If user asks to write code → Decline, suggest skill-builder
-
----
-
-> **Framework Source**: See `../../_shared/knowledge/framework.md` for complete reference
+> **Full framework**: See `../../_shared/knowledge/framework.md`

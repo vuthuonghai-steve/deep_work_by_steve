@@ -1,26 +1,36 @@
-# {Domain Name} — Tài liệu Kiến thức Domain
+---
+artifact_type: "resource"
+skill_name: "{skill_name}"
+domain: "{domain_name}"
+generated_by: "skill-planner"
+generated_at: "{generated_at}"
+source_trace: "[TỪ AUDIT TÀI NGUYÊN]"
+confidence: 0
+status: "draft"
+---
+# {Domain Name} — Domain Knowledge Document
 
-> Template cho tài liệu domain knowledge trong resources/
-> Sử dụng khi Planner xác định cần tạo tài liệu domain mới
+> Template for domain knowledge in resources/
+> Use when Planner identifies need for new domain document
 
 ---
 
-## 1. Tổng quan
+## 1. Overview
 
-{Mô tả ngắn về domain - 2-3 câu}
+{Short domain description — 2-3 sentences}
 
-**Phạm vi**: {Những gì tài liệu này bao gồm}
+**Scope**: {What this document covers}
 
-**Đối tượng**: {AI Agent sử dụng tài liệu này cần biết gì}
+**Audience**: {What AI Agent needs to know}
 
 ---
 
-## 2. Quy tắc & Tiêu chuẩn
+## 2. Rules & Standards
 
-### 2.1 Quy tắc cơ bản
+### 2.1 Core Rules
 
-| # | Quy tắc | Mô tả | Ví dụ |
-|---|---------|--------|--------|
+| # | Rule | Description | Example |
+|---|------|-------------|---------|
 | 1 | ... | ... | ... |
 | 2 | ... | ... | ... |
 
@@ -32,52 +42,62 @@
 
 ### 2.3 Best Practices
 
-- **Nên làm**: ...
-- **Không nên**: ...
+- **Do**: ...
+- **Don't**: ...
 
 ---
 
-## 3. Ví dụ minh họa
+## 3. Examples
 
-### 3.1 Ví dụ tốt (✅)
+### 3.1 Good Example (✅)
 
 ```mermaid
 {Good example in Mermaid or code}
 ```
 
-Giải thích: {Tại sao đây là ví dụ tốt}
+Explanation: {Why this is good}
 
-### 3.2 Ví dụ sai (❌)
+### 3.2 Bad Example (❌)
 
 ```mermaid
 {Bad example in Mermaid or code}
 ```
 
-Giải thích: {Tại sao đây là ví dụ sai}
+Explanation: {Why this is bad}
 
 ---
 
 ## 4. Anti-patterns
 
-| Anti-pattern | Vấn đề | Giải pháp |
-|-------------|---------|-----------|
+| Anti-pattern | Problem | Solution |
+|-------------|---------|----------|
 | ... | ... | ... |
 
 ---
 
-## 5. Reference & Nguồn tham khảo
+## 5. References
 
-- [Link 1 - Title](URL)
-- [Link 2 - Title](URL)
+- [Link 1 — Title](URL)
+- [Link 2 — Title](URL)
 
 ---
 
 ## 6. Audit Trail
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | {Date} | Initial creation |
+| Version | Date | Changes | Source Trace |
+|---------|------|---------|-------------|
+| 1.0.0 | {Date} | Initial creation | [TỪ AUDIT TÀI NGUYÊN] |
 
 ---
 
-*Template được tạo bởi skill-planner v2.0*
+## 7. Confidence & Source
+
+**Confidence Score**: {0-100}
+
+**Source**: {Where this knowledge came from — user input, external doc, inference}
+
+**Verification**: {How this was verified}
+
+---
+
+*Template created by skill-planner v2.1*
