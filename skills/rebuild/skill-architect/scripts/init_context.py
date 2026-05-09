@@ -166,6 +166,7 @@ def main() -> int:
         return 1
 
     # --- Bootstrap _shared/ if missing ---
+    script_dir = Path(__file__).resolve().parent  # Define early for ensure_shared_bundled
     try:
         ensure_shared_bundled(script_dir)
     except RuntimeError as e:
@@ -184,7 +185,6 @@ def main() -> int:
     context_root = project_root / ".skill-context"
     skill_context_dir = context_root / skill_name
     resources_dir = skill_context_dir / "resources"
-    script_dir = Path(__file__).resolve().parent
     templates_dir = script_dir.parent / "templates"
 
     # --- Prepare placeholders ---
