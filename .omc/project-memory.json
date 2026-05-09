@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778126493879,
+  "lastScanned": 1778238075346,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -35,7 +35,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1778126493876,
+      "lastAccessed": 1778238075343,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -48,19 +48,66 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1778126493878,
+      "lastAccessed": 1778238075345,
       "keyFiles": [
         "rebuild-skill-suite-remediation-guide.md"
+      ]
+    },
+    "info_temp": {
+      "path": "info_temp",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1778238075346,
+      "keyFiles": [
+        "data.json",
+        "data.yaml",
+        "r.md",
+        "temp.json",
+        "temp.md"
+      ]
+    },
+    "knowledge": {
+      "path": "knowledge",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1778238075346,
+      "keyFiles": [
+        "README.md"
       ]
     },
     "skills": {
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778126493878,
+      "lastAccessed": 1778238075346,
       "keyFiles": []
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": ".skill-context/session-learner",
+      "accessCount": 1,
+      "lastAccessed": 1778238101267,
+      "type": "directory"
+    },
+    {
+      "path": ".skill-context/session-learner/todo.md",
+      "accessCount": 1,
+      "lastAccessed": 1778238106554,
+      "type": "file"
+    },
+    {
+      "path": ".skill-context/session-learner/design.md",
+      "accessCount": 1,
+      "lastAccessed": 1778238106603,
+      "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 1,
+      "lastAccessed": 1778238113765,
+      "type": "directory"
+    }
+  ],
   "userDirectives": []
 }
