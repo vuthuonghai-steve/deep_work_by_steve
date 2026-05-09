@@ -1,0 +1,192 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Spec Generator business.md Schema"
+description: "Section schema for business.md artifact in Spec Generator v2.0.0"
+version: "2.0.0"
+
+type: object
+
+required:
+  - spec_version
+  - feature
+  - complexity
+  - engine
+
+properties:
+  spec_version:
+    type: string
+    const: "2.0.0"
+
+  feature:
+    type: string
+
+  complexity:
+    type: string
+    enum:
+      - LOW
+      - MEDIUM
+      - HIGH
+
+  engine:
+    type: string
+
+  overview:
+    type: object
+    properties:
+      feature:
+        type: string
+      complexity:
+        type: string
+      engine:
+        type: string
+      lastUpdated:
+        type: string
+        format: date
+
+  actors:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required:
+        - name
+        - role
+        - permissions
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        permissions:
+          type: string
+
+  entity_definitions:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required:
+        - name
+        - collection
+        - fields
+        - lifecycle
+      properties:
+        name:
+          type: string
+        collection:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              required:
+                type: boolean
+              description:
+                type: string
+        lifecycle:
+          type: object
+          properties:
+            createdWhen:
+              type: string
+            updatedWhen:
+              type: string
+            deletedWhen:
+              type: string
+
+  status_workflow:
+    type: array
+    items:
+      type: object
+      properties:
+        status:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        trigger:
+          type: string
+
+  business_rules:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required:
+        - id
+        - condition
+        - action
+        - actor
+        - trace
+      properties:
+        id:
+          type: string
+          pattern: "^BR-\\d{3}$"
+        condition:
+          type: string
+        action:
+          type: string
+        actor:
+          type: string
+        trace:
+          type: string
+          description: "Reference to api.json or flow.md section"
+
+  constraints:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - unique
+            - required
+            - length
+            - range
+            - custom
+        description:
+          type: string
+
+  edge_cases:
+    type: array
+    items:
+      type: object
+      properties:
+        case:
+          type: string
+        handling:
+          type: string
+
+  permissions_matrix:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required:
+        - action
+        - actor
+        - permission
+      properties:
+        action:
+          type: string
+        actor:
+          type: string
+        permission:
+          type: string
+
+  cross_references:
+    type: object
+    properties:
+      api_json:
+        type: string
+      flow_md:
+        type: string
+      tasks_md:
+        type: string
