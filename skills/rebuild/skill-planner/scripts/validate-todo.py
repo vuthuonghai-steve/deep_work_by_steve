@@ -27,6 +27,7 @@ class TodoValidator:
         "## 3. Knowledge & Resources Needed",
         "## 4. Definition of Done",
         "## 5. Notes",
+        "## 6. Builder Feedback Integration",
     ]
 
     OPTIONAL_SECTIONS = [
@@ -152,10 +153,19 @@ class TodoValidator:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python validate-todo.py <path-to-todo.md>")
+        print("Usage: python validate-todo.py <path-to-todo.md> [--design <path-to-design.md>]")
         sys.exit(2)
 
     filepath = sys.argv[1]
+    
+    # Optional --design flag for cross-reference validation
+    design_path = None
+    if "--design" in sys.argv:
+        idx = sys.argv.index("--design")
+        if idx + 1 < len(sys.argv):
+            design_path = sys.argv[idx + 1]
+            print(f"Cross-referencing design.md: {design_path}")
+
     validator = TodoValidator(filepath)
 
     if validator.validate():
