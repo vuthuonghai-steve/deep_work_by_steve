@@ -2,7 +2,7 @@
 name: session-learner
 description: 'Khai thác và học hỏi kinh nghiệm từ session chat hiện tại. Đóng gói thành markdown và ghi vào knowledge base của dự án. Trigger: "học từ session", "trích xuất kiến thức", "lưu vào knowledge".'
 category: meta
-version: "1.0.0"
+version: "2.0.0"
 pipeline:
   stage_order: standalone
   input_contract:
@@ -19,114 +19,166 @@ progressive_disclosure:
   tier1:
     - path: "SKILL.md"
       base: "skill_dir"
-    - path: "../_shared/knowledge/framework.md"
-      base: "skill_dir"
   tier2:
     - path: "knowledge/session-extraction.md"
       base: "skill_dir"
-      load_when: "Step EXTRACT"
+      load_when: "Auto-loaded at start"
     - path: "templates/knowledge-entry.template"
       base: "skill_dir"
       load_when: "Step WRITE"
-    - path: "loop/learn-checklist.md"
-      base: "skill_dir"
-      load_when: "Before deliver"
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG**
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Hệ thống **KHÔNG** tự động nạp các file khác.
-> Tại Boot, đọc Tier 1 files. Các file Tier 2 được load theo từng Step.
+> Tier 1 = SKILL.md (mandatory). Tier 2 = Auto-loaded at start.
 
 ---
 
-# Session Learner
+# Session Learner v2.0
 
 ## Mission
 
-Act as a **Knowledge Harvester**. Scan the current session chat, extract valuable insights, lessons learned, patterns, and knowledge, then package them into a well-structured markdown file and save to the project's knowledge base.
+Act as a **Knowledge Harvester**. Scan the current session chat, extract valuable insights, lessons learned, patterns, and knowledge, then package them into well-structured markdown files and save to the project's knowledge base.
 
-**Scope:** This skill ONLY extracts and writes to knowledge. It does NOT modify existing files (unless explicitly requested).
+**Tối ưu hóa:** Thay vì nhiều bước riêng biệt với interaction gates, skill này chạy **1-PASS** — scan → extract → write → verify trong 1 lần chạy duy nhất. Không hỏi user trừ khi cần xác nhận overwrite.
 
 ## Hardcoded Configuration
 
 ```
 Knowledge Base Path: /home/steve/Work-space/deep_work_by_steve/knowledge/
 Allowed Categories: experience, projects, notes, programming, resources
+Session Date Format: YYYY-MM-DD
 ```
 
-## Workflow
+## 1-PASS Workflow
 
-```mermaid
-graph LR
-    A[Scan Session] --> B[Extract Insights]
-    B --> C[Apply Template]
-    C --> D[Write to Knowledge]
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     1-PASS KNOWLEDGE EXTRACTION                     │
+├─────────────────────────────────────────────────────────────────────┤
+│  SCAN → EXTRACT → WRITE → VERIFY → DELIVER (không dừng giữa các bước) │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Step 1: SCAN
+### Step 1: SCAN (scan toàn bộ session)
 
-1. Scan the current session for:
-   - **Insights**: Unique observations, solutions discovered
-   - **Lessons Learned**: Mistakes made and corrected
-   - **Patterns**: Recurring themes or approaches
-   - **Commands/Tools**: Useful commands or tool usages
-   - **Decisions**: Key decisions and reasoning
+Scan messages từ đầu session, collect tất cả candidates:
 
-2. Classify each item by category:
-   - `experience/` — Personal lessons, insights
-   - `projects/` — Project-specific knowledge
-   - `notes/` — Quick notes, ideas
-   - `programming/` — Technical patterns
-   - `resources/` — References, links
+- 🔍 Problem-solving exchanges
+- 💡 Lightbulb moments ("aha!", "tôi hiểu rồi", "phát hiện")
+- ⚠️ Warnings or cautions
+- ✅ Confirmations of approach
+- 🔧 Tool or command usage
+- 📚 Explanations or teaching moments
+- 🔄 Workflow improvements discovered
+- 🎯 Decisions made with reasoning
 
-### Step 2: EXTRACT
+### Step 2: EXTRACT (categorize và structure)
 
-1. Read `knowledge/session-extraction.md` for extraction guidelines
-2. Apply categorization rules
-3. Prioritize by relevance and uniqueness
+Đọc `knowledge/session-extraction.md` để apply extraction guidelines. Tự động detect category và generate filename.
 
-### Step 3: WRITE
+**Category Detection:**
+```
+- experience/  — Personal lessons, mistakes, discoveries
+- projects/    — Project-specific knowledge, ADRs, architecture
+- notes/       — Quick notes, ideas, reminders, TODOs
+- programming/ — Technical patterns, commands, tool usage
+- resources/   — URLs, docs, references
+```
 
-1. Load `templates/knowledge-entry.template`
-2. Fill template with extracted content
-3. Validate markdown syntax
-4. Write to: `{knowledge_path}/{category}/{filename}.md`
+**Filename Generation (Session-Specific Naming):**
+```
+Format: YYYY-MM-DD.{session-name}.md
+Example: 2026-05-09.skill-suite-v3-upgrade.md
 
-### Step 4: VERIFY
+session_name = sanitize(topic/keyword từ session)
+                → lowercase
+                → hyphenated
+                → unique trong category folder
+```
 
-1. Read `loop/learn-checklist.md`
-2. Run through all checklist items
-3. If any fail → fix before delivering
+**Auto-categorization Rules:**
+- Nếu content chứa "mistake", "learned", "insight" → `experience/`
+- Nếu content chứa "project", "architecture", "ADR" → `projects/`
+- Nếu content chứa "pattern", "code", "technical" → `programming/`
+- Nếu content quá ngắn hoặc fragment → `notes/`
+- Nếu content chỉ là link hoặc reference → `resources/`
 
-## Interaction Points
+### Step 3: WRITE (parallel extraction cho multiple entries)
 
-| Gate | When | Action |
-|------|------|--------|
-| **Gate 1** | After extract | Present category suggestions, ask for filename |
-| **Gate 2** | Before write | Show preview, ask for confirmation |
+**CRITICAL: Sử dụng parallel extraction pattern**
 
-## Guardrails
+Đối với session có nhiều categories, spawn sub-agents để extract song song:
 
-| ID | Rule | Description |
-|----|------|-------------|
-| G1 | **No Overwrite** | Never overwrite existing files without explicit permission |
-| G2 | **Size Limit** | Warn if content >100KB, suggest splitting |
-| G3 | **Validate MD** | Ensure valid markdown before writing |
-| G4 | **Scan Limit** | Only scan last 50 messages to stay focused |
-| G5 | **Category Check** | Verify target category folder exists |
+```python
+# Pseudo-code for parallel extraction
+categories = detect_categories_from_scanned_content)
+if len(categories) > 1:
+    # Spawn delegate_task cho mỗi category
+    for category in categories:
+        delegate_task(
+            goal=f"Extract knowledge from session for category: {category}",
+            context=full_session_context
+        )
+else:
+    # Single category — extract trực tiếp
+    extract_single_category(session, category)
+```
 
-## Error Handling
+**Entry Structure:**
+```
+# {Title}
 
-| Situation | Action |
-|-----------|--------|
-| Knowledge folder not found | Create category folder |
-| File already exists | Warn user, offer to append or rename |
-| Session empty | Report: "No content to extract" |
-| Invalid markdown | Fix syntax before writing |
+**Extracted from:** {session_id}
+**Date:** {YYYY-MM-DD}
+**Category:** {category}
 
-## Confirm
+---
 
-Present the completed knowledge entry to the user:
+## Overview
+{brief_description}
+
+---
+
+## Key Insights
+### Insight N
+**What:** {what}
+**Why:** {why_matters}
+**Context:** {when_where}
+
+---
+
+## Lessons Learned
+### Lesson N
+**Situation:** {what_happened}
+**Learning:** {what_we_learned}
+**Action:** {what_to_do_different}
+
+---
+
+## Related
+- [[related knowledge entry]]
+
+---
+
+## Source
+Session: {session_id}
+```
+
+### Step 4: VERIFY (quality gate)
+
+Tự động check, không cần user confirm:
+
+- [ ] File không trùng với file có sẵn (check trước khi write)
+- [ ] Markdown syntax đúng
+- [ ] Không có placeholder chưa fill (`{...}`)
+- [ ] File size <100KB
+- [ ] Ngữ cảnh đầy đủ để hiểu sau này
+- [ ] Filename đúng format `YYYY-MM-DD.{session-name}.md`
+
+### Step 5: DELIVER (auto-deliver)
+
+Tự động deliver kết quả cho user:
 
 ```
 ✅ Đã ghi vào: knowledge/{category}/{filename}.md
@@ -135,6 +187,47 @@ Nội dung đã trích xuất:
 - {count} insights
 - {count} lessons learned
 - {count} patterns
+- {count} related entries
+
+Files created:
+- knowledge/{cat1}/{filename1}.md
+- knowledge/{cat2}/{filename2}.md
+```
+
+## Guardrails
+
+| ID | Rule | Description |
+|----|------|-------------|
+| G1 | **No Overwrite** | Nếu file tồn tại, tự động append `_v2`, `_v3` |
+| G2 | **Size Limit** | Warn nếu content >100KB, tự động split nếu cần |
+| G3 | **Validate MD** | Ensure valid markdown trước khi write |
+| G4 | **Scan Full Session** | Scan toàn bộ session, không giới hạn 50 messages |
+| G5 | **Category Check** | Verify target category folder exists trước write |
+
+## Error Handling
+
+| Situation | Action |
+|-----------|--------|
+| Knowledge folder not found | Create category folder automatically |
+| File already exists | Auto-append `_v2`, `_v3`, etc. |
+| Session empty | Report: "No content to extract" và exit |
+| Invalid markdown | Fix syntax trước khi write |
+| Duplicate content | Skip, ghi warning vào output |
+
+## Session-Specific Naming Convention
+
+**Format:** `YYYY-MM-DD.{session-name}.md`
+
+**Rules:**
+1. Date = ngày session diễn ra (from conversation metadata)
+2. session_name = keyword/topic chính của session, lowercase, hyphenated
+3. Nếu trùng tên trong folder → append `_v2`, `_v3`, etc.
+
+**Examples:**
+```
+2026-05-09.skill-suite-v3-upgrade.md
+2026-05-08.docker-debugging-session.md
+2026-05-07.architecture-design-review.md
 ```
 
 ## Related Skills

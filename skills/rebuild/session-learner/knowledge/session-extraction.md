@@ -1,99 +1,115 @@
-# Session Extraction Guide
+# Session Extraction Guide v2.0
 
-Hướng dẫn cách trích xuất kiến thức từ session chat.
-
----
-
-## Extraction Principles
-
-1. **Chỉ trích xuất giá trị** — Không phải mọi thứ đều worth saving
-2. **Ngữ cảnh quan trọng** — Ghi lại WHY, không chỉ WHAT
-3. **Actionable** — Kiến thức phải useful, không chỉ interesting
-4. **Unique** — Ưu tiên insights không có sẵn ở nơi khác
+Hướng dẫn cách trích xuất kiến thức từ session chat — tối ưu cho 1-PASS execution.
 
 ---
 
-## Categories & What to Extract
+## Core Principles
+
+1. **1-PASS execution** — Scan → Extract → Write → Verify trong 1 lần, không pause giữa các bước
+2. **Auto-categorization** — Không hỏi user, tự động detect category từ content
+3. **Parallel extraction** — Nếu session có nhiều categories, extract song song
+4. **Session-specific naming** — Format `YYYY-MM-DD.{session-name}.md`
+
+---
+
+## Categories & Auto-Detection
 
 ### `experience/` — Personal Lessons
 
-| Extract | Ví dụ |
-|---------|-------|
-| Mistake + Fix | "Tôi đã sai ở chỗ X, cách sửa là Y" |
-| Discovery | "Tôi phát hiện ra rằng X" |
-| Insight | "X có vẻ đúng, nhưng thực ra Y mới đúng" |
-| Workflow improvement | "Cách cũ X không tốt, cách mới Y hiệu quả hơn" |
+**Keywords trigger:** mistake, learned, insight, discovery, aha, phát hiện, hiểu rồi, workflow cũ/không tốt
+
+**What to extract:**
+- Mistake + Fix pairs: "Tôi đã sai ở chỗ X, cách sửa là Y"
+- Discoveries: "Tôi phát hiện ra rằng X"
+- Insights: "X có vẻ đúng, nhưng thực ra Y mới đúng"
+- Workflow improvements: "Cách cũ X không tốt, cách mới Y hiệu quả hơn"
 
 ### `projects/` — Project Knowledge
 
-| Extract | Ví dụ |
-|---------|-------|
-| Architecture decision | "Chọn X thay vì Y vì Z" |
-| Technical approach | "Cách implement feature này là..." |
-| Gotchas | "Cẩn thận X — nó gây ra Y" |
-| Dependencies | "Cần X trước khi làm Y" |
+**Keywords trigger:** project, architecture, ADR, decision, design, setup, config
+
+**What to extract:**
+- Architecture decisions: "Chọn X thay vì Y vì Z"
+- Technical approaches: "Cách implement feature này là..."
+- Gotchas: "Cẩn thận X — nó gây ra Y"
+- Dependencies: "Cần X trước khi làm Y"
 
 ### `notes/` — Quick Notes
 
-| Extract | Ví dụ |
-|---------|-------|
-| TODO items | "Cần làm X" |
-| Questions | "Tại sao X lại hoạt động như vậy?" |
-| Ideas | "Thử X xem sao" |
-| Reminders | "X — đừng quên" |
+**Keywords trigger:** todo, reminder, question, idea, thử, câu hỏi
+
+**What to extract:**
+- TODO items: "Cần làm X"
+- Questions: "Tại sao X lại hoạt động như vậy?"
+- Ideas: "Thử X xem sao"
+- Reminders: "X — đừng quên"
 
 ### `programming/` — Technical Patterns
 
-| Extract | Ví dụ |
-|---------|-------|
-| Command | "Lệnh `X` làm Y" |
-| Pattern | "Pattern X giải quyết vấn đề Y" |
-| Tool usage | "Cách dùng tool X hiệu quả" |
-| Code snippet | "Đoạn code này làm X" |
+**Keywords trigger:** pattern, command, code, tool, function, script, algorithm
+
+**What to extract:**
+- Commands: "Lệnh `X` làm Y"
+- Patterns: "Pattern X giải quyết vấn đề Y"
+- Tool usage: "Cách dùng tool X hiệu quả"
+- Code snippets: "Đoạn code này làm X"
 
 ### `resources/` — References
 
-| Extract | Ví dụ |
-|---------|-------|
-| URL | "Link này hữu ích cho X" |
-| Documentation | "Doc của X có section về Y" |
-| Tool | "Tool X hữu ích cho Y" |
+**Keywords trigger:** link, url, doc, documentation, reference
+
+**What to extract:**
+- URLs: "Link này hữu ích cho X"
+- Documentation: "Doc của X có section về Y"
+- Tools: "Tool X hữu ích cho Y"
 
 ---
 
-## Extraction Process
+## Parallel Extraction Pattern
 
-### Step 1: Identify Candidates
+### When to Use
 
-Scan messages for:
+Khi session chứa content thuộc **2+ categories**, sử dụng parallel extraction:
 
-- 🔍 Problem-solving exchanges
-- 💡 Lightbulb moments ("aha!", "tôi hiểu rồi")
-- ⚠️ Warnings or cautions
-- ✅ Confirmations of approach
-- 🔧 Tool or command usage
-- 📚 Explanations or teaching moments
+```
+Session có content:
+  - experience/ (insights về delegation pattern)
+  - programming/ (technical patterns về YAML frontmatter)
+  → Extract 2 files song song
+```
 
-### Step 2: Evaluate Value
+### Implementation
 
-Ask:
+```python
+# 1. Scan session → collect all candidates
+# 2. Detect unique categories từ candidates
+# 3. Nếu categories > 1:
+#      delegate_task per category (parallel)
+#    Else:
+#      extract directly (single pass)
+```
 
-- Đây có phải knowledge mới không?
-- Nó sẽ hữu ích trong tương lai không?
-- Có thể action được không?
+### Example Output Structure
 
-### Step 3: Capture Context
+**File 1:** `knowledge/experience/2026-05-09.skill-suite-v3-upgrade-learnings.md`
+**File 2:** `knowledge/programming/2026-05-09.hermes-skill-v3-patterns.md`
+**File 3:** `knowledge/projects/2026-05-09.skill-suite-v3-upgrade.md`
 
-For each valid extraction:
+---
 
-- **What**: Nội dung chính
-- **Why**: Tại sao nó quan trọng
-- **When**: Trong bối cảnh nào
-- **Source**: Message nào trong session
+## Quality Checklist (Automated)
 
-### Step 4: Structure
-
-Apply template từ `templates/knowledge-entry.template`
+- [ ] Session có nội dung để extract
+- [ ] Đã xác định category phù hợp
+- [ ] Filename đúng format `YYYY-MM-DD.{session-name}.md`
+- [ ] Knowledge folder tồn tại (auto-create nếu không)
+- [ ] Không trùng lặp với file có sẵn (auto-append `_v2` nếu trùng)
+- [ ] Markdown syntax đúng
+- [ ] Không có placeholder chưa fill (`{...}`)
+- [ ] File size <100KB
+- [ ] Ngữ cảnh đầy đủ để hiểu sau này
+- [ ] Tiêu đề mô tả rõ nội dung
 
 ---
 
@@ -105,13 +121,32 @@ Apply template từ `templates/knowledge-entry.template`
 | Nội dung quá dài (>500 words) | Tóm tắt, giữ essence |
 | Duplicate kiến thức đã có | Check trước, skip nếu trùng |
 | Opinion mà không có basis | Ghi rõ đây là opinion, không phải fact |
+| Fragment không đủ context | Bỏ qua, không force extract |
 
 ---
 
-## Quality Checklist
+## Session-Specific Naming
 
-- [ ] Mỗi entry có ngữ cảnh đầy đủ
-- [ ] Không trùng lặp với file có sẵn
-- [ ] Markdown syntax đúng
-- [ ] File size <100KB
-- [ ] Tiêu đề mô tả rõ nội dung
+**Format:** `YYYY-MM-DD.{session-name}.md`
+
+**Examples:**
+```
+2026-05-09.skill-suite-v3-upgrade.md
+2026-05-08.docker-debugging-session.md
+2026-05-07.architecture-design-review.md
+2026-05-06.telegram-bot-setup.md
+```
+
+**How to derive session-name:**
+1. Lấy topic/keyword chính từ session
+2. Lowercase
+3. Hyphenate spaces
+4. Nếu trùng → append `_v2`, `_v3`, etc.
+
+---
+
+## Source
+
+Adapted from: session-learner v1.0
+Session: skill-suite-v3-upgrade (2026-05-09)
+Pattern: 1-PASS execution with parallel extraction

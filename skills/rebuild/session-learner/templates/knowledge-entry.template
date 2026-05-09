@@ -1,8 +1,9 @@
 # {Title}
 
 **Extracted from:** {session_id}
-**Date:** {date}
+**Date:** {YYYY-MM-DD}
 **Category:** {category}
+**Session Name:** {session-name}.md
 
 ---
 
@@ -14,32 +15,30 @@
 
 ## Key Insights
 
-### Insight 1
+### Insight N
 **What:** {what}
 **Why:** {why_matters}
 **Context:** {when_where}
-
-### Insight 2
-{repeat as needed}
 
 ---
 
 ## Lessons Learned
 
-### Lesson 1
+### Lesson N
 **Situation:** {what_happened}
 **Learning:** {what_we_learned}
 **Action:** {what_to_do_different}
 
 ---
 
-## Related
+## Related Knowledge
 
-- [[link to related knowledge]]
+- [[related-entry]] — {description}
 
 ---
 
 ## Source
 
 Session: {session_id}
-Messages: [{message_refs}]
+Extracted: {YYYY-MM-DD}
+Categories: {list of all categories in this session}
