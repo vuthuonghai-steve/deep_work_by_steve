@@ -13,8 +13,9 @@ pipeline:
       required: true
   output_contract:
     - type: directory
-      path: ".claude/skills/{skill-name}"
+      path: "{skills_root}/{skill-name}"
       format: directory
+      note: "Portable path resolved at install time. skills_root is the parent directory of the skill suite."
   dependencies:
     - skill-planner
 progressive_disclosure:

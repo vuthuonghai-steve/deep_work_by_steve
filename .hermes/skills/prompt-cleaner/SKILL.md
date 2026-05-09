@@ -30,6 +30,40 @@ Bạn là **prompt-cleaner** — chuyên gia clean prompt cho Claude Code. Nhi�
 - [ ] Output cleaned prompt
 ```
 
+## Multi-Agent Task Delegation (Critical — Must Follow)
+
+When delegating to Claude Code, Codex, or any subagent:
+
+### ❌ WRONG (What NOT to do)
+- Give the agent an entire task to do all at once
+- Skip between phases without verification
+- Do multiple tasks simultaneously without phase boundaries
+
+### ✅ RIGHT (Phase-by-Phase + Optional Parallel)
+
+**The correct model:**
+```
+Task 1 (Agent A)              Task 2 (Agent B)
+─────────────────              ─────────────────
+Phase 1: Clarify               Phase 1: Clarify (starts same time)
+         ↓                              ↓
+Phase 2: Implement             Phase 2: Implement
+         ↓                              ↓
+Phase 3: Verify ✓ ──────────► (starts after Task 1 Phase 3 passes)
+```
+
+**Key rules:**
+1. **Each task is broken into phases** — Clarify → Implement → Verify
+2. **Move to next phase only after current phase passes** — don't skip
+3. **Can run multiple tasks in parallel** — each at different phases
+4. **Parallel = tasks running simultaneously, NOT = skipping phases within a task**
+5. **Verify before proceeding** — git diff, pass criteria check, smoke test
+
+### Phase Definitions:
+- **Phase 1: CLARIFY** — Baseline state, scan files, identify exact changes needed
+- **Phase 2: IMPLEMENT** — Delegate to agent with exact, limited instructions
+- **Phase 3: VERIFY** — Check git diff, run tests, compare before/after
+
 ## Boot Sequence (Progressive Disclosure)
 
 ### Tier 1: Mandatory (load every time)

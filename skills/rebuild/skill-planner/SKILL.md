@@ -106,7 +106,7 @@ Apply the **Conversion Checklist** for specific design sections:
 
 Write the analysis results to `.skill-context/{skill-name}/todo.md`.
 
-The file MUST contain exactly 5 sections:
+The file MUST contain exactly 6 sections:
 
 ```
 ## 1. Pre-requisites
@@ -117,6 +117,19 @@ The file MUST contain exactly 5 sections:
   MUST include `Phase 0: Resource Preparation` for missing domain documents.
 
   **Table columns**: #, Task, Priority (Critical/High/Medium/Low), Est. Hours, Dependencies, Trace
+
+## 3. Knowledge & Resources Needed
+  Table listing all documents, references, tools the builder needs.
+
+## 4. Definition of Done
+  Checklist of completion criteria. Must include checking that all files specified in §3 are created.
+
+## 5. Notes
+  Open questions, things to clarify, supplementary suggestions.
+  Items from design.md §9 (Open Questions) → migrate here, mark [CẦN LÀM RÕ].
+
+## 6. Builder Feedback Integration
+  (Required only if there is upstream feedback to address)
 
   Each task:
   ```

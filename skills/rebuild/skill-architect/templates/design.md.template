@@ -239,3 +239,106 @@ sequenceDiagram
 - **Handoff Checklist**:
   - [ ] design.md hoàn thiện (checklist pass)
   - [ ] Sẵn sàng cho skill-planner
+
+---
+
+## 10.1 Version & Dependencies
+
+### Version Management
+
+All skills use Semantic Versioning:
+
+```
+MAJOR.MINOR.PATCH
+- MAJOR: Breaking changes (output format, workflow)
+- MINOR: Backward-compatible (new features)
+- PATCH: Bug fixes, documentation
+```
+
+**Version update rules**:
+- New section (§11, §12) → MINOR
+- Zone Mapping format change → MAJOR
+- Typo fix, add example → PATCH
+
+### Skill Dependencies
+
+|| Type | Skill | Required | Reason |
+|---|------|-------|----------|--------|
+| Predecessor | None | — | First in pipeline |
+| Successor | skill-planner | ✅ | Needs design.md to create todo.md |
+| Successor | skill-builder | ❌ | Runs after skill-planner |
+
+---
+
+## 11. Naming Conventions
+
+### Skill Name Rules
+
+**Required Pattern**: `kebab-case` (lowercase, hyphen-separated)
+
+| ✅ Correct | ❌ Incorrect |
+|-----------|-------------|
+| `skill-planner` | `SkillPlanner` |
+| `api-integrator` | `api_integrator` |
+| `flow-design-analyst` | `flow design analyst` |
+
+### Zone File Naming
+
+| Zone | Pattern | Example |
+|------|---------|---------|
+| knowledge/ | `domain-topic.md` | `uml-rules.md`, `api-standards.md` |
+| scripts/ | `action-target.py` | `init-context.py`, `validate-skill.py` |
+| templates/ | `output-format.template` | `design-md.template`, `todo-md.template` |
+| loop/ | `purpose-checklist.md` | `design-checklist.md`, `plan-checklist.md` |
+| data/ | `config-name.yaml` | `skill-config.yaml`, `schema.json` |
+
+---
+
+## 12. Rollback Procedures
+
+### Phase 1 Rollback — Collect
+
+**Trigger**: User rejects Problem Statement or wants to change skill-name.
+
+**Rollback Steps**:
+```
+1. Reset §1 Problem Statement → draft state
+2. Reset §10 Metadata (status: DRAFT)
+3. Xóa mọi note/artifact đã tạo tạm thời
+4. Quay lại Phase 1: Collect
+```
+
+### Phase 2 Rollback — Analyze
+
+**Trigger**: User rejects Capability Map or Zone Mapping.
+
+**Rollback Steps**:
+```
+1. Reset §2 Capability Map → draft state
+2. Reset §3 Zone Mapping → draft state
+3. Reset §8 Risks & Blind Spots → draft state
+4. Quay lại Phase 2: Analyze
+```
+
+### Phase 3 Rollback — Design
+
+**Trigger**: User rejects final design or specific parts.
+
+**Rollback Steps**:
+```
+1. Reset §4-§9 → draft state
+2. Keep §1, §2, §3, §8 if unchanged
+3. Quay lại Phase 3: Design
+```
+
+### Emergency Rollback
+
+**Trigger**: Phát hiện lỗi nghiêm trọng trong design đã xuất.
+
+**Procedure**:
+```
+1. Dừng ngay lập tức
+2. Thông báo user về lỗi phát hiện
+3. Rollback về phase gây ra lỗi
+4. Tiếp tục lại từ đầu phase đó
+```
