@@ -3,6 +3,12 @@ name: spec-generator-has-api
 description: Generate feature specifications (api.json, business.md, flow.md, tasks.md) with validation gates. AI-first, 5-phase workflow with ambiguity detection.
 version: 2.0.0
 spec_schema_version: "2.0.0"
+author: "Steve Void Team"
+license: private
+metadata:
+  hermes:
+    tags: [specification, api-design, validation, feature-planning]
+    related_skills: []
 ---
 
 # Spec Generator v2 — AI-First Feature Specification

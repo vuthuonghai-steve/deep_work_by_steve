@@ -1,5 +1,5 @@
 ---
-name: session-learner
+name: deep-session-learner
 description: 'Khai thác và học hỏi kinh nghiệm từ session chat hiện tại. Đóng gói thành markdown và ghi vào knowledge base của dự án. Trigger: "học từ session", "trích xuất kiến thức", "lưu vào knowledge".'
 category: meta
 version: "2.0.0"
@@ -26,6 +26,12 @@ progressive_disclosure:
     - path: "templates/knowledge-entry.template"
       base: "skill_dir"
       load_when: "Step WRITE"
+author: "Steve Void Team"
+license: private
+metadata:
+  hermes:
+    tags: [session-learning, knowledge-base, meta, documentation]
+    related_skills: []
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG**

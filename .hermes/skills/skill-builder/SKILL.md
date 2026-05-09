@@ -2,6 +2,13 @@
 name: skill-builder
 description: Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop.
 category: meta
+version: "2.0.0"
+author: "Steve Void Team"
+license: private
+metadata:
+  hermes:
+    tags: [skill-development, implementation, quality-gates, meta]
+    related_skills: [skill-architect, skill-planner]
 pipeline:
   stage_order: 3
   input_contract:

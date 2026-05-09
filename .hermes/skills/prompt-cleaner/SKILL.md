@@ -1,6 +1,13 @@
 ---
 name: prompt-cleaner
 description: Claude Code prompt cleaner — transforms raw user prompts into structured XML prompts following Claude Code standards. Triggered when user submits unstructured prompts in Vietnamese or English.
+version: "1.0.0"
+author: "Steve Void Team"
+license: private
+metadata:
+  hermes:
+    tags: [prompt-engineering, claude-code, prompt-cleaning, vietnamese]
+    related_skills: []
 ---
 
 # prompt-cleaner

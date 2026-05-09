@@ -51,6 +51,11 @@ progressive_disclosure:
     - path: "references/examples/design-*.md"
       base: "skill_dir"
       load_when: "When needing reference examples"
+license: private
+metadata:
+  hermes:
+    tags: [architecture, design, skill-development, mermaid, uml, meta]
+    related_skills: [skill-planner, skill-builder]
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
