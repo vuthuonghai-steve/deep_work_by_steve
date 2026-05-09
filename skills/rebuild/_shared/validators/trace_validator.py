@@ -9,7 +9,7 @@ trace_validator.py — Validate trace tag patterns in a Markdown file.
   4. [TỪ AUDIT TÀI NGUYÊN]
 
 Catches common typos:
-  [CẦU LÀM RÕ]        → should be [CẦN LÀM RÕ]
+  [CẦN LÀM RÕ]        → should be [CẦN LÀM RÕ]
   [TỪ AUDIT TÀI NGUYÊN] (missing N on NGUYÊN) → should be [TỪ AUDIT TÀI NGUYÊN]
 
 CLI:
@@ -65,7 +65,7 @@ VALID_PATTERNS = [
 
 # Known typo variants for helpful error messages
 KNOWN_TYPOS = {
-    "[CẦU LÀM RÕ]": "'CẦU' should be 'CẦN'",
+    "[CẦN LÀM RÕ]": "'CẦU' should be 'CẦN'",
     "[TỪ AUDIT TÀI NGUYÊN]": "Missing 'N' in NGUYÊN (should be NGUYÊN)",
     "[GỢI BỔ SUNG]": "Missing 'Ý' after 'GỢI'",
     "[GỢI Ý BỔ XUNG]": "'XUNG' should be 'SUNG'",
