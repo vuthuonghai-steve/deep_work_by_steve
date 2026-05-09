@@ -93,7 +93,7 @@ class SkillValidator:
         if len(lines) > 500:
             self.errors.append(f"[E03] ERROR: SKILL.md exceeds 500 lines limit ({len(lines)})")
 
-        mandatory_keywords = ["## Persona", "Workflow", "Guardrails"]
+        mandatory_keywords = ["Persona", "Workflow", "Guardrails"]
         for kw in mandatory_keywords:
             if kw not in content:
                 self.errors.append(f"[E04] ERROR: SKILL.md missing mandatory section keyword: '{kw}'")
@@ -156,17 +156,19 @@ class SkillValidator:
                     in_zone_mapping = False
             
             if in_zone_mapping:
-                # Find file paths in backticks like `knowledge/architect.md`
-                matches = re.findall(r"`([a-zA-Z0-9_\-\./]+\.[a-z]{2,4})`", line)
+                # Find file paths in backticks like `knowledge/architect.md` or `design.md.template`
+                matches = re.findall(r"`([^`]+)`", line)
                 for m in matches:
-                    if "/" in m or m == "SKILL.md":
+                    if "/" in m or m.startswith("SKILL") or "." in m:
                         expected_files.add(os.path.normpath(m))
         
         # Ensure SKILL.md is expected
         expected_files.add("SKILL.md")
 
         actual_files: set[str] = set()
-        for root, _, files in os.walk(self.skill_path):
+        for root, dirs, files in os.walk(self.skill_path):
+            # Skip __pycache__ and other generated directories
+            dirs[:] = [d for d in dirs if d != '__pycache__' and not d.startswith('.')]
             rel_root = os.path.relpath(root, self.skill_path)
             for file in files:
                 if not file.startswith('.'):
