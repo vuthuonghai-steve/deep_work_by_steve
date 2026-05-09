@@ -35,7 +35,7 @@ Tài liệu này định nghĩa **SPEC** đầy đủ và **TASK BREAKDOWN** cho
 
 **Ngoài phạm vi:**
 - skill-learner, spec-generator (khác pipeline)
-- Skills Hub integration (P2)
+- Skills Hub integration (P2 — future)
 
 ### Nguồn tài liệu tham khảo
 
@@ -47,6 +47,14 @@ Tài liệu này định nghĩa **SPEC** đầy đủ và **TASK BREAKDOWN** cho
 | `docs/raw/brainstorm/` | Migration strategy, testing strategy, future extensions | Rollback plan, test pyramid, roadmap |
 | `docs/rebuild-skill-suite-remediation-guide.md` | Checklist P0/P1/P2 issues | Cách xử lý chi tiết từng vấn đề |
 | `skills/raw/prompt-cleaner/` | Prompt patterns cho Claude Code/Codex | Cách giao tiếp với external agents |
+
+---
+
+### State Machine Design
+
+States: DETECT → CREATE_NEW | PATCH_EXISTING | REFACTOR | MIGRATE | CONSOLIDATE | DEPRECATE
+- 5 signals for patch mode detection
+- State persistence and recovery mechanisms
 
 ---
 
@@ -89,6 +97,12 @@ Tài liệu này định nghĩa **SPEC** đầy đủ và **TASK BREAKDOWN** cho
 - Chỉ còn `.claude/skills` như ví dụ install, không phải path bắt buộc
 
 **Source:** rebuild-skill-suite-remediation-guide.md Section P0-02
+
+**install_target Resolution (Priority levels - highest to lowest):**
+1. HERMES_USER_LOCAL: `~/.hermes/skills/{category}/{skill-name}/`
+2. HERMES_PROJECT_LOCAL: `{project}/.hermes/skills/{category}/{skill-name}/`
+3. REPO_LOCAL: `{repo}/skills/{category}/{skill-name}/`
+4. CLAUDE_USER_LOCAL: `~/.claude/skills/{category}/{skill-name}/`
 
 ---
 
@@ -503,6 +517,34 @@ Tài liệu này định nghĩa **SPEC** đầy đủ và **TASK BREAKDOWN** cho
 | 3.15 | Remove __pycache__/ | Zero __pycache__ |
 | 3.16 | Remove stale build-log.md (nếu historical log) | Clean |
 | 3.17 | Add .gitignore cho generated artifacts | Generated ignored |
+
+---
+
+### Migration Strategy (v2.x → v3.0)
+
+- **Phase M1 Foundation** (week 1-2): Core infrastructure
+- **Phase M2 Shadow Mode** (week 3-4): Parallel run v2 and v3
+- **Phase M3 Cutover** (week 5-6): Full switchover
+- **Rollback**: Max 32 minutes, decision in 5 min
+- **Success metrics**: 0 min downtime, <0.1% error rate, <150ms P99 latency
+
+### Rollback Procedures
+
+- **Trigger**: Error rate >1% or latency >500ms for 5 min
+- **Steps**:
+  1. Stop new invocations
+  2. Revert gateway to v2 mode
+  3. Drain pending tasks
+  4. Verify v2 health
+  5. Notify stakeholders
+- **Max rollback time**: 32 minutes
+
+### Testing Strategy
+
+- **Pyramid**: 60% unit, 30% integration, 10% E2E
+- **Coverage targets**: Validator 90%, Parser 85%, Template engine 80%
+- **Quality gates**: <80% unit coverage blocks merge, <100% smoke blocks deploy
+- **Smoke test**: <30s runtime, happy path only, deterministic
 
 ---
 
