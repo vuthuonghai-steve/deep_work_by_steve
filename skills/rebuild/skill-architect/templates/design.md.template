@@ -65,6 +65,9 @@ required_sections:
   - "8_risks"
   - "9_open_questions"
   - "10_metadata"
+  - "10.1_version_and_dependencies"
+  - "11_naming_conventions"
+  - "12_rollback_procedures"
 optional_sections: []
 handoff:
   next_stage: "planner"
