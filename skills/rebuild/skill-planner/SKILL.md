@@ -2,7 +2,8 @@
 name: skill-planner
 description: 'Doc ban thiet ke kien truc (design.md) va tao ke hoach trien khai chi tiet (todo.md). Trigger khi user noi: "lap ke hoach skill", "tao todo.md", "phan ra task tu design.md", "trace design -> task". Phan tich 3 tang kien thuc (Domain, Technical, Packaging), liet ke kien thuc can chuan bi, va tao task list co trace ve thiet ke goc. Skill nay la #2 trong bo Master Skill Suite (Architect -> Planner -> Builder).'
 category: meta
-version: "2.0.0"
+version: "3.0.0"
+case_system: true
 pipeline:
   stage_order: 2
   input_contract:
@@ -24,6 +25,12 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+    - path: "knowledge/case-system.md"
+      base: "skill_dir"
+      triggers: [boot_sequence, entering_planning]
+    - path: "scripts/check_status.py"
+      base: "skill_dir"
+      triggers: [boot_sequence]
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -35,14 +42,81 @@ progressive_disclosure:
     - path: "loop/plan-checklist.md"
       base: "skill_dir"
       load_when: "Before deliver (Quality Gate)"
+    - path: "loop/resume_checklist.md"
+      base: "skill_dir"
+      triggers: [resuming_from_checkpoint]
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
+> **Tại Boot**, bạn CHỈ đọc Tier 1 files.
 > Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+
+---
+
+# Skill Planner — CASE-Aware Heavy Thinking Skill
+
+## CASE System Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CASE SYSTEM                               │
+│                                                              │
+│   PREVENT        →        DETECT         →        RECOVER     │
+│   State-aware        Gate validators         Rollback         │
+│   boot + PD         + exit codes           procedures       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 3 Mechanisms:
+
+- **PREVENT**: State-aware boot, explicit triggers, contract validation
+- **DETECT**: Gate validators với exit codes (0=PASS, 1=FAIL, 2=EMERGENCY)
+- **RECOVER**: Rollback procedures, checkpoint resume, staleness check
+
+---
+
+## 🚀 Boot Sequence (MANDATORY — Thực hiện ĐÚNG THỨ TỰ)
+
+### Step 1: Read SKILL.md
+- [ ] Đọc `SKILL.md` này toàn bộ
+- [ ] Nắm CASE System framework và Heavy Thinking concept
+
+### Step 2: Run check_status.py
+```bash
+python skills/rebuild/skill-suite-upgrade/scripts/check_status.py .skill-context/{skill-name}/design.md
+```
+- [ ] Script exit code = 0 → proceed
+- [ ] Script exit code != 0 → STOP, report error
+
+### Step 3: Determine Position
+
+| phase | Position | Action |
+|-------|----------|--------|
+| 0 | Fresh start | Proceed to Step READ |
+| 1-3 | Resume available | Ask user: resume or restart? |
+| 4 | Complete | Report: "Todo.md already exists. Use skill-builder." |
+
+### Step 4: Load Tier 2 Files
+
+Based on position:
+- [ ] `knowledge/case-system.md` — Đọc nếu entering planning
+- [ ] `knowledge/architect.md` — Đọc khi audit design.md
+- [ ] `knowledge/skill-packaging.md` — Đọc khi analyze 3-tier
+
+### Step 5: Proceed to Step READ
+
+---
+
+## Mandatory Boot Sequence (Legacy — for reference)
+
+1. Read this `SKILL.md` file.
+2. Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Naming, Anti-hallucination).
+3. Determine the skill name from user input or context.
+4. Proceed to Step READ.
+5. Tier 2/3 files (`knowledge/architect.md`, `knowledge/skill-packaging.md`, `loop/plan-checklist.md`) được load theo Step tương ứng trong workflow.
 
 ---
 
@@ -57,13 +131,27 @@ across 3 tiers, and produce a comprehensive implementation plan at
 
 This skill ONLY plans — it does NOT write implementation code or design architecture.
 
-## Mandatory Boot Sequence
+## Heavy Thinking Integration
 
-1. Read this `SKILL.md` file.
-2. Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Naming, Anti-hallucination).
-3. Determine the skill name from user input or context.
-4. Proceed to Step READ.
-5. Tier 2/3 files (`knowledge/architect.md`, `knowledge/skill-packaging.md`, `loop/plan-checklist.md`) được load theo Step tương ứng trong workflow.
+Planner sử dụng **Heavy Thinking** để phân tích design.md:
+
+### K=4 Parallel Reasoning Chains
+
+| Chain | Focus Area | Purpose |
+|-------|------------|---------|
+| Chain 1 | Domain Knowledge Audit | Đánh giá resources/ có đủ domain knowledge? |
+| Chain 2 | Technical Requirements | Phân tích tool, syntax, dependencies |
+| Chain 3 | Task Complexity | Ước lượng effort, phát hiện risks |
+| Chain 4 | Traceability | Đảm bảo every task → design section |
+
+### Deliberation Step
+
+Sau khi 4 chains hoàn thành:
+1. **Synthesize**: Tổng hợp 4 perspectives thành unified plan
+2. **Cross-validate**: Kiểm tra tasks không conflict
+3. **Final output**: todo.md với đầy đủ trace tags
+
+---
 
 ## Step READ — Đọc Input & Audit Tài nguyên
 
@@ -179,14 +267,69 @@ Present the completed todo.md to the user for review.
 
 ## Guardrails
 
+| ID | Rule | Description |
+|----|------|-------------|
 | G1 | Trace required      | Every item in todo.md MUST trace back to `design.md §N`            |
 | G2 | Label sources       | Mark `[TỪ DESIGN §N]` / `[GỢI Ý BỔ SUNG]` / `[TỪ AUDIT TÀI NGUYÊN]` |
 | G3 | No inventing        | Only DECOMPOSE the design — do NOT add new requirements            |
 | G4 | List, don't do      | List knowledge needed → user prepares. Do NOT search/generate      |
 | G5 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
 | G6 | **Resource Gate**   | Planner chỉ được đánh dấu 'Complete' khi `resources/` đã đủ dữ liệu domain để Builder làm việc. |
+| G7 | **CASE System**     | Boot sequence PHẢI chạy check_status.py trước khi tiếp tục |
+| G8 | **Exit Codes**      | validate_gate.py exit 0/1/2 phải được respect |
+
+## CASE System Integration
+
+### PREVENT: State-Aware Boot
+
+Trước khi bắt đầu, Planner phải:
+
+1. **Chạy check_status.py** để đọc status block từ design.md
+2. **Kiểm tra phase**: 
+   - phase=0 → Fresh start
+   - phase=1-3 → Hỏi user: resume hay restart?
+   - phase=4 → Báo đã hoàn thành, gợi ý dùng skill-builder
+3. **Load Tier 2 files** theo triggers cụ thể
+
+### DETECT: Gate Validators
+
+#### Gate 1 Checklist (Planning Start)
+
+```
+- [ ] design.md tồn tại và có frontmatter
+- [ ] §1 Problem Statement có >= 50 words
+- [ ] §3 Zone Mapping không rỗng
+- [ ] confidence >= 70% hoặc [CẦN LÀM RÕ]
+```
+
+#### Gate 2 Checklist (Plan Draft)
+
+```
+- [ ] todo.md đã tạo với đầy đủ 6 sections
+- [ ] §3 Zone Mapping → tasks đã được trace
+- [ ] Phase 0 đã include nếu có resources thiếu
+- [ ] Mỗi task có trace tag
+```
+
+### RECOVER: Rollback & Resume
+
+| Trigger | Action |
+|---------|--------|
+| User reject plan | Rollback to previous phase |
+| Validation fails | Fix and retry (max 3 attempts) |
+| Stale checkpoint (>7 days) | Warning + user confirmation |
 
 ## Error Handling
+
+### Exit Codes (Machine-Readable)
+
+| Exit Code | Meaning | Action |
+|-----------|---------|--------|
+| 0 | PASS/Success | Continue to next step |
+| 1 | FAIL | Fix issue, retry, or report |
+| 2 | EMERGENCY | Stop immediately, report error |
+
+### Error Scenarios
 
 - If `design.md` not found → Report error, suggest running Skill Architect first.
 - If design.md Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping. Cannot plan."
@@ -195,6 +338,7 @@ Present the completed todo.md to the user for review.
   - Required: `knowledge/architect.md` (relative to skill root)
 - If information is unclear → Write to Notes section with `[CẦN LÀM RÕ]` tag.
 - If user asks to write code → Decline. Suggest using `skill-builder` instead.
+- If checkpoint is stale (> 7 days) → Warn user, require explicit confirmation to proceed.
 
 ## Related Skills
 
