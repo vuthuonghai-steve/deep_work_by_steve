@@ -403,6 +403,14 @@ Xác định vị trí trong Master Skill Suite:
 
 ---
 
+## 📚 References
+
+| Reference | Mục đích |
+|-----------|-----------|
+| `references/heavy-thinking-to-design-workflow.md` | Heavy Thinking → CASE System → design.md meta-workflow |
+
+---
+
 ## 📋 Output Specification
 
 **Output duy nhất**: `.skill-context/{skill-name}/design.md`
