@@ -1,0 +1,163 @@
+# Complexity Matrix — Assessment Criteria and Adaptation Rules
+
+> Determine feature complexity to adapt phase structure and validation rigor
+
+---
+
+## Complexity Levels
+
+### Level: LOW
+
+**Characteristics**:
+| Criterion | Threshold |
+|-----------|-----------|
+| Entity count | 1 |
+| Endpoint count | ≤3 |
+| Sub-flows | 0 |
+| Status states | ≤2 |
+| Business rules | ≤5 |
+| External integrations | 0 |
+
+**Phase Structure**: P1 → P2 → P4 (skip Phase 3)
+
+**Validation Rigor**: Minimal
+- Skip B4-B5 checks (no complex flow validation)
+- Skip sub-phase splitting
+- Reduced diagram requirements (1 sequence diagram sufficient)
+
+**Example Use Cases**:
+- Simple CRUD with 1 entity (e.g., "contact form submissions")
+- Read-only data display (e.g., "product catalog")
+- Single action with no state (e.g., "newsletter signup")
+
+---
+
+### Level: MEDIUM
+
+**Characteristics**:
+| Criterion | Threshold |
+|-----------|-----------|
+| Entity count | 2-3 |
+| Endpoint count | 4-10 |
+| Sub-flows | 1-2 |
+| Status states | 3-5 |
+| Business rules | 6-15 |
+| External integrations | 1-2 |
+
+**Phase Structure**: P1 → P2 → P3 → P4
+
+**Validation Rigor**: Standard
+- All Category A, B, C rules apply
+- All diagrams required (sequence, activity, state, dataflow, error)
+- Cross-reference validation mandatory
+
+**Example Use Cases**:
+- E-commerce order management (Order, Payment, Shipping entities)
+- User authentication system (User, Session, RefreshToken)
+- Content management with workflow (Article, Category, Media)
+
+---
+
+### Level: HIGH
+
+**Characteristics**:
+| Criterion | Threshold |
+|-----------|-----------|
+| Entity count | 4+ |
+| Endpoint count | 10+ |
+| Sub-flows | 3+ |
+| Status states | 6+ |
+| Business rules | 15+ |
+| External integrations | 3+ |
+
+**Phase Structure**: P1 → P2 → P3 → P4 + sub-phase splitting
+
+**Validation Rigor**: Maximum
+- All rules apply
+- Sub-phase splitting for complex entities
+- Additional consistency checks
+- May require separate spec documents per sub-feature
+
+**Example Use Cases**:
+- Multi-vendor marketplace (Seller, Buyer, Product, Order, Payment, Shipping, Dispute)
+- Complex CRM with automation (Lead, Opportunity, Contact, Account, Task, Workflow)
+- Real-time collaboration system (Document, Session, User, Activity, Notification)
+
+---
+
+## Assessment Flow
+
+```
+Start: Assess Feature Complexity
+          │
+          ▼
+┌─────────────────────────┐
+│ Count Entities          │
+│ Count Endpoints         │
+│ Count Sub-flows         │
+│ Count Status States     │
+│ Count Business Rules   │
+│ Count External Integ.   │
+└───────────┬─────────────┘
+            │
+            ▼
+┌─────────────────────────────────────────────────────┐
+│ Apply Thresholds:                                   │
+│   Entity count = 1 AND Endpoint ≤ 3 → LOW          │
+│   Entity count 2-3 AND Endpoint 4-10 → MEDIUM      │
+│   Entity count 4+ OR Endpoint > 10 → HIGH           │
+└───────────────────────────┬───────────────────────┘
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │ Complexity:   │
+                    │ LOW|MEDIUM|HIGH │
+                    └───────────────┘
+                            │
+                            ▼
+                    Apply Phase Rules
+```
+
+---
+
+## Complexity Override
+
+User can override complexity assessment:
+
+```yaml
+# In tasks.md
+complexity_override:
+  declared: HIGH  # User's declared complexity
+  reason: "Project requires sub-phase splitting despite low entity count"
+  approved_by: <user or architect>
+```
+
+**Override Triggers**:
+- User explicitly states complexity level
+- Architectural decision requiring additional rigor
+- Skill-builder feedback indicating under-specification
+
+---
+
+## Phase Adaptation by Complexity
+
+| Phase | LOW | MEDIUM | HIGH |
+|-------|-----|--------|------|
+| Phase 1: api.json | Full | Full | Full + sub-specs |
+| Phase 2: business.md | Simplified sections | Full | Full + sub-specs |
+| Phase 3: flow.md | Skip | 1-2 diagrams | 3+ diagrams |
+| Phase 4: tasks.md | Minimal phases | Full phases | Sub-phase splitting |
+| Phase 5: Completeness | Basic check | Full check | Full + sub-spec checks |
+
+---
+
+## Risk Scaling by Complexity
+
+| Risk | LOW | MEDIUM | HIGH |
+|------|-----|--------|------|
+| Ambiguity blindness | Medium | High | Very High |
+| Inconsistency drift | Low | Medium | High |
+| Traceability gap | Low | Medium | High |
+| skill-builder handoff | Low | Medium | High |
+
+**Mitigation**: Increase validation rigor with complexity

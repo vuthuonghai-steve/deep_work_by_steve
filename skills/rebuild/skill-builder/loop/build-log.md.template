@@ -55,5 +55,22 @@ quality_metrics:
 
 ## Feedback
 
-- **To Planner**: None recorded.
-- **To Architect**: None recorded.
+### Upstream Feedback
+
+|| ID | Type | Blocks Build? | Source | Issue | Required Upstream Action | Status |
+|---|---|---|---|---|---|---|
+|| FB-001 | DESIGN | yes/no | design.md §N | Mô tả vấn đề | Architect revise §N | OPEN/RESOLVED |
+
+- **To Planner**: Record issues that Planner needs to address.
+- **To Architect**: Record design issues that Architect needs to address.
+
+### Status Enum
+
+| Status | Meaning |
+|--------|---------|
+| READY_FOR_BUILD | All blockers resolved, ready for Builder |
+| BLOCKED_BY_DESIGN | Design issue blocks build |
+| BLOCKED_BY_PLAN | Plan issue blocks build |
+| BLOCKED_BY_RESOURCES | Resource missing blocks build |
+| BUILT_WITH_WARNINGS | Built but has warnings |
+| COMPLETE | Build successful |

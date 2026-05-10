@@ -27,6 +27,7 @@ class TodoValidator:
         "## 3. Knowledge & Resources Needed",
         "## 4. Definition of Done",
         "## 5. Notes",
+        "## 6. Builder Feedback Integration",
     ]
 
     OPTIONAL_SECTIONS = [
@@ -93,24 +94,28 @@ class TodoValidator:
 
     def _validate_trace_tags(self, content: str):
         """Check that all tasks have trace tags."""
-        # Find all task items
-        tasks = re.findall(r"- \[ \] (.+)$", content, re.MULTILINE)
+        # Find all task items in markdown tables (format: | id | description | ... | trace_tag |)
+        # Also find markdown checkbox items: - [ ] task description [TAG]
+        tasks_in_tables = re.findall(r"\|[^|\n]+[^|\n]*\[([^\]]+)\][^\n]*\|", content)
+        tasks_in_checkboxes = re.findall(r"- \[ \] ([^\[]+)\[([^\]]+)\]", content)
 
-        for task in tasks:
-            task = task.strip()
-            if not task:
-                continue
-
-            # Check if task has a trace tag
-            has_tag = any(tag in task for tag in self.TRACE_TAGS)
-            if not has_tag:
-                self.warnings.append(f"Task may be missing trace tag: '{task[:50]}...'")
+        for tag in tasks_in_tables + tasks_in_checkboxes:
+            if isinstance(tag, tuple):
+                trace_tag = f"[{tag[1]}]"
+            else:
+                trace_tag = f"[{tag}]"
+            has_valid_tag = any(
+                tag in trace_tag for tag in self.TRACE_TAGS
+            )
+            if not has_valid_tag:
+                self.warnings.append(f"Task may be missing valid trace tag: '{trace_tag}'")
 
     def _validate_priorities(self, content: str):
-        """Validate priority values."""
-        priorities = re.findall(r"(?i)(priority[:\s]+)(\w+)", content)
+        """Validate priority values in markdown tables."""
+        # Match Priority column in tables: | ... | Critical | ... | or **Priority**: Critical
+        priorities = re.findall(r"(?:\*\*Priority\*\*:\s*|\bPriority\b[:\s]+)(\w+)", content, re.IGNORECASE)
 
-        for _, priority in priorities:
+        for priority in priorities:
             if priority.capitalize() not in self.PRIORITIES:
                 self.warnings.append(f"Invalid priority value: {priority}")
 
@@ -152,10 +157,19 @@ class TodoValidator:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python validate-todo.py <path-to-todo.md>")
+        print("Usage: python validate-todo.py <path-to-todo.md> [--design <path-to-design.md>]")
         sys.exit(2)
 
     filepath = sys.argv[1]
+    
+    # Optional --design flag for cross-reference validation
+    design_path = None
+    if "--design" in sys.argv:
+        idx = sys.argv.index("--design")
+        if idx + 1 < len(sys.argv):
+            design_path = sys.argv[idx + 1]
+            print(f"Cross-referencing design.md: {design_path}")
+
     validator = TodoValidator(filepath)
 
     if validator.validate():
