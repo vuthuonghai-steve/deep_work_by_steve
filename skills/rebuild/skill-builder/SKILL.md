@@ -91,6 +91,16 @@ Read all inputs and assess feasibility:
 
 Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into `.skill-context/{skill-name}/design.md` §Clarifications.
 
+**Trace Tag Scanning Rules:**
+Builder phải scan đúng 4 trace tags chuẩn:
+- `[TỪ DESIGN §N]` — derived directly from design.md section N
+- `[TỪ AUDIT TÀI NGUYÊN]` — generated because a required resource was missing
+- `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
+- `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
+
+Legacy tags (fail trên validator):
+- `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
+
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
 ## Phase 3: BUILD (Phase-Driven)

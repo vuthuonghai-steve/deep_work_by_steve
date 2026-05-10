@@ -65,7 +65,7 @@ VALID_PATTERNS = [
 
 # Known typo variants for helpful error messages
 KNOWN_TYPOS = {
-    "[CẦN LÀM RÕ]": "'CẦU' should be 'CẦN'",
+    "[CẦU LÀM RÕ]": "'CẦU' should be 'CẦN'",
     "[TỪ AUDIT TÀI NGUYÊN]": "Missing 'N' in NGUYÊN (should be NGUYÊN)",
     "[GỢI BỔ SUNG]": "Missing 'Ý' after 'GỢI'",
     "[GỢI Ý BỔ XUNG]": "'XUNG' should be 'SUNG'",

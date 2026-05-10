@@ -240,3 +240,7 @@ Files created:
 
 - **skill-architect** — Design new skills
 - **skill-builder** — Build skill packages
+
+## References
+
+- `references/skill-suite-upgrade-pitfalls.md` — Common pitfalls when upgrading skill suites (trusting prior summaries, incomplete verification, docs/raw/ not read)

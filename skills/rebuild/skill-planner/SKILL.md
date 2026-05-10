@@ -96,6 +96,7 @@ For EACH Zone that has content in **design.md §3 Zone Mapping** (specifically r
 
 3. **Tier 3 — Packaging**: How to map this into the specific zone of the agent skill?
    - Read `Files cần tạo` from §3. Generate explicit Tasks for Builder to create exactly these files.
+   - **Data Zone**: If §3 lists files under `data/` zone (e.g., `data/config.yaml`, `data/schema.json`), create a Task for Builder to create `data/` directory and populate these files per design specification.
 
 Apply the **Conversion Checklist** for specific design sections:
 - **§6 Interaction Points**: Create Tasks to implement templates or prompts for user interaction points.
@@ -147,43 +148,13 @@ The file MUST contain exactly 6 sections:
   - 4-8 hours: Complex knowledge documents
   - 8-16 hours: Full zone implementation
 
-  **Dependency Detection**:
-  - Task A depends on Task B when:
-    - Task A needs output of Task B
-    - Task A references file created by Task B
-    - Task A must happen after Task B temporally 
+**Dependency Detection**:
+- Task A depends on Task B when:
+- Task A needs output of Task B
+- Task A references file created by Task B
+- Task A must happen after Task B temporally
 
-## 3. Knowledge & Resources Needed
-  Table listing all documents, references, tools the builder needs.
-
-## 4. Definition of Done
-  Checklist of completion criteria. Must include checking that all files specified in §3 are created.
-
-## 5. Notes
-  Open questions, things to clarify, supplementary suggestions.
-  Items from design.md §9 (Open Questions) → migrate here, mark [CẦN LÀM RÕ].
-
-## 6. Builder Feedback Integration
-
-### Success Criteria
-- [ ] skill-builder có thể start ngay sau khi nhận design.md + todo.md
-- [ ] Tất cả files trong §3 Zone Mapping đã được ánh xạ thành task cụ thể
-- [ ] Resources đủ "rich" để Builder không cần hỏi thêm domain knowledge
-
-### Known Gaps (for Builder)
-Liệt kê những điểm Builder cần tự quyết định:
-- [ ] ...
-- [ ] ...
-
-### Pre-implementation Checklist
-Trước khi bàn giao cho Builder, đảm bảo:
-- [ ] Todo.md có đủ thông tin để Builder bắt đầu
-- [ ] Tất cả Priority/Critical tasks đã được đánh dấu rõ
-- [ ] Dependencies giữa các task đã được xác định
-- [ ] Resources trong resources/ đã được audit là "Rich"
-```
-
-### Trace Tag Format
+## Step VERIFY
 Every item MUST end with a trace tag:
 - `[TỪ DESIGN §N]` — derived directly from design.md section N
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md

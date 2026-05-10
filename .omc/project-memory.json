@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778238075346,
+  "lastScanned": 1778327232518,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -35,7 +35,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1778238075343,
+      "lastAccessed": 1778327232514,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -48,7 +48,7 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 1,
-      "lastAccessed": 1778238075345,
+      "lastAccessed": 1778327232517,
       "keyFiles": [
         "rebuild-skill-suite-remediation-guide.md"
       ]
@@ -57,7 +57,7 @@
       "path": "info_temp",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1778238075346,
+      "lastAccessed": 1778327232517,
       "keyFiles": [
         "data.json",
         "data.yaml",
@@ -69,17 +69,18 @@
     "knowledge": {
       "path": "knowledge",
       "purpose": null,
-      "fileCount": 1,
-      "lastAccessed": 1778238075346,
+      "fileCount": 2,
+      "lastAccessed": 1778327232517,
       "keyFiles": [
-        "README.md"
+        "README.md",
+        "index.md"
       ]
     },
     "skills": {
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778238075346,
+      "lastAccessed": 1778327232517,
       "keyFiles": []
     }
   },

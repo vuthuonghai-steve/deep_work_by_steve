@@ -402,7 +402,7 @@ Xác định vị trí trong Master Skill Suite:
 
 **Output duy nhất**: `.skill-context/{skill-name}/design.md`
 
-Cấu trúc bắt buộc 10 sections:
+|Cấu trúc bắt buộc 12 sections:|
 
 | # | Section | Mục đích | Ghi sau Phase |
 |---|---------|---------|---------------|

@@ -151,13 +151,15 @@ def safe_create_file(filepath: Path, content: str) -> str:
 
 
 def main() -> int:
-    # --- Argument parsing ---
-    if len(sys.argv) != 2:
-        print("Usage: python init_context.py <skill-name>")
-        print("  skill-name must be kebab-case (e.g., my-api-analyzer)")
-        return 1
-
-    skill_name = sys.argv[1]
+    import argparse
+    parser = argparse.ArgumentParser(description="Initialize .skill-context/{skill-name}/ directory structure")
+    parser.add_argument("skill_name", help="Skill name in kebab-case (e.g., my-api-analyzer)")
+    parser.add_argument("--project-root", default=None, help="Project root path (default: auto-detect)")
+    parser.add_argument("--context-dir", default=None, help="Context directory path (default: {project-root}/.skill-context/{skill-name})")
+    parser.add_argument("--skills-root", default=None, help="Skills root path (default: parent of skill-architect)")
+    args = parser.parse_args()
+    
+    skill_name = args.skill_name
 
     if not validate_skill_name(skill_name):
         print(f"Error: '{skill_name}' is not valid kebab-case.")
@@ -172,18 +174,25 @@ def main() -> int:
     except RuntimeError as e:
         print(f"[BOOT WARNING] {e}", file=sys.stderr)
 
-    # --- Detect project root ---
-    project_root = find_project_root(Path.cwd())
-    if project_root is None:
-        print("Error: Could not find .claude/ directory.")
-        print("  Run this script from within the project directory.")
-        return 1
+    # --- Detect project root (supports --project-root override) ---
+    if args.project_root:
+        project_root = Path(args.project_root)
+    else:
+        project_root = find_project_root(Path.cwd())
+        if project_root is None:
+            print("Error: Could not find .claude/ directory.")
+            print("  Run this script from within the project directory.")
+            return 1
 
     print(f"Project root: {project_root}")
 
-    # --- Resolve paths ---
-    context_root = project_root / ".skill-context"
-    skill_context_dir = context_root / skill_name
+    # --- Resolve paths (supports --context-dir and --skills-root overrides) ---
+    if args.context_dir:
+        context_root = Path(args.context_dir).parent
+        skill_context_dir = Path(args.context_dir)
+    else:
+        context_root = project_root / ".skill-context"
+        skill_context_dir = context_root / skill_name
     resources_dir = skill_context_dir / "resources"
     templates_dir = script_dir.parent / "templates"
 

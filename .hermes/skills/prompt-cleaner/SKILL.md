@@ -74,6 +74,7 @@ Phase 3: Verify ✓ ──────────► (starts after Task 1 Phase
 - [`knowledge/claude-code-prompt-patterns.md`](knowledge/claude-code-prompt-patterns.md) — tag syntax reference, ${VAR} patterns, NEVER/IMPORTANT rules
 - [`templates/cleaned-prompt.xml.template`](templates/cleaned-prompt.xml.template) — 5 standard templates for output format
 - [`loop/clean-checklist.md`](loop/clean-checklist.md) — 6-item validation checklist before output
+- [`references/agent-delegation.md`](references/agent-delegation.md) — running Claude Code/Codex as subagents, timeout handling
 
 ### Tier 3: Project Context (Dynamic — auto-detect per project)
 
@@ -169,6 +170,22 @@ Chỉ dùng tags từ `data/tag-reference.yaml`.
 | **G3** | Tag whitelist | Chỉ dùng tags từ `data/tag-reference.yaml` |
 | **G4** | Goal-first | Bắt buộc xác định `<goal>` trước mọi tag khác |
 | **G5** | AskUserQuestion khi confidence < 40% | Hỏi user bổ sung, không tự đoán |
+| **G6** | Delegate implementation | Dùng `delegate_task` cho Claude Code/Codex thay vì tự làm (self-do) mọi thứ qua terminal |
+
+## Pitfalls (Discovered)
+
+| ID | Pitfall | Lesson |
+|----|---------|--------|
+| **P1** | Tự làm thay vì delegate | Với skill suite upgrade, nên delegate cho Claude Code/Codex, chỉ dùng terminal cho verify |
+| **P2** | Không verify prior session claims | Luôn verify claims từ session trước bằng cách đọc files thực tế |
+| **P3** | Bỏ qua docs/raw/ | Đọc raw docs TRƯỚC khi bắt đầu implement để có đầy đủ context |
+| **P4** | `delegate_task` syntax errors | `acp_command` and `acp_args` caused "unknown option" errors. Fallback: use terminal tool to run Claude Code/Codex directly, and use patch tool for file edits. delegate_task with only `goal`, `context`, `toolsets` works without these options. |
+| **P5** | Subagent timeout causes partial work | When agent times out (600s), ALWAYS check what files were actually created vs what was planned. Don't assume nothing was done — use `find`, `ls`, `git status` to verify. |
+| **P6** | Regression after fix | When creating test infrastructure that depends on validators, the fix for P1-05 (typo) regressed because new test expected old behavior. Always re-run pytest after test creation to catch regressions. |
+| **P7** | Conftest corruption via patching | Large conftest.py files are easily corrupted by repeated patches. If conftest.py has syntax errors after patches, consider regenerating from scratch with `write_file` instead of multiple patches. |
+| **P8** | Incomplete Phase verification | Previous session claimed "Task X already correct" but it wasn't. ALWAYS do fresh verification with actual file reads — don't trust session summaries alone. |
+| **P9** | Coordinator role: don't self-implement | User explicitly wants coordinator/delegate pattern: delegate to Claude Code/Codex, verify results, don't do everything via terminal yourself. |
+| **P10** | Subagent completes without web research | `delegate_task` with `toolsets: ["web"]` can return without actually searching — agent echoes task description instead of running web searches. When delegating research tasks, ALWAYS verify the agent actually searched. If it returns immediately without actual tool calls, fall back to using `browser_navigate` directly for web research. |
 
 ---
 
