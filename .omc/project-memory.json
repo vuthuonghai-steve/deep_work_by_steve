@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778639547100,
+  "lastScanned": 1778763872520,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -35,7 +35,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1778639547092,
+      "lastAccessed": 1778763872518,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -47,21 +47,15 @@
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 10,
-      "lastAccessed": 1778639547094,
-      "keyFiles": [
-        "audit-issues-inventory.md",
-        "chain-04-guardrails-anti-hallucination-analysis.md",
-        "chain-05-handoff-quality-analysis.md",
-        "chain-06-dead-features-analysis.md",
-        "chain-07-complexity-llm-capability-analysis.md"
-      ]
+      "fileCount": 0,
+      "lastAccessed": 1778763872519,
+      "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1778639547094,
+      "lastAccessed": 1778763872519,
       "keyFiles": [
         "data.json",
         "data.yaml",
@@ -74,7 +68,7 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778639547094,
+      "lastAccessed": 1778763872520,
       "keyFiles": [
         "README.md",
         "index.md"
@@ -84,7 +78,7 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778639547094,
+      "lastAccessed": 1778763872520,
       "keyFiles": []
     }
   },
@@ -112,6 +106,48 @@
       "accessCount": 1,
       "lastAccessed": 1778238113765,
       "type": "directory"
+    },
+    {
+      "path": ".hermes/skills/skill-planner/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764272165,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/skill-planner/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764272203,
+      "type": "file"
+    },
+    {
+      "path": ".hermes/skills/skill-architect/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764272221,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/skill-architect/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764272272,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/_shared/knowledge/framework.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764282075,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/skill-architect/knowledge/architect.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764301456,
+      "type": "file"
+    },
+    {
+      "path": ".claude/skills/skill-planner/knowledge/skill-packaging.md",
+      "accessCount": 1,
+      "lastAccessed": 1778764301515,
+      "type": "file"
     }
   ],
   "userDirectives": []
