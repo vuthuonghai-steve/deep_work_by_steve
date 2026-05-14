@@ -61,20 +61,22 @@ progressive_disclosure:
 ## 🚀 Boot Sequence (MANDATORY — Thực hiện ĐÚNG THỨ TỰ)
 
 ### Step 1: Read SKILL.md
+
 - [ ] Đọc `SKILL.md` này toàn bộ
 - [ ] Nắm workflow và guardrails
 
 ### Step 2: Check design.md exists
+
 - [ ] Verify `.skill-context/{skill-name}/design.md` tồn tại
 - [ ] Nếu không có → báo lỗi: cần chạy skill-architect trước
 
 ### Step 3: Determine Position
 
-| phase | Position | Action |
-|-------|----------|--------|
-| 0 | Fresh start | Proceed to Step READ |
-| 1-3 | Resume available | Ask user: resume or restart? |
-| 4 | Complete | Report: "Todo.md already exists. Use skill-builder." |
+| phase | Position         | Action                                               |
+| ----- | ---------------- | ---------------------------------------------------- |
+| 0     | Fresh start      | Proceed to Step READ                                 |
+| 1-3   | Resume available | Ask user: resume or restart?                         |
+| 4     | Complete         | Report: "Todo.md already exists. Use skill-builder." |
 
 ### Step 4: Proceed to Step READ
 
@@ -97,16 +99,17 @@ Planner sử dụng **Multi-Perspective Analysis** để phân tích design.md t
 
 ### 4 Analysis Perspectives
 
-| Perspective | Focus Area | Purpose |
-|-------|------------|---------|
+| Perspective   | Focus Area             | Purpose                                     |
+| ------------- | ---------------------- | ------------------------------------------- |
 | Perspective 1 | Domain Knowledge Audit | Đánh giá resources/ có đủ domain knowledge? |
-| Perspective 2 | Technical Requirements | Phân tích tool, syntax, dependencies |
-| Perspective 3 | Task Complexity | Ước lượng effort, phát hiện risks |
-| Perspective 4 | Traceability | Đảm bảo every task → design section |
+| Perspective 2 | Technical Requirements | Phân tích tool, syntax, dependencies        |
+| Perspective 3 | Task Complexity        | Ước lượng effort, phát hiện risks           |
+| Perspective 4 | Traceability           | Đảm bảo every task → design section         |
 
 ### Synthesis Step
 
 Sau khi phân tích từ 4 góc nhìn:
+
 1. **Synthesize**: Tổng hợp 4 perspectives thành unified plan
 2. **Cross-validate**: Kiểm tra tasks không conflict
 3. **Final output**: todo.md với đầy đủ trace tags
@@ -118,7 +121,6 @@ Sau khi phân tích từ 4 góc nhìn:
 Read all available input sources and audit current state:
 
 1. **Master Design** (REQUIRED): Refer to `knowledge/architect.md` (the 7-Zone framework reference) and read `.skill-context/{skill-name}/design.md` to understand the overarching standards.
-   
 2. **design.md** (REQUIRED): Read `.skill-context/{skill-name}/design.md`.
    - Extract Zone Mapping (§3) and Capability Map (§2) as the primary analysis targets.
 
@@ -147,6 +149,7 @@ For EACH Zone that has content in **design.md §3 Zone Mapping** (specifically r
    - **Data Zone**: If §3 lists files under `data/` zone (e.g., `data/config.yaml`, `data/schema.json`), create a Task for Builder to create `data/` directory and populate these files per design specification.
 
 Apply the **Conversion Checklist** for specific design sections:
+
 - **§6 Interaction Points**: Create Tasks to implement templates or prompts for user interaction points.
 - **§7 Progressive Disclosure Plan**: For files listed as Tier 1 (Mandatory) vs Tier 2 (Conditional), create a Task for Builder to document this boot sequence in `SKILL.md`.
 - **§8 Risks & Blind Spots**: Create a Task to build strict `loop/` checklists to mitigate these exact risks.
@@ -181,20 +184,22 @@ The file MUST contain exactly 6 sections:
   (Required only if there is upstream feedback to address)
 
   Each task:
-  ```
-  - [ ] Task description [TỪ DESIGN §N] hoặc [TỪ AUDIT TÀI NGUYÊN]
-  ```
+```
 
-  **Priority Guidelines**:
-  - **Critical**: Tasks that block other tasks or are core to skill functionality
-  - **High**: Important tasks that should be done early
-  - **Medium**: Standard tasks
-  - **Low**: Nice-to-have tasks, can be done later
+- [ ] Task description [TỪ DESIGN §N] hoặc [TỪ AUDIT TÀI NGUYÊN]
 
-  **Est. Hours Guidelines**:
-  - 1-2 hours: Simple file creation
-  - 4-8 hours: Complex knowledge documents
-  - 8-16 hours: Full zone implementation
+```
+
+**Priority Guidelines**:
+- **Critical**: Tasks that block other tasks or are core to skill functionality
+- **High**: Important tasks that should be done early
+- **Medium**: Standard tasks
+- **Low**: Nice-to-have tasks, can be done later
+
+**Est. Hours Guidelines**:
+- 1-2 hours: Simple file creation
+- 4-8 hours: Complex knowledge documents
+- 8-16 hours: Full zone implementation
 
 **Dependency Detection**:
 - Task A depends on Task B when:
@@ -214,7 +219,7 @@ Every item MUST end with a trace tag:
 Sau khi viết `todo.md`, Planner thực hiện bước tự kiểm tra cuối cùng:
 
 1. **Resource Integrity Check**: Đối chiếu bảng Pre-requisites với thực tế `resources/`.
-   - Nếu bất kỳ tài nguyên Sống còn (Crucial) nào ghi `Status: ⬜`, Planner PHẢI thông báo: "Kế hoạch sẽ bắt đầu từ Phase 0 để chuẩn bị tài nguyên. Xin mời bổ sung."
+ - Nếu bất kỳ tài nguyên Sống còn (Crucial) nào ghi `Status: ⬜`, Planner PHẢI thông báo: "Kế hoạch sẽ bắt đầu từ Phase 0 để chuẩn bị tài nguyên. Xin mời bổ sung."
 2. **Contract Traceability**: Kiểm tra xem tất cả các file trong §3 "Files cần tạo" đã được ánh xạ thành Task cụ thể chắp nối với `todo.md` chưa.
 3. **DoD Verification**: Đảm bảo bảng Definition of Done có bao hàm việc tạo tất cả các file thiết yếu.
 
@@ -250,8 +255,8 @@ Present the completed todo.md to the user for review.
 - If `design.md` not found → Report error, suggest running Skill Architect first.
 - If design.md Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping. Cannot plan."
 - If knowledge file not found → Report: "Missing knowledge file. Cannot proceed. Please ensure the skill is properly installed."
-  - Required: `knowledge/skill-packaging.md` (relative to skill root)
-  - Required: `knowledge/architect.md` (relative to skill root)
+- Required: `knowledge/skill-packaging.md` (relative to skill root)
+- Required: `knowledge/architect.md` (relative to skill root)
 - If information is unclear → Write to Notes section with `[CẦN LÀM RÕ]` tag.
 - If user asks to write code → Decline. Suggest using `skill-builder` instead.
 - If checkpoint is stale (> 7 days) → Warn user, require explicit confirmation to proceed.
@@ -268,9 +273,13 @@ Input and output live in `.skill-context/{skill-name}/` directory. This director
 **Location:** `<current-working-directory>/.skill-context/{skill-name}/`
 
 ```
+
 .skill-context/{skill-name}/
-├── design.md       ← Skill Architect writes here (INPUT)
-├── todo.md         ← THIS SKILL writes here (OUTPUT)
-├── build-log.md    ← Skill Builder writes here
-└── resources/      ← User-provided reference documents (INPUT)
+├── design.md ← Skill Architect writes here (INPUT)
+├── todo.md ← THIS SKILL writes here (OUTPUT)
+├── build-log.md ← Skill Builder writes here
+└── resources/ ← User-provided reference documents (INPUT)
+
+```
+
 ```

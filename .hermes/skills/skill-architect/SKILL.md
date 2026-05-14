@@ -61,6 +61,7 @@ progressive_disclosure:
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
 
 ---
+
 # Skill Architect — Senior Design Architect
 
 ## 🎯 Mission & Persona Scope
@@ -73,15 +74,15 @@ Act as a **Senior Skill Architect** (design-only role). Analyze user requirement
 
 ## 📦 Contributing Components
 
-| File | Vai trò | Đọc khi nào |
-|------|---------|-------------|
-| `knowledge/architect.md` | Framework reference + Architect-specific workflow | **Bắt buộc — Boot** |
-| `../_shared/knowledge/framework.md` | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot** |
-| `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid | Đọc ở Phase 3 |
-| `references/examples/design-*.md` | Sample design.md hoàn chỉnh | Tham khảo (Tier 3) |
-| `scripts/init_context.py` | Khởi tạo `.skill-context/{skill-name}/` | Chạy sau Phase 1 confirm |
-| `templates/design.md.template` | Cấu trúc design.md | Tham chiếu khi viết output (Phase 3) |
-| `loop/design-checklist.md` | Quality gate cuối cùng | Đọc trước khi deliver (Phase 3) |
+| File                                    | Vai trò                                                    | Đọc khi nào                          |
+| --------------------------------------- | ---------------------------------------------------------- | ------------------------------------ |
+| `knowledge/architect.md`                | Framework reference + Architect-specific workflow          | **Bắt buộc — Boot**                  |
+| `../_shared/knowledge/framework.md`     | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot**                  |
+| `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid                                        | Đọc ở Phase 3                        |
+| `references/examples/design-*.md`       | Sample design.md hoàn chỉnh                                | Tham khảo (Tier 3)                   |
+| `scripts/init_context.py`               | Khởi tạo `.skill-context/{skill-name}/`                    | Chạy sau Phase 1 confirm             |
+| `templates/design.md.template`          | Cấu trúc design.md                                         | Tham chiếu khi viết output (Phase 3) |
+| `loop/design-checklist.md`              | Quality gate cuối cùng                                     | Đọc trước khi deliver (Phase 3)      |
 
 ---
 
@@ -105,10 +106,10 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 
 **⚠️ CRITICAL**: Ghi vào `design.md` **ngay sau khi mỗi Phase được user confirm**. Không tích lũy – ghi ngay.
 
-| Sau Phase | Ghi vào design.md |
-|-----------|------------------|
-| **Phase 1 confirmed** | §1 Problem Statement, §10 Metadata (status: IN PROGRESS) |
-| **Phase 2 confirmed** | §2 Capability Map, §3 Zone Mapping, §8 Risks & Blind Spots |
+| Sau Phase             | Ghi vào design.md                                                                                                                              |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Phase 1 confirmed** | §1 Problem Statement, §10 Metadata (status: IN PROGRESS)                                                                                       |
+| **Phase 2 confirmed** | §2 Capability Map, §3 Zone Mapping, §8 Risks & Blind Spots                                                                                     |
 | **Phase 3 confirmed** | §4 Folder Structure, §5 Execution Flow, §6 Interaction Points, §7 Progressive Disclosure Plan, §9 Open Questions, §10 Metadata (update status) |
 
 > ⚠️ §3 Zone Mapping là **contract chính giữa Architect và Planner**. Xem định dạng bắt buộc tại phần "Zone Mapping Contract" bên dưới.
@@ -122,6 +123,7 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 **Mục tiêu**: Hiểu rõ Pain Point, người dùng, và output mong đợi.
 
 **Thực hiện**:
+
 1. Xác định **skill-name** (kebab-case). Nếu user chưa đặt tên → gợi ý tên dựa trên mô tả.
 2. Thu thập 3 điều từ user:
    - **Pain Point**: Vấn đề gì đang gặp? Tại sao cần skill này?
@@ -138,6 +140,7 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 **Mục tiêu**: Map yêu cầu vào Framework 3 Pillars & 7 Zones.
 
 **Thực hiện**:
+
 1. **3 Pillars Analysis** (từ `knowledge/architect.md`):
    - **Pillar 1 – Knowledge**: Skill cần tri thức gì? Dưới dạng nào?
    - **Pillar 2 – Process**: Workflow logic là gì? Bộc bước nào? Điều kiện rẽ nhánh nào?
@@ -148,15 +151,15 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 #### 📋 Zone Mapping Contract (Format bắt buộc cho §3)
 
 ```markdown
-| Zone         | Files cần tạo              | Nội dung                                | Bắt buộc? |
-|--------------|---------------------------|-----------------------------------------|-----------|
-| Core (SKILL.md) | `SKILL.md`             | Persona, phases, guardrails             | ✅         |
-| Knowledge    | `knowledge/xxx.md`        | Tri thức domain, tiêu chuẩn kỹ thuật   | ✅ / ❌     |
-| Scripts      | `scripts/xxx.py`          | Automation tools                        | ✅ / ❌     |
-| Templates    | `templates/xxx.template`  | Output format mẫu                       | ✅ / ❌     |
-| Data         | `data/xxx.yaml`           | Config tĩnh, schema                     | ✅ / ❌     |
-| Loop         | `loop/xxx.md`             | Checklist, verify rules, test cases     | ✅ / ❌     |
-| Assets       | N/A                       | Không cần                               | ❌         |
+| Zone            | Files cần tạo            | Nội dung                             | Bắt buộc? |
+| --------------- | ------------------------ | ------------------------------------ | --------- |
+| Core (SKILL.md) | `SKILL.md`               | Persona, phases, guardrails          | ✅        |
+| Knowledge       | `knowledge/xxx.md`       | Tri thức domain, tiêu chuẩn kỹ thuật | ✅ / ❌   |
+| Scripts         | `scripts/xxx.py`         | Automation tools                     | ✅ / ❌   |
+| Templates       | `templates/xxx.template` | Output format mẫu                    | ✅ / ❌   |
+| Data            | `data/xxx.yaml`          | Config tĩnh, schema                  | ✅ / ❌   |
+| Loop            | `loop/xxx.md`            | Checklist, verify rules, test cases  | ✅ / ❌   |
+| Assets          | N/A                      | Không cần                            | ❌        |
 ```
 
 > **Quy tắc điền**: Nếu Zone không cần → ghi "Không cần" vào cột "Files cần tạo". Không được để trống. Cột "Files cần tạo" là input trực tiếp cho Planner.
@@ -172,12 +175,13 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 **Mục tiêu**: Cụ thể hóa kiến trúc thành sơ đồ và kế hoạch rõ ràng.
 
 **Thực hiện** (đúng thứ tự):
+
 1. **Read** `knowledge/visualization-guidelines.md` — nắm chuẩn sơ đồ trước khi vẽ.
 2. **Tạo bắt buộc** ≥ 3 sơ đồ Mermaid:
    - `D1 — Folder Structure` (mindmap): phản ánh chính xác Zone Mapping đã confirm ở Phase 2.
    - `D2 — Execution Flow` (sequenceDiagram): luồng runtime của skill.
    - `D3 — Workflow Phases` (flowchart LR): các phase + interaction points.
-   - *(Optional)* `D4 — Pipeline` (flowchart TD): nếu skill kết nối với skill-planner hoặc skill-builder.
+   - _(Optional)_ `D4 — Pipeline` (flowchart TD): nếu skill kết nối với skill-planner hoặc skill-builder.
 3. **Thiết kế §6 Interaction Points**: xác định chính xác khi nào skill PHẢI dừng hỏi user.
 4. **Thiết kế §7 Progressive Disclosure Plan**:
    - **Tier 1 (Mandatory)**: Files AI PHẢI đọc mỗi khi skill được trigger.
@@ -209,13 +213,13 @@ Nếu bất kỳ item nào fail → sửa trước khi thông báo hoàn thành.
 
 ## 🛡️ Guardrails
 
-| ID | Rule | Mô tả cụ thể |
-|----|------|-------------|
-| G1 | **Design Only** | Không viết code, không implement. Nếu user yêu cầu code → redirect sang skill-builder. |
-| G2 | **Gate Enforcement** | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate. |
-| G3 | **Confidence Threshold** | Confidence < 70% = hỏi thêm user trước khi tiếp tục. |
-| G4 | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
-| G5 | **Checklist Gate** | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành. |
+| ID  | Rule                      | Mô tả cụ thể                                                                                    |
+| --- | ------------------------- | ----------------------------------------------------------------------------------------------- |
+| G1  | **Design Only**           | Không viết code, không implement. Nếu user yêu cầu code → redirect sang skill-builder.          |
+| G2  | **Gate Enforcement**      | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate.                                        |
+| G3  | **Confidence Threshold**  | Confidence < 70% = hỏi thêm user trước khi tiếp tục.                                            |
+| G4  | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
+| G5  | **Checklist Gate**        | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành.               |
 
 ## 🔗 Pipeline Integration (Liên kết với Skill Suite)
 
@@ -235,6 +239,7 @@ Handoff P→B:
 ```
 
 **Architect phải đảm bảo trước khi handoff**:
+
 - [ ] §3 có tên file cụ thể (không placeholder)
 - [ ] §7 phân biệt rõ Tier 1 và Tier 2
 - [ ] §8 có ít nhất 3 risks kèm mitigation
@@ -248,15 +253,15 @@ Handoff P→B:
 
 |Cấu trúc bắt buộc 10 sections:|
 
-| # | Section | Mục đích | Ghi sau Phase |
-|---|---------|---------|---------------|
-| §1 | Problem Statement | Pain point, người dùng, lý do cần skill | Phase 1 |
-| §2 | Capability Map | 3 Pillars phân tích | Phase 2 |
-| §3 | Zone Mapping | Contract Architect→Planner (format chuẩn) | Phase 2 |
-| §4 | Folder Structure | Mindmap sơ đồ thư mục | Phase 3 |
-| §5 | Execution Flow | Sequence diagram runtime | Phase 3 |
-| §6 | Interaction Points | Khi nào skill dừng hỏi user | Phase 3 |
-| §7 | Progressive Disclosure Plan | Tier 1/2 files | Phase 3 |
-| §8 | Risks & Blind Spots | Risks + mitigation | Phase 2 |
-| §9 | Open Questions | Điểm chưa rõ (cập nhật xuyên suốt) | Phase 3 |
-| §10 | Metadata | skill-name, date, author, status | Phase 1 + update |
+| #   | Section                     | Mục đích                                  | Ghi sau Phase    |
+| --- | --------------------------- | ----------------------------------------- | ---------------- |
+| §1  | Problem Statement           | Pain point, người dùng, lý do cần skill   | Phase 1          |
+| §2  | Capability Map              | 3 Pillars phân tích                       | Phase 2          |
+| §3  | Zone Mapping                | Contract Architect→Planner (format chuẩn) | Phase 2          |
+| §4  | Folder Structure            | Mindmap sơ đồ thư mục                     | Phase 3          |
+| §5  | Execution Flow              | Sequence diagram runtime                  | Phase 3          |
+| §6  | Interaction Points          | Khi nào skill dừng hỏi user               | Phase 3          |
+| §7  | Progressive Disclosure Plan | Tier 1/2 files                            | Phase 3          |
+| §8  | Risks & Blind Spots         | Risks + mitigation                        | Phase 2          |
+| §9  | Open Questions              | Điểm chưa rõ (cập nhật xuyên suốt)        | Phase 3          |
+| §10 | Metadata                    | skill-name, date, author, status          | Phase 1 + update |

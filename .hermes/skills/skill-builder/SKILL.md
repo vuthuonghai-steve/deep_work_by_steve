@@ -64,6 +64,7 @@ Copy this checklist into your response and mark progress:
 
 ```markdown
 ### [skill-builder] Progress:
+
 - [ ] Phase 1: PREPARE & Evaluate
 - [ ] Phase 2: CLARIFY → [⏸️ Gate: User clarification]
 - [ ] Phase 3: BUILD (Phase-Driven)
@@ -74,6 +75,7 @@ Copy this checklist into your response and mark progress:
 ## Phase 1: PREPARE & Evaluate
 
 **Before starting:**
+
 - Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Anti-hallucination)
 - Read `knowledge/architect.md` — Builder-specific workflow (Tier 2)
 
@@ -84,7 +86,7 @@ Read all inputs and assess feasibility:
 - Read `.skill-context/{skill-name}/resources/` (Domain Data).
 - Read `.skill-context/{skill-name}/data/` if present.
 - Read `.skill-context/{skill-name}/loop/` if present.
-- Build context inventory: classify as `Critical` (design.md, todo.md, resources/*, data/*) or `Supportive` (loop/*).
+- Build context inventory: classify as `Critical` (design.md, todo.md, resources/_, data/_) or `Supportive` (loop/\*).
 - **The Stance**: Audit design, identify phi logic, build mental model of phases.
 
 ## Phase 2: CLARIFY (Closing the Loop)
@@ -93,12 +95,14 @@ Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Ma
 
 **Trace Tag Scanning Rules:**
 Builder phải scan đúng 4 trace tags chuẩn:
+
 - `[TỪ DESIGN §N]` — derived directly from design.md section N
 - `[TỪ AUDIT TÀI NGUYÊN]` — generated because a required resource was missing
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
 - `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
 
 Legacy tags (fail trên validator):
+
 - `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
 
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
@@ -138,19 +142,20 @@ Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/bu
 
 ## Guardrails
 
-| ID | Rule | Description |
-|---|---|---|
-| G1 | **Kỹ sư Phản biện** | Thẩm định design trước build. Quyền sửa logic sai. |
-| G2 | **Phase-driven Build** | Chia BUILD theo Phase todo.md. Mark-as-done từng phase. |
-| G3 | **Log-Notify-Stop** | Lỗi hệ thống → Log → Notify → **DỪNG NGAY**. |
-| G4 | **Source Grounding** | Nội dung 100% từ design/todo/resources. Không ảo giác. |
-| G5 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
-| G6 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
-| G7 | **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
+| ID  | Rule                    | Description                                                          |
+| --- | ----------------------- | -------------------------------------------------------------------- |
+| G1  | **Kỹ sư Phản biện**     | Thẩm định design trước build. Quyền sửa logic sai.                   |
+| G2  | **Phase-driven Build**  | Chia BUILD theo Phase todo.md. Mark-as-done từng phase.              |
+| G3  | **Log-Notify-Stop**     | Lỗi hệ thống → Log → Notify → **DỪNG NGAY**.                         |
+| G4  | **Source Grounding**    | Nội dung 100% từ design/todo/resources. Không ảo giác.               |
+| G5  | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md.                |
+| G6  | **Context Coverage**    | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
+| G7  | **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm.                  |
 
 ## Error Policy
 
 If critical command fails:
+
 1. Append error to `loop/build-log.md`.
 2. Use **AskUserQuestion** to notify blockage.
 3. **STOP** all tasks. Exit session.
@@ -174,8 +179,8 @@ Output (skill folder):
 skill-name/
 ├── SKILL.md
 ├── knowledge/
-│   ├── architect.md
-│   └── standards.md
+│ ├── architect.md
+│ └── standards.md
 ```
 
 **Example 2 — Placeholder Tracking:**
