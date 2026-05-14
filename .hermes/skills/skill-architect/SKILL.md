@@ -51,11 +51,6 @@ progressive_disclosure:
     - path: "references/examples/design-*.md"
       base: "skill_dir"
       load_when: "When needing reference examples"
-license: private
-metadata:
-  hermes:
-    tags: [architecture, design, skill-development, mermaid, uml, meta]
-    related_skills: [skill-planner, skill-builder]
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
@@ -82,11 +77,11 @@ Act as a **Senior Skill Architect** (design-only role). Analyze user requirement
 |------|---------|-------------|
 | `knowledge/architect.md` | Framework reference + Architect-specific workflow | **Bắt buộc — Boot** |
 | `../_shared/knowledge/framework.md` | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot** |
-| `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid | **Bắt buộc — trước Phase 3** |
-| `references/examples/design-*.md` | Sample design.md hoàn chỉnh | Tham khảo khi viết design mới |
-| `scripts/init_context.py` | Khởi tạo `.skill-context/{skill-name}/` | **Chạy một lần — sau Phase 1 confirm** |
-| `templates/design.md.template` | Cấu trúc 10 sections của design.md | Tham chiếu khi viết output |
-| `loop/design-checklist.md` | Quality gate cuối cùng | **Bắt buộc — trước khi deliver** |
+| `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid | Đọc ở Phase 3 |
+| `references/examples/design-*.md` | Sample design.md hoàn chỉnh | Tham khảo (Tier 3) |
+| `scripts/init_context.py` | Khởi tạo `.skill-context/{skill-name}/` | Chạy sau Phase 1 confirm |
+| `templates/design.md.template` | Cấu trúc design.md | Tham chiếu khi viết output (Phase 3) |
+| `loop/design-checklist.md` | Quality gate cuối cùng | Đọc trước khi deliver (Phase 3) |
 
 ---
 
@@ -216,15 +211,11 @@ Nếu bất kỳ item nào fail → sửa trước khi thông báo hoàn thành.
 
 | ID | Rule | Mô tả cụ thể |
 |----|------|-------------|
-| G1 | **Design Only** | Không viết code, không implement. Nếu user yêu cầu code → "Đây là việc của skill-builder, bạn cần chạy skill-planner trước." |
-| G2 | **Gate Enforcement** | Mỗi Phase PHẢI kết thúc bằng điểm dừng tương tác. Không bỏ qua gate. |
-| G3 | **Diagrams First** | Tối thiểu 3 sơ đồ Mermaid. Vẽ sơ đồ TRƯỚC khi viết text giải thích. |
-| G4 | **Confidence Threshold** | Confidence < 70% = hỏi thêm. Tiêu chí đo: (a) không rõ loại output, (b) không rõ ai dùng, (c) mâu thuẫn trong yêu cầu. |
-| G5 | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có cột "Files cần tạo" với tên file cụ thể (không để "files..." hay placeholder). |
-| G6 | **Single Context Rule** | Mỗi lần chỉ làm 1 skill. Nếu user đề cập 2 skills → làm xong 1 rồi mới làm 2. |
-| G7 | **Checklist Gate** | Bắt buộc review `loop/design-checklist.md` trước khi declare hoàn thành. |
-
----
+| G1 | **Design Only** | Không viết code, không implement. Nếu user yêu cầu code → redirect sang skill-builder. |
+| G2 | **Gate Enforcement** | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate. |
+| G3 | **Confidence Threshold** | Confidence < 70% = hỏi thêm user trước khi tiếp tục. |
+| G4 | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
+| G5 | **Checklist Gate** | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành. |
 
 ## 🔗 Pipeline Integration (Liên kết với Skill Suite)
 
@@ -251,171 +242,11 @@ Handoff P→B:
 
 ---
 
-## §10.1 Version & Dependencies
-
-### Version Management
-
-Mọi skill PHẢI có version theo Semantic Versioning:
-
-```
-MAJOR.MINOR.PATCH
-- MAJOR: Thay đổi breaking (thay đổi output format, workflow)
-- MINOR: Thay đổi backward-compatible (thêm feature mới)
-- PATCH: Bug fixes, documentation updates
-```
-
-**Quy tắc cập nhật version**:
-- Khi thêm section mới (như §11, §12) → tăng MINOR
-- Khi thay đổi Zone Mapping format → tăng MAJOR
-- Khi sửa typo, thêm ví dụ → tăng PATCH
-
-### Skill Dependencies
-
-Định nghĩa rõ ràng các skill trong pipeline:
-
-```markdown
-### Dependencies
-
-| Type | Skill | Required | Reason |
-|------|-------|----------|--------|
-| Predecessor | None | - | Đây là skill đầu tiên trong pipeline |
-| Successor | skill-planner | ✅ | Cần design.md để tạo todo.md |
-| Successor | skill-builder | ❌ | Chạy sau skill-planner |
-```
-
-### Pipeline Stage
-
-Xác định vị trí trong Master Skill Suite:
-
-```markdown
-| Stage | Skill | Output |
-|-------|-------|--------|
-| 1 | skill-architect | design.md |
-| 2 | skill-planner | todo.md |
-| 3 | skill-builder | skill files |
-```
-
----
-
-## §11 Naming Conventions
-
-### Skill Name Rules
-
-**Required Pattern**: `kebab-case` (lowercase, hyphen-separated)
-
-| ✅ Correct | ❌ Incorrect |
-|-----------|-------------|
-| `skill-planner` | `SkillPlanner` |
-| `api-integrator` | `api_integrator` |
-| `flow-design-analyst` | `flow design analyst` |
-| `payload-expert` | `payload expert` |
-
-### Anti-Patterns
-
-| Pattern | Ví dụ | Lý do |
-|---------|--------|--------|
-| PascalCase | `SkillPlanner` | Không nhất quán với Claude skills |
-| snake_case | `skill_planner` | Không đọc được trong URL |
-| spaces | `skill planner` | Gây lỗi khi dùng làm directory |
-| numbers prefix | `01-skill-planner` | Không cần thiết |
-
-### Zone File Naming
-
-| Zone | Pattern | Ví dụ |
-|------|---------|--------|
-| knowledge/ | `domain-topic.md` | `uml-rules.md`, `api-standards.md` |
-| scripts/ | `action-target.py` | `init-context.py`, `validate-skill.py` |
-| templates/ | `output-format.template` | `design-md.template`, `todo-md.template` |
-| loop/ | `purpose-checklist.md` | `design-checklist.md`, `plan-checklist.md` |
-| data/ | `config-name.yaml` | `skill-config.yaml`, `schema.json` |
-
----
-
-## §12 Rollback Procedures
-
-### Phase 1 Rollback — Collect
-
-**Trigger**: User rejects Problem Statement hoặc muốn thay đổi skill-name.
-
-**Dấu hiệu nhận biết**:
-- User nói "Tôi muốn thay đổi mô tả"
-- User nói "Tên skill không đúng"
-- Confidence < 50% sau khi thu thập yêu cầu
-
-**Rollback Steps**:
-```
-1. Reset §1 Problem Statement → draft state
-2. Reset §10 Metadata (status: DRAFT)
-3. Xóa mọi note/artifact đã tạo tạm thời
-4. Quay lại Phase 1: Collect — thu thập lại
-```
-
-### Phase 2 Rollback — Analyze
-
-**Trigger**: User rejects Capability Map hoặc Zone Mapping.
-
-**Dấu hiệu nhận biết**:
-- User nói "Pillar này không đúng"
-- User nói "Zone Mapping thiếu zone X"
-- User muốn thêm zone mới
-
-**Rollback Steps**:
-```
-1. Reset §2 Capability Map → draft state
-2. Reset §3 Zone Mapping → draft state
-3. Reset §8 Risks & Blind Spots → draft state
-4. Cần xem xét lại Phase 1 nếu pain point thay đổi
-5. Quay lại Phase 2: Analyze — phân tích lại
-```
-
-### Phase 3 Rollback — Design
-
-**Trigger**: User rejects final design hoặc một phần cụ thể.
-
-**Dấu hiệu nhận biết**:
-- User nói "Folder structure không đúng"
-- User nói "Thiếu diagram X"
-- User muốn thêm interaction point mới
-
-**Rollback Steps**:
-```
-1. Reset §4 Folder Structure → draft state
-2. Reset §5 Execution Flow → draft state
-3. Reset §6 Interaction Points → draft state
-4. Reset §7 Progressive Disclosure Plan → draft state
-5. Reset §9 Open Questions → draft state
-6. Có thể giữ nguyên §2, §3, §8 nếu không liên quan
-7. Quay lại Phase 3: Design — thiết kế lại
-```
-
-### Emergency Rollback (Any Phase)
-
-**Trigger**: Phát hiện lỗi nghiêm trọng trong design đã xuất.
-
-**Procedure**:
-```
-1. Dừng ngay lập tức
-2. Thông báo user về lỗi phát hiện
-3. Xác định phase gây ra lỗi
-4. Rollback về phase đó
-5. Tiếp tục lại từ đầu phase đó
-```
-
----
-
-## 📚 References
-
-| Reference | Mục đích |
-|-----------|-----------|
-| `references/heavy-thinking-to-design-workflow.md` | Heavy Thinking → CASE System → design.md meta-workflow |
-
----
-
 ## 📋 Output Specification
 
 **Output duy nhất**: `.skill-context/{skill-name}/design.md`
 
-Cấu trúc bắt buộc 10 sections:
+|Cấu trúc bắt buộc 10 sections:|
 
 | # | Section | Mục đích | Ghi sau Phase |
 |---|---------|---------|---------------|
@@ -429,6 +260,3 @@ Cấu trúc bắt buộc 10 sections:
 | §8 | Risks & Blind Spots | Risks + mitigation | Phase 2 |
 | §9 | Open Questions | Điểm chưa rõ (cập nhật xuyên suốt) | Phase 3 |
 | §10 | Metadata | skill-name, date, author, status | Phase 1 + update |
-| §10.1 | Version & Dependencies | Version management, skill dependencies | v2.0 |
-| §11 | Naming Conventions | Skill naming rules & anti-patterns | v2.0 |
-| §12 | Rollback Procedures | Rollback steps for each phase | v2.0 |

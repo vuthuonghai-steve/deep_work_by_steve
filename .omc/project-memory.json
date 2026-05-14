@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778327232518,
+  "lastScanned": 1778639547100,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -35,7 +35,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1778327232514,
+      "lastAccessed": 1778639547092,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -47,17 +47,21 @@
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 1,
-      "lastAccessed": 1778327232517,
+      "fileCount": 10,
+      "lastAccessed": 1778639547094,
       "keyFiles": [
-        "rebuild-skill-suite-remediation-guide.md"
+        "audit-issues-inventory.md",
+        "chain-04-guardrails-anti-hallucination-analysis.md",
+        "chain-05-handoff-quality-analysis.md",
+        "chain-06-dead-features-analysis.md",
+        "chain-07-complexity-llm-capability-analysis.md"
       ]
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 6,
-      "lastAccessed": 1778327232517,
+      "lastAccessed": 1778639547094,
       "keyFiles": [
         "data.json",
         "data.yaml",
@@ -70,7 +74,7 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778327232517,
+      "lastAccessed": 1778639547094,
       "keyFiles": [
         "README.md",
         "index.md"
@@ -80,7 +84,7 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778327232517,
+      "lastAccessed": 1778639547094,
       "keyFiles": []
     }
   },

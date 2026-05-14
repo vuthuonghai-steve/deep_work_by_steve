@@ -2,13 +2,8 @@
 name: skill-planner
 description: 'Doc ban thiet ke kien truc (design.md) va tao ke hoach trien khai chi tiet (todo.md). Trigger khi user noi: "lap ke hoach skill", "tao todo.md", "phan ra task tu design.md", "trace design -> task". Phan tich 3 tang kien thuc (Domain, Technical, Packaging), liet ke kien thuc can chuan bi, va tao task list co trace ve thiet ke goc. Skill nay la #2 trong bo Master Skill Suite (Architect -> Planner -> Builder).'
 category: meta
-version: "2.0.0"
-author: "Steve Void Team"
-license: private
-metadata:
-  hermes:
-    tags: [planning, skill-development, task-breakdown, meta]
-    related_skills: [skill-architect, skill-builder]
+version: "3.0.0"
+case_system: true
 pipeline:
   stage_order: 2
   input_contract:
@@ -30,6 +25,12 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+    - path: "knowledge/case-system.md"
+      base: "skill_dir"
+      triggers: [boot_sequence, entering_planning]
+    - path: "scripts/check_status.py"
+      base: "skill_dir"
+      triggers: [boot_sequence]
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -41,14 +42,41 @@ progressive_disclosure:
     - path: "loop/plan-checklist.md"
       base: "skill_dir"
       load_when: "Before deliver (Quality Gate)"
+    - path: "loop/resume_checklist.md"
+      base: "skill_dir"
+      triggers: [resuming_from_checkpoint]
 ---
 
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
+> **Tại Boot**, bạn CHỈ đọc Tier 1 files.
 > Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+
+---
+
+# Skill Planner — Multi-Perspective Design-to-Plan Converter
+
+## 🚀 Boot Sequence (MANDATORY — Thực hiện ĐÚNG THỨ TỰ)
+
+### Step 1: Read SKILL.md
+- [ ] Đọc `SKILL.md` này toàn bộ
+- [ ] Nắm workflow và guardrails
+
+### Step 2: Check design.md exists
+- [ ] Verify `.skill-context/{skill-name}/design.md` tồn tại
+- [ ] Nếu không có → báo lỗi: cần chạy skill-architect trước
+
+### Step 3: Determine Position
+
+| phase | Position | Action |
+|-------|----------|--------|
+| 0 | Fresh start | Proceed to Step READ |
+| 1-3 | Resume available | Ask user: resume or restart? |
+| 4 | Complete | Report: "Todo.md already exists. Use skill-builder." |
+
+### Step 4: Proceed to Step READ
 
 ---
 
@@ -63,13 +91,27 @@ across 3 tiers, and produce a comprehensive implementation plan at
 
 This skill ONLY plans — it does NOT write implementation code or design architecture.
 
-## Mandatory Boot Sequence
+## Multi-Perspective Analysis
 
-1. Read this `SKILL.md` file.
-2. Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Naming, Anti-hallucination).
-3. Determine the skill name from user input or context.
-4. Proceed to Step READ.
-5. Tier 2/3 files (`knowledge/architect.md`, `knowledge/skill-packaging.md`, `loop/plan-checklist.md`) được load theo Step tương ứng trong workflow.
+Planner sử dụng **Multi-Perspective Analysis** để phân tích design.md toàn diện:
+
+### 4 Analysis Perspectives
+
+| Perspective | Focus Area | Purpose |
+|-------|------------|---------|
+| Perspective 1 | Domain Knowledge Audit | Đánh giá resources/ có đủ domain knowledge? |
+| Perspective 2 | Technical Requirements | Phân tích tool, syntax, dependencies |
+| Perspective 3 | Task Complexity | Ước lượng effort, phát hiện risks |
+| Perspective 4 | Traceability | Đảm bảo every task → design section |
+
+### Synthesis Step
+
+Sau khi phân tích từ 4 góc nhìn:
+1. **Synthesize**: Tổng hợp 4 perspectives thành unified plan
+2. **Cross-validate**: Kiểm tra tasks không conflict
+3. **Final output**: todo.md với đầy đủ trace tags
+
+---
 
 ## Step READ — Đọc Input & Audit Tài nguyên
 
@@ -102,6 +144,7 @@ For EACH Zone that has content in **design.md §3 Zone Mapping** (specifically r
 
 3. **Tier 3 — Packaging**: How to map this into the specific zone of the agent skill?
    - Read `Files cần tạo` from §3. Generate explicit Tasks for Builder to create exactly these files.
+   - **Data Zone**: If §3 lists files under `data/` zone (e.g., `data/config.yaml`, `data/schema.json`), create a Task for Builder to create `data/` directory and populate these files per design specification.
 
 Apply the **Conversion Checklist** for specific design sections:
 - **§6 Interaction Points**: Create Tasks to implement templates or prompts for user interaction points.
@@ -112,7 +155,7 @@ Apply the **Conversion Checklist** for specific design sections:
 
 Write the analysis results to `.skill-context/{skill-name}/todo.md`.
 
-The file MUST contain exactly 5 sections:
+The file MUST contain exactly 6 sections:
 
 ```
 ## 1. Pre-requisites
@@ -123,6 +166,19 @@ The file MUST contain exactly 5 sections:
   MUST include `Phase 0: Resource Preparation` for missing domain documents.
 
   **Table columns**: #, Task, Priority (Critical/High/Medium/Low), Est. Hours, Dependencies, Trace
+
+## 3. Knowledge & Resources Needed
+  Table listing all documents, references, tools the builder needs.
+
+## 4. Definition of Done
+  Checklist of completion criteria. Must include checking that all files specified in §3 are created.
+
+## 5. Notes
+  Open questions, things to clarify, supplementary suggestions.
+  Items from design.md §9 (Open Questions) → migrate here, mark [CẦN LÀM RÕ].
+
+## 6. Builder Feedback Integration
+  (Required only if there is upstream feedback to address)
 
   Each task:
   ```
@@ -140,43 +196,13 @@ The file MUST contain exactly 5 sections:
   - 4-8 hours: Complex knowledge documents
   - 8-16 hours: Full zone implementation
 
-  **Dependency Detection**:
-  - Task A depends on Task B when:
-    - Task A needs output of Task B
-    - Task A references file created by Task B
-    - Task A must happen after Task B temporally 
+**Dependency Detection**:
+- Task A depends on Task B when:
+- Task A needs output of Task B
+- Task A references file created by Task B
+- Task A must happen after Task B temporally
 
-## 3. Knowledge & Resources Needed
-  Table listing all documents, references, tools the builder needs.
-
-## 4. Definition of Done
-  Checklist of completion criteria. Must include checking that all files specified in §3 are created.
-
-## 5. Notes
-  Open questions, things to clarify, supplementary suggestions.
-  Items from design.md §9 (Open Questions) → migrate here, mark [CẦN LÀM RÕ].
-
-## 6. Builder Feedback Integration
-
-### Success Criteria
-- [ ] skill-builder có thể start ngay sau khi nhận design.md + todo.md
-- [ ] Tất cả files trong §3 Zone Mapping đã được ánh xạ thành task cụ thể
-- [ ] Resources đủ "rich" để Builder không cần hỏi thêm domain knowledge
-
-### Known Gaps (for Builder)
-Liệt kê những điểm Builder cần tự quyết định:
-- [ ] ...
-- [ ] ...
-
-### Pre-implementation Checklist
-Trước khi bàn giao cho Builder, đảm bảo:
-- [ ] Todo.md có đủ thông tin để Builder bắt đầu
-- [ ] Tất cả Priority/Critical tasks đã được đánh dấu rõ
-- [ ] Dependencies giữa các task đã được xác định
-- [ ] Resources trong resources/ đã được audit là "Rich"
-```
-
-### Trace Tag Format
+## Step VERIFY
 Every item MUST end with a trace tag:
 - `[TỪ DESIGN §N]` — derived directly from design.md section N
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
@@ -201,14 +227,25 @@ Present the completed todo.md to the user for review.
 
 ## Guardrails
 
+| ID | Rule | Description |
+|----|------|-------------|
 | G1 | Trace required      | Every item in todo.md MUST trace back to `design.md §N`            |
 | G2 | Label sources       | Mark `[TỪ DESIGN §N]` / `[GỢI Ý BỔ SUNG]` / `[TỪ AUDIT TÀI NGUYÊN]` |
 | G3 | No inventing        | Only DECOMPOSE the design — do NOT add new requirements            |
-| G4 | List, don't do      | List knowledge needed → user prepares. Do NOT search/generate      |
-| G5 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
-| G6 | **Resource Gate**   | Planner chỉ được đánh dấu 'Complete' khi `resources/` đã đủ dữ liệu domain để Builder làm việc. |
+| G4 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
+| G5 | Resource Gate       | Planner chỉ đánh dấu 'Complete' khi `resources/` đã đủ cho Builder |
 
 ## Error Handling
+
+### Exit Codes (Machine-Readable)
+
+| Exit Code | Meaning | Action |
+|-----------|---------|--------|
+| 0 | PASS/Success | Continue to next step |
+| 1 | FAIL | Fix issue, retry, or report |
+| 2 | EMERGENCY | Stop immediately, report error |
+
+### Error Scenarios
 
 - If `design.md` not found → Report error, suggest running Skill Architect first.
 - If design.md Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping. Cannot plan."
@@ -217,6 +254,7 @@ Present the completed todo.md to the user for review.
   - Required: `knowledge/architect.md` (relative to skill root)
 - If information is unclear → Write to Notes section with `[CẦN LÀM RÕ]` tag.
 - If user asks to write code → Decline. Suggest using `skill-builder` instead.
+- If checkpoint is stale (> 7 days) → Warn user, require explicit confirmation to proceed.
 
 ## Related Skills
 

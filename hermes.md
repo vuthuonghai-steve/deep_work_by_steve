@@ -2,7 +2,35 @@
 
 ## Project Purpose
 
-This repository is Steve's local workspace for designing, testing, and evolving Hermes/agent skills and repeatable AI workflows.
+Triển khai Hermes như **AI-first productivity platform** — không phải chatbot, mà là **AI agent skill suite** giúp khai thác và nâng cao khả năng của LLM.
+
+**Định hướng:** Hướng tới câu hỏi — *Làm thế nào để sử dụng AI hiệu quả?*
+
+**Con đường:** Cung cấp hệ thống **skill + knowledge + workflow** để điều hướng và giải quyết vấn đề.
+
+### Core Principle: Heavy Thinking
+
+Mọi agentic harness (Claude Code, CodeX, Hermes) đều dựa vào **một inner skill** — **Heavy Thinking** (arXiv:2605.02396):
+
+```
+Input → [Stage 1: Parallel Reasoning] → [Stage 2: Deliberation] → Output
+              K independent chains            Synthesize
+              (K = 8 hoặc 16)                 final answer
+```
+
+**Insight:** Orchestration layer (skills, memory, sub-agents) chỉ quản lý complexity. Performance gain thực sự đến từ **inner skill** — Heavy Thinking.
+
+**Deliberator không cần mạnh nhất** — chỉ cần khả năng tổng hợp và bám hướng dẫn.
+
+### Áp Dụng Trong Dự Án
+
+Khi thiết kế skill mới:
+1. **Skill architect** → design rõ input/output
+2. **Skill planner** → chia thành task nhỏ
+3. **Skill builder** → implement + validate
+4. **Deep session learner** → capture durable lessons
+
+Kiến thức nền tảng: `/home/steve/Work-space/deep_work_by_steve/knowledge/ai-agents/ai-agents.md`
 
 ## Local Hermes Skills
 

@@ -143,13 +143,10 @@ Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/bu
 | G1 | **Kỹ sư Phản biện** | Thẩm định design trước build. Quyền sửa logic sai. |
 | G2 | **Phase-driven Build** | Chia BUILD theo Phase todo.md. Mark-as-done từng phase. |
 | G3 | **Log-Notify-Stop** | Lỗi hệ thống → Log → Notify → **DỪNG NGAY**. |
-| G4 | **Placeholder Scale** | Cảnh báo mỗi 5. >10 = FAIL. |
-| G5 | **Source Grounding** | Nội dung 100% từ design/todo/resources. Không ảo giác. |
-| G6 | **PD Tiering** | Tuân thủ Tier 1 vs Tier 2 từ `design.md §7`. |
-| G7 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
-| G8 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
-| G9 | **Knowledge Fidelity** | Không summarize tài nguyên Critical. Transform 100% tri thức. |
-| G10| **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
+| G4 | **Source Grounding** | Nội dung 100% từ design/todo/resources. Không ảo giác. |
+| G5 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
+| G6 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
+| G7 | **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
 
 ## Error Policy
 

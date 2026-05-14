@@ -186,6 +186,8 @@ Chỉ dùng tags từ `data/tag-reference.yaml`.
 | **P8** | Incomplete Phase verification | Previous session claimed "Task X already correct" but it wasn't. ALWAYS do fresh verification with actual file reads — don't trust session summaries alone. |
 | **P9** | Coordinator role: don't self-implement | User explicitly wants coordinator/delegate pattern: delegate to Claude Code/Codex, verify results, don't do everything via terminal yourself. |
 | **P10** | Subagent completes without web research | `delegate_task` with `toolsets: ["web"]` can return without actually searching — agent echoes task description instead of running web searches. When delegating research tasks, ALWAYS verify the agent actually searched. If it returns immediately without actual tool calls, fall back to using `browser_navigate` directly for web research. |
+| **P11** | Claude Code heredoc input + trust dialog conflict | When running `claude -p << EOF` (heredoc/piped input), the workspace trust dialog still appears on stderr BEFORE piped input is consumed. Claude blocks waiting for trust dialog input that never comes from the heredoc. **Fix**: Use PTY mode (`pty=true`) instead of piped heredoc, or use tmux to send Enter to dismiss the trust dialog before piped input is processed. |
+| **P12** | Claude Code binary not in PATH | On Steve's setup, `claude` binary is at `/home/linuxbrew/.linuxbrew/bin/claude` (installed via npm -g). Always use `which claude` to find the actual path before invoking, or use the full path directly. |
 
 ---
 

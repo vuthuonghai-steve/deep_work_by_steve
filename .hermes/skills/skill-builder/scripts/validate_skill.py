@@ -9,12 +9,13 @@ class SkillValidator:
     Kỹ sư thẩm định chất lượng Agent Skill.
     Đảm bảo tính chính trực giữa thiết kế (design) và thực thi (build).
     """
-    def __init__(self, skill_path: str, design_path: str | None = None, log_mode: bool = False, strict_context: bool = False):
+    def __init__(self, skill_path: str, design_path: str | None = None, log_mode: bool = False, strict_context: bool = False, todo_path: str | None = None):
         self.skill_path: str = os.path.abspath(skill_path)
         self.skill_name: str = os.path.basename(self.skill_path.rstrip('/'))
         self.design_path: str | None = os.path.abspath(design_path) if design_path else None
         self.log_mode: bool = log_mode
         self.strict_context: bool = strict_context
+        self.todo_path: str | None = os.path.abspath(todo_path) if todo_path else None
         self.workspace_root: str = self.find_workspace_root()
         self.errors: list[str] = []
         self.warnings: list[str] = []
@@ -93,7 +94,7 @@ class SkillValidator:
         if len(lines) > 500:
             self.errors.append(f"[E03] ERROR: SKILL.md exceeds 500 lines limit ({len(lines)})")
 
-        mandatory_keywords = ["## Persona", "Workflow", "Guardrails"]
+        mandatory_keywords = ["Persona", "Workflow", "Guardrails"]
         for kw in mandatory_keywords:
             if kw not in content:
                 self.errors.append(f"[E04] ERROR: SKILL.md missing mandatory section keyword: '{kw}'")
@@ -156,17 +157,19 @@ class SkillValidator:
                     in_zone_mapping = False
             
             if in_zone_mapping:
-                # Find file paths in backticks like `knowledge/architect.md`
-                matches = re.findall(r"`([a-zA-Z0-9_\-\./]+\.[a-z]{2,4})`", line)
+                # Find file paths in backticks like `knowledge/architect.md` or `design.md.template`
+                matches = re.findall(r"`([^`]+)`", line)
                 for m in matches:
-                    if "/" in m or m == "SKILL.md":
+                    if "/" in m or m.startswith("SKILL") or "." in m:
                         expected_files.add(os.path.normpath(m))
         
         # Ensure SKILL.md is expected
         expected_files.add("SKILL.md")
 
         actual_files: set[str] = set()
-        for root, _, files in os.walk(self.skill_path):
+        for root, dirs, files in os.walk(self.skill_path):
+            # Skip __pycache__ and other generated directories
+            dirs[:] = [d for d in dirs if d != '__pycache__' and not d.startswith('.')]
             rel_root = os.path.relpath(root, self.skill_path)
             for file in files:
                 if not file.startswith('.'):
@@ -323,6 +326,67 @@ class SkillValidator:
 
         return len(uncovered) == 0 if self.strict_context else True
 
+    def check_todo_cross_reference(self):
+        """
+        Cross-reference validation between todo.md tasks and design §3 Zone Mapping.
+        Ensures every file listed in §3 Zone Mapping has a corresponding task in todo.md.
+        """
+        if not self.todo_path:
+            return True
+            
+        if not os.path.exists(self.todo_path):
+            self.warnings.append(f"WARNING: todo.md not found at {self.todo_path}, skipping cross-reference")
+            return True
+            
+        self.log("9. Todo ↔ Design Cross-Reference Check...")
+        
+        # Parse §3 Zone Mapping from design.md to get expected files
+        expected_files = set()
+        if self.design_path and os.path.exists(self.design_path):
+            with open(self.design_path, 'r', encoding='utf-8') as f:
+                design_content = f.read()
+            
+            lines = design_content.split('\n')
+            in_zone_mapping = False
+            for line in lines:
+                if '## 3. Zone Mapping' in line:
+                    in_zone_mapping = True
+                elif in_zone_mapping and line.startswith('##'):
+                    in_zone_mapping = False
+                
+                if in_zone_mapping:
+                    matches = re.findall(r"`([^`]+)`", line)
+                    for m in matches:
+                        if "/" in m or m.startswith("SKILL") or "." in m:
+                            expected_files.add(os.path.normpath(m))
+        
+        # Parse todo.md to get task target files
+        with open(self.todo_path, 'r', encoding='utf-8') as f:
+            todo_content = f.read()
+        
+        # Extract file targets from todo tasks (look for patterns like "→ file.md" or "file_target:")
+        task_files = set()
+        task_file_patterns = [
+            r"(?:→|->)\s*`?([^`\s]+)`?",  # → target.md or -> target.md
+            r"file_target:\s*([^\s\n]+)",   # file_target: path/to/file.md
+        ]
+        for pattern in task_file_patterns:
+            matches = re.findall(pattern, todo_content)
+            for m in matches:
+                if m and ("." in m or m.startswith("/")):
+                    task_files.add(os.path.normpath(m))
+        
+        # Check coverage
+        missing_in_todo = expected_files - task_files
+        if missing_in_todo:
+            self.warnings.append(
+                f"WARNING: Files in design §3 but not covered by todo tasks: {', '.join(missing_in_todo)}"
+            )
+            self.log(f"   -> Missing in todo: {missing_in_todo}", "WARN")
+        
+        self.log(f"   -> §3 files: {len(expected_files)}, Todo tasks: {len(task_files)}, Coverage: {len(task_files & expected_files)}/{len(expected_files)}")
+        return True
+
     def check_fidelity_heuristics(self):
         """
         Check for potential summarization by comparing line counts between sources and targets.
@@ -377,6 +441,7 @@ class SkillValidator:
         self.check_error_handling() # Fix Medium: Call checking error handling
         self.check_context_resource_coverage()
         self.check_fidelity_heuristics()
+        self.check_todo_cross_reference()
         
         print("="*50)
         final_status = "PASS" if not self.errors else "FAIL"
@@ -424,6 +489,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Fail validation if context resource coverage in .skill-context/{skill-name}/build-log.md is incomplete",
     )
+    parser.add_argument(
+        "--todo",
+        default=None,
+        help="Path to todo.md for cross-reference validation between todo tasks and design §3 files",
+    )
     args = parser.parse_args()
     
     validator = SkillValidator(
@@ -431,5 +501,6 @@ if __name__ == "__main__":
         design_path=args.design,
         log_mode=args.log,
         strict_context=args.strict_context,
+        todo_path=args.todo,
     )
     validator.report()

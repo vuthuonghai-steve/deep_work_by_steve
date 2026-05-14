@@ -2,13 +2,6 @@
 name: skill-builder
 description: Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop.
 category: meta
-version: "2.0.0"
-author: "Steve Void Team"
-license: private
-metadata:
-  hermes:
-    tags: [skill-development, implementation, quality-gates, meta]
-    related_skills: [skill-architect, skill-planner]
 pipeline:
   stage_order: 3
   input_contract:
@@ -20,8 +13,9 @@ pipeline:
       required: true
   output_contract:
     - type: directory
-      path: ".claude/skills/{skill-name}"
+      path: "{skills_root}/{skill-name}"
       format: directory
+      note: "Portable path resolved at install time. skills_root is the parent directory of the skill suite."
   dependencies:
     - skill-planner
 progressive_disclosure:
@@ -97,6 +91,16 @@ Read all inputs and assess feasibility:
 
 Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into `.skill-context/{skill-name}/design.md` §Clarifications.
 
+**Trace Tag Scanning Rules:**
+Builder phải scan đúng 4 trace tags chuẩn:
+- `[TỪ DESIGN §N]` — derived directly from design.md section N
+- `[TỪ AUDIT TÀI NGUYÊN]` — generated because a required resource was missing
+- `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
+- `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
+
+Legacy tags (fail trên validator):
+- `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
+
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
 ## Phase 3: BUILD (Phase-Driven)
@@ -139,13 +143,10 @@ Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/bu
 | G1 | **Kỹ sư Phản biện** | Thẩm định design trước build. Quyền sửa logic sai. |
 | G2 | **Phase-driven Build** | Chia BUILD theo Phase todo.md. Mark-as-done từng phase. |
 | G3 | **Log-Notify-Stop** | Lỗi hệ thống → Log → Notify → **DỪNG NGAY**. |
-| G4 | **Placeholder Scale** | Cảnh báo mỗi 5. >10 = FAIL. |
-| G5 | **Source Grounding** | Nội dung 100% từ design/todo/resources. Không ảo giác. |
-| G6 | **PD Tiering** | Tuân thủ Tier 1 vs Tier 2 từ `design.md §7`. |
-| G7 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
-| G8 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
-| G9 | **Knowledge Fidelity** | Không summarize tài nguyên Critical. Transform 100% tri thức. |
-| G10| **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
+| G4 | **Source Grounding** | Nội dung 100% từ design/todo/resources. Không ảo giác. |
+| G5 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
+| G6 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
+| G7 | **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
 
 ## Error Policy
 

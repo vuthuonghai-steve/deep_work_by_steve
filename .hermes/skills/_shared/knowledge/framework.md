@@ -3,7 +3,7 @@
 > **Purpose**: Single source of truth for all 3 meta-skills
 > **Location**: `_shared/knowledge/framework.md` (portable, resolved relative to skills-root)
 > **Path from SKILL.md**: `../_shared/knowledge/framework.md` (1 level up)
-> **Path from knowledge/*.md**: `../../_shared/knowledge/framework.md` (2 levels up)
+> **Path from knowledge/*.md**: `../../../_shared/knowledge/framework.md` (2 levels up)
 > **Usage**: Read this FIRST when working with skill-architect, skill-planner, or skill-builder
 
 ---
