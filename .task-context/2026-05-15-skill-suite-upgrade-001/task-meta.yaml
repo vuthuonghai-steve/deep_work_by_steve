@@ -1,0 +1,11 @@
+task_id: 2026-05-15-skill-suite-upgrade-001
+date: 2026-05-15
+trigger: skill-suite-analysis
+task_type: fix-bug + build-feature
+confidence: high
+ready_for_implementation: false
+blockers:
+  - P0: Missing case-system.md blocks skill-planner boot
+  - P0: Validation scripts downgrade critical errors to warnings
+  - P1: SKILL.md token budget 2.5-10x over CLAUDE.md standard
+  - P1: Duplicate .claude/ vs .hermes/ architecture ambiguity

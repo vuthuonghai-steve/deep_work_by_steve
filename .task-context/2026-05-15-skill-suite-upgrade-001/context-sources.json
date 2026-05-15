@@ -1,0 +1,27 @@
+{
+  "loaded": [
+    {"source": "CLAUDE.md (root)", "status": "loaded", "bytes": "~15KB"},
+    {"source": ".claude/skills/skill-architect/SKILL.md", "status": "loaded", "bytes": "14.5KB"},
+    {"source": ".claude/skills/skill-planner/SKILL.md", "status": "loaded", "bytes": "12.3KB"},
+    {"source": ".claude/skills/skill-builder/SKILL.md", "status": "loaded", "bytes": "7.4KB"},
+    {"source": "_shared/knowledge/framework.md", "status": "loaded", "bytes": "7KB"},
+    {"source": "skill-packaging.md", "status": "loaded", "bytes": "8.5KB"},
+    {"source": "anthropic-skill-standards.md", "status": "loaded", "bytes": "9KB"},
+    {"source": "build-guidelines.md", "status": "loaded", "bytes": "4.3KB"}
+  ],
+  "missing": [
+    {"source": "case-system.md", "severity": "CRITICAL", "impact": "blocks skill-planner boot"},
+    {"source": "check_status.py", "severity": "HIGH", "impact": "tier1 reference missing"},
+    {"source": "validate_skill.py", "severity": "CRITICAL", "impact": "quality gate non-functional"}
+  ],
+  "ambiguous": [
+    {"source": ".claude/skills/ vs .hermes/skills/", "severity": "HIGH", "impact": "duplicate trees"}
+  ],
+  "gaps": [
+    "case-system.md referenced in tier1 but does not exist",
+    "check_status.py referenced in tier1 but does not exist",
+    "SKILL.md files 2.5-10x over token budget",
+    "Trace validation is warning-only, not error",
+    "architect.md = 1.7KB (too thin for framework knowledge)"
+  ]
+}

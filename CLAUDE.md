@@ -244,6 +244,27 @@ token_budget_by_format:
 
 Nếu root guide vượt 1800–3000 tokens, cần kiểm tra xem nó có đang chứa quá nhiều domain context, examples hoặc prose không. Nếu vượt 5000 tokens, gần như chắc chắn cần tái cấu trúc thành nhiều lớp.
 
+### 6.1 Quy đổi Token tham chiếu (Ước tính)
+
+Token không phải là byte hay ký tự, và không có tỷ lệ quy đổi cố định 1:1. Tuy nhiên, có thể sử dụng bảng tham chiếu sau để ước lượng dung lượng:
+
+| Tokens | Ngôn ngữ | Ký tự (ước tính) | Bytes (ASCII/UTF-8) | Bits |
+| :--- | :--- | :--- | :--- | :--- |
+| **100** | Tiếng Anh | ~400 | ~400 | ~3,200 |
+| | Tiếng Việt | 300 - 500 | 300 - 500 | 2,400 - 4,000 |
+| **500** | Tiếng Anh | ~2,000 | ~2,000 | ~16,000 |
+| | Tiếng Việt | 1,500 - 2,500 | 1,500 - 2,500 | 12,000 - 20,000 |
+| **700** | Tiếng Anh | ~2,800 | ~2,800 | ~22,400 |
+| | Tiếng Việt | 2,100 - 3,500 | 2,100 - 3,500 | 16,800 - 28,000 |
+| **1,000** | Tiếng Anh | ~4,000 | ~4,000 | ~32,000 |
+| | Tiếng Việt | 3,000 - 5,000 | 3,000 - 5,000 | 24,000 - 40,000 |
+
+**Lưu ý kỹ thuật:**
+- **Tiếng Anh:** Trung bình 1 token ≈ 4 ký tự.
+- **Tiếng Việt:** Dao động mạnh (thường 3-5 ký tự/token) tùy cách viết, từ ghép, dấu và ký tự đặc biệt.
+- **Dung lượng:** 1 ký tự ≈ 1 byte (ASCII). Với tiếng Việt có dấu, UTF-8 có thể dùng 2-4 bytes cho một số ký tự, nên số byte thực tế thường lớn hơn số ký tự.
+- **Quy đổi Bit:** 1 byte = 8 bits.
+
 ---
 
 ## 7. Cấu trúc root guide khuyến nghị

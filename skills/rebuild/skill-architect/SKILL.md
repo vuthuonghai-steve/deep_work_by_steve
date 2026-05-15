@@ -157,7 +157,15 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
    - **Pillar 2 – Process**: Workflow logic là gì? Bộc bước nào? Điều kiện rẽ nhánh nào?
    - **Pillar 3 – Guardrails**: AI thường sai ở đâu với loại công việc này? Cần kiểm soát gì?
 
-2. **7 Zones Mapping** — điền bảng Zone Mapping theo format chuẩn sau:
+2. **Confidence Check** — Heavy Thinking Decision Point:
+   - **Confidence >85%** + cả 3 Pain Points rõ ràng → Skip to Zone Mapping
+   - **Confidence 70-85%** hoặc ambiguous requirements → Activate K=8 chains (xem § Heavy Thinking Integration):
+     - Chain 1-2: Pillar 1 analysis
+     - Chain 3-5: Pillar 2 analysis
+     - Chain 6-8: Pillar 3 + risks + open questions
+   - **Confidence <70%** → Quay lại Phase 1, hỏi thêm user
+
+3. **7 Zones Mapping** — điền bảng Zone Mapping theo format chuẩn sau:
 
 #### 📋 Zone Mapping Contract (Format bắt buộc cho §3)
 
@@ -175,7 +183,7 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 
 > **Quy tắc điền**: Nếu Zone không cần → ghi "Không cần" vào cột "Files cần tạo". Không được để trống. Cột "Files cần tạo" là input trực tiếp cho Planner.
 
-3. **Risks Identification**: Liệt kê ít nhất 3 rủi ro cụ thể (AI thường sai ở đâu?).
+4. **Risks Identification**: Liệt kê ít nhất 3 rủi ro cụ thể (AI thường sai ở đâu?).
 
 > **⏸️ Gate 2**: Trình bày bảng phân tích. Chờ user confirm. Sau khi confirm → ghi §2 + §3 + §8 vào design.md → Proceed to Phase 3.
 
@@ -222,15 +230,55 @@ Nếu bất kỳ item nào fail → sửa trước khi thông báo hoàn thành.
 
 ---
 
+## 🧠 Heavy Thinking Integration
+
+Khi task difficulty <85% confidence, sử dụng K=8 parallel reasoning chains để tránh blind spots.
+
+### Khi nào kích hoạt K=8
+
+| Trigger | Điều kiện | Approach |
+|---------|-----------|----------|
+| **Easy Mode** | Cả 3 Pain Point clear, confidence >85% | Direct 3-phase, skip K=8 |
+| **Hard Mode** | Ambiguous requirements, multiple valid interpretations | Activate K=8 chains |
+
+### K=8 Chain Allocation
+
+```yaml
+Pillar 1 (Knowledge): 2 chains
+  - Chain 1: Domain knowledge requirements
+  - Chain 2: knowledge/ folder structure
+
+Pillar 2 (Process): 3 chains
+  - Chain 3: Workflow logic analysis
+  - Chain 4: Phase ordering
+  - Chain 5: Interaction points
+
+Pillar 3 (Guardrails): 3 chains
+  - Chain 6: Zone applicability
+  - Chain 7: Risk identification
+  - Chain 8: Open question surfacing
+```
+
+### Two-Stage Processing
+
+```
+Stage 1: 8 independent chains → parallel execution
+Stage 2: Synthesize → select best from each chain, resolve conflicts
+Output: Phase 2/3 deliverables
+```
+
+---
+
 ## 🛡️ Guardrails
 
 | ID  | Rule                      | Mô tả cụ thể                                                                                    |
 | --- | ------------------------- | ----------------------------------------------------------------------------------------------- |
 | G1  | **Design Only**           | Không viết code, không implement. Nếu user yêu cầu code → redirect sang skill-builder.          |
 | G2  | **Gate Enforcement**      | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate.                                        |
-| G3  | **Confidence Threshold**  | Confidence < 70% = hỏi thêm user trước khi tiếp tục.                                            |
+| G3  | **Confidence Threshold**  | Confidence < 70% = hỏi thêm user trước khi tiếp tục. <85% = consider K=8 chains.              |
 | G4  | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
 | G5  | **Checklist Gate**        | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành.               |
+| G6  | **Heavy Thinking Gate**   | Khi confidence <85% ở Phase 2 → activate K=8 chains trước khi trình bày analysis.              |
 
 ## 🔗 Pipeline Integration (Liên kết với Skill Suite)
 

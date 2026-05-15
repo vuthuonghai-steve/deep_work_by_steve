@@ -1,0 +1,54 @@
+verification_checklist:
+  - id: CHECK-1
+    description: "Promote case-system.md from skills/rebuild/ to .claude/skills/skill-planner/knowledge/"
+    priority: P0
+    blocks: skill-planner boot
+    status: pending
+    action: "cp skills/rebuild/skill-suite-upgrade/knowledge/case-system.md .claude/skills/skill-planner/knowledge/"
+
+  - id: CHECK-2
+    description: "Create .claude/skills/skill-planner/scripts/ directory and check_status.py"
+    priority: P0
+    blocks: tier1 boot sequence
+    status: pending
+    action: "mkdir -p .claude/skills/skill-planner/scripts/ && create stub"
+
+  - id: CHECK-3
+    description: "Add trace tag validation to validate_skill.py (ERROR level for missing tags)"
+    priority: P1
+    blocks: trace validation gap
+    status: pending
+    action: "Edit validate_skill.py to add trace tag check"
+
+  - id: CHECK-4
+    description: "Split SKILL.md files to <700 bytes each (token budget)"
+    priority: P0
+    blocks: context eviction risk
+    status: pending
+    action: "Refactor into stub + progressive_disclosure references"
+
+  - id: CHECK-5
+    description: "Consolidate .hermes/ into .claude/ as canonical"
+    priority: P2
+    blocks: source ambiguity
+    status: pending
+    action: "Verify identical, then consolidate"
+
+  - id: CHECK-6
+    description: "Enrich architect.md to minimum 3KB"
+    priority: P2
+    blocks: weak framework context
+    status: pending
+    action: "Expand content with 7-Zone framework details"
+
+p0_blockers:
+  - "SKILL.md 21x over token budget"
+  - "case-system.md missing from active path"
+  - "check_status.py missing (directory doesn't exist)"
+
+p1_issues:
+  - "validate_skill.py has no trace tag validation"
+
+p2_issues:
+  - ".claude/.hermes duplicate (but identical)"
+  - "architect.md knowledge too thin"

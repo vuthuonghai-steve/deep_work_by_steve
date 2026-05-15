@@ -1,0 +1,40 @@
+{
+  "task_id": "2026-05-15-skill-suite-upgrade-001",
+  "summary": "Skill Suite Upgrade Analysis — REFINED with validated evidence",
+  "refined": true,
+  "core_problems": [
+    "P0: SKILL.md Token Budget 21x Over (14810B vs 700B budget)",
+    "P0: check_status.py MISSING (directory doesn't exist)",
+    "P0: case-system.md MISSING from active path (exists in rebuild/)",
+    "P1: validate_skill.py has NO trace tag validation",
+    "P2: .claude/.hermes IDENTICAL (safe to consolidate)",
+    "P2: architect.md knowledge too thin (1789B)"
+  ],
+  "root_causes": [
+    "RC1: SKILL.md bloat — no token budget enforcement",
+    "RC2: Missing tier1 files — case-system.md, check_status.py not in active path",
+    "RC3: No trace validation — validate_skill.py checks Zone Mapping but not trace tags"
+  ],
+  "recommended_approach": "Option A (Aggressive Fix) — P0 + P1",
+  "priority_fixes": [
+    "P0: Split SKILL.md to <700B each",
+    "P0: Promote case-system.md from skills/rebuild/ to .claude/skills/skill-planner/knowledge/",
+    "P0: Create check_status.py stub (directory needs to be created first)",
+    "P1: Add trace tag validation to validate_skill.py as ERROR level",
+    "P2: Consolidate .hermes/ into .claude/ (files identical)",
+    "P2: Enrich skill-architect/knowledge/architect.md to minimum 3KB"
+  ],
+  "files_affected": [
+    ".claude/skills/skill-architect/SKILL.md",
+    ".claude/skills/skill-planner/SKILL.md",
+    ".claude/skills/skill-builder/SKILL.md",
+    ".claude/skills/skill-planner/knowledge/case-system.md (MISSING — promote from rebuild/)",
+    ".claude/skills/skill-planner/scripts/check_status.py (MISSING — create)",
+    ".claude/skills/skill-builder/scripts/validate_skill.py (exists, needs trace check)"
+  ],
+  "option_comparison": {
+    "A": {"scope": "P0+P1", "effort": "~2-3h", "risk": "Low"},
+    "B": {"scope": "P0+P1+P2", "effort": "~4-6h", "risk": "Medium"},
+    "C": {"scope": "P0 only", "effort": "~1h", "risk": "Very Low"}
+  }
+}
