@@ -1,15 +1,8 @@
 ---
 name: skill-builder
-description: Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop.
+description: 'Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop. Trigger khi user nói: "build skill", "triển khai skill", "implement design", "tạo skill từ design".'
 category: meta
-version: "2.1.0"
-token_budget:
-  # Per L1_working_policy in CLAUDE.md
-  L0_limit: 400
-  L1_limit: 1200
-  L2_limit: 2500
-  tokenizer: cl100k_base
-  enforcement: soft
+version: "4.0.0"
 pipeline:
   stage_order: 3
   input_contract:
@@ -43,45 +36,60 @@ progressive_disclosure:
       base: "skill_dir"
       load_when: "Phase 3: BUILD phase (SKILL.md writing)"
   tier3:
-    - path: "loop/build-checklist.md"
+    - path: "loop/build-checklist.yaml"
       base: "skill_dir"
       load_when: "Phase 4: VERIFY (Quality Gate)"
-    - path: "loop/build-log.md"
+    - path: "loop/build-log.md.template"
       base: "skill_dir"
       load_when: "Phase 5: DELIVER"
+
+# AI-FIRST SEMANTIC CONFIGURATION
+priority_order:
+  - source_fidelity          # design.md + todo.md are ground truth
+  - zone_contract           # only create files in design.md §3
+  - phase_discipline        # execute phase by phase, mark as done
+  - placeholder_control     # maintain <5 placeholders
+  - build_log_completeness  # track every decision
+
+constraints:
+  must:
+    - create ONLY files specified in design.md §3 Zone Mapping
+    - execute todo.md phases in order
+    - mark tasks done only after verification
+    - append to build-log.md with every decision
+    - resolve [CẦN LÀM RÕ] before proceeding
+  must_not:
+    - create files outside design.md §3
+    - skip phases or reorder without user approval
+    - mark task done without evidence
+    - continue after system error (Log-Notify-Stop)
+    - leave placeholder density > 9
+
+output_contract:
+  include:
+    - skill_directory_with_all_zones
+    - build_log_with_execution_trace
+    - resource_inventory
+    - resource_usage_matrix
+    - validation_result
+  format: directory_with_yaml_frontmatter_files
 ---
 
 <instructions>
-> 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
-> Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
-> Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-> **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
-> Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
-> Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+## 🚨 MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG
+Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
+Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
+**Tại Boot**, bạn CHỈ đọc Tier 1 files.
+Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
+Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
 </instructions>
 
 <context>
-**Tier 1 Files** (Boot - load these first):
-- `SKILL.md` (this file)
-- `../_shared/knowledge/framework.md`
-
-**Tier 2 Files** (Load when needed per Phase):
-- `knowledge/architect.md` - Builder workflow
-- `knowledge/build-guidelines.md` - Build standards
-- `knowledge/anthropic-skill-standards.md` - SKILL.md writing standards
-
-**Tier 3 Files** (Optional):
-- `loop/build-checklist.md` - Quality gate
-- `loop/build-log.md` - Build evidence
+## Mission Context
+Skill Builder là Phase 3 trong Master Skill Suite: Architect → Planner → Builder.
+Nó nhận design.md từ skill-architect và todo.md từ skill-planner, tạo production-ready Agent Skill.
+Builder là Senior Implementation Engineer — có quyền và trách nhiệm phản biện thiết kế.
 </context>
-
-<examples>
-**Boot Sequence Example**:
-1. Read SKILL.md (this file)
-2. Read framework.md
-3. Proceed to Phase 1
-4. Load Tier 2 files as needed per Phase
-</examples>
 
 ---
 
@@ -93,11 +101,8 @@ progressive_disclosure:
 
 ## Workflow Progress Tracker
 
-Copy this checklist into your response and mark progress:
-
 ```markdown
 ### [skill-builder] Progress:
-
 - [ ] Phase 1: PREPARE & Evaluate
 - [ ] Phase 2: CLARIFY → [⏸️ Gate: User clarification]
 - [ ] Phase 3: BUILD (Phase-Driven)
@@ -107,8 +112,11 @@ Copy this checklist into your response and mark progress:
 
 ## Phase 1: PREPARE & Evaluate
 
-**Before starting:**
+<instructions>
+Read all inputs and assess feasibility before starting.
+</instructions>
 
+**Before starting:**
 - Read `../_shared/knowledge/framework.md` — **Shared** framework (7 Zones, Pipeline, Anti-hallucination)
 - Read `knowledge/architect.md` — Builder-specific workflow (Tier 2)
 
@@ -119,28 +127,34 @@ Read all inputs and assess feasibility:
 - Read `.skill-context/{skill-name}/resources/` (Domain Data).
 - Read `.skill-context/{skill-name}/data/` if present.
 - Read `.skill-context/{skill-name}/loop/` if present.
-- Build context inventory: classify as `Critical` (design.md, todo.md, resources/_, data/_) or `Supportive` (loop/\*).
+- Build context inventory: classify as `Critical` (design.md, todo.md, resources/*, data/*) or `Supportive` (loop/*).
 - **The Stance**: Audit design, identify phi logic, build mental model of phases.
 
 ## Phase 2: CLARIFY (Closing the Loop)
+
+<instructions>
+Scan for clarification flags and logic flaws.
+</instructions>
 
 Scan `todo.md` for `[CẦN LÀM RÕ]` or logic flaws. Ask user clarification (Max 5 items). Record answers into `.skill-context/{skill-name}/design.md` §Clarifications.
 
 **Trace Tag Scanning Rules:**
 Builder phải scan đúng 4 trace tags chuẩn:
-
 - `[TỪ DESIGN §N]` — derived directly from design.md section N
 - `[TỪ AUDIT TÀI NGUYÊN]` — generated because a required resource was missing
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
 - `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
 
 Legacy tags (fail trên validator):
-
 - `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
 
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
 ## Phase 3: BUILD (Phase-Driven)
+
+<instructions>
+Execute todo.md phase by phase. Create files ONLY in design.md §3.
+</instructions>
 
 **Before starting:** Read:
 
@@ -159,13 +173,21 @@ Execute `todo.md` phase by phase:
 
 ## Phase 4: VERIFY (The Gatekeeper)
 
+<instructions>
+Run quality gates and validate output.
+</instructions>
+
 Run quality gates:
 
 - Run `scripts/validate_skill.py` với design.md và todo.md
-- Apply `loop/build-checklist.md`.
+- Apply `loop/build-checklist.yaml`.
 - **Placeholder Density**: <5 PASS, 5-9 WARNING, 10+ FAIL.
 
 ## Phase 5: DELIVER
+
+<instructions>
+Finalize and present results.
+</instructions>
 
 Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/build-log.md`. Ensure mandatory sections:
 
@@ -175,20 +197,34 @@ Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/bu
 
 ## Guardrails
 
-| ID  | Rule                    | Description                                                          |
-| --- | ----------------------- | -------------------------------------------------------------------- |
-| G1  | **Kỹ sư Phản biện**     | Thẩm định design trước build. Quyền sửa logic sai.                   |
-| G2  | **Phase-driven Build**  | Chia BUILD theo Phase todo.md. Mark-as-done từng phase.              |
-| G3  | **Log-Notify-Stop**     | Lỗi hệ thống → Log → Notify → **DỪNG NGAY**.                         |
-| G4  | **Source Grounding**    | Nội dung 100% từ design/todo/resources. Không ảo giác.               |
-| G5  | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md.                |
-| G6  | **Context Coverage**    | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
-| G7  | **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm.                  |
+```yaml
+guardrails:
+  G1_engineer_critic:
+    description: "Thẩm định design trước build. Quyền sửa logic sai."
+    must: "Challenge phi logic in design before implementation"
+  G2_phase_driven:
+    description: "Chia BUILD theo Phase todo.md. Mark-as-done từng phase."
+    must: "Execute phases in order, mark done only after verification"
+  G3_log_notify_stop:
+    description: "Lỗi hệ thống → Log → Notify → DỪNG NGAY."
+    must: "On system error: log, notify user, STOP all tasks"
+  G4_source_grounding:
+    description: "Nội dung 100% từ design/todo/resources. Không ảo giác."
+    must: "Only create files in design.md §3 Zone Mapping"
+  G5_build_log_mandatory:
+    description: "Ghi quyết định, phản biện, file tạo vào build-log.md."
+    must: "Append every decision with Task -> Output -> Source"
+  G6_context_coverage:
+    description: "Không bỏ sót file critical; có evidence trong Resource Usage Matrix."
+    must: "All critical files have usage evidence"
+  G7_zone_contract_block:
+    description: "CHỉ tạo file trong design.md §3. Không tự ý thêm."
+    must_not: "Create files not in §3 Zone Mapping"
+```
 
 ## Error Policy
 
 If critical command fails:
-
 1. Append error to `loop/build-log.md`.
 2. Use **AskUserQuestion** to notify blockage.
 3. **STOP** all tasks. Exit session.
@@ -212,8 +248,8 @@ Output (skill folder):
 skill-name/
 ├── SKILL.md
 ├── knowledge/
-│ ├── architect.md
-│ └── standards.md
+│   ├── architect.md
+│   └── standards.md
 ```
 
 **Example 2 — Placeholder Tracking:**

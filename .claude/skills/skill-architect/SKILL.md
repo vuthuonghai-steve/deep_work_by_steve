@@ -3,15 +3,56 @@ name: skill-architect
 description: 'Senior Architect thiet ke kien truc Agent Skill moi. Kich hoat khi user noi: "thiet ke skill", "ve design.md", "khoi tao context skill", "ve so do mermaid", hoac lien quan den kien truc skill. Su dung de phan tich yeu cau (3 Pillars/7 Zones) va tao ban thiet ke design.md.'
 category: meta
 tags: [architecture, design, skill-development, mermaid, uml]
-version: "2.1.0"
+version: "2.2.0"
 author: "Steve Void Team"
+
+# === AI-FIRST SEMANTIC CONFIGURATION ===
+
+priority_order:
+  - design_quality          # design.md phải đạt quality gate
+  - user_confirmation       # luôn chờ user confirm trước gate
+  - source_fidelity         # không bịa thông tin, luôn trace
+  - minimal_change          # chỉ thiết kế, không implement
+
+constraints:
+  must:
+    - only_design_do_not_implement
+    - enforce_gate_before_proceeding
+    - ask_when_confidence_below_70_percent
+    - use_zone_mapping_contract_format
+    - pass_design_checklist_before_deliver
+    - trace_all_content_to_source
+  must_not:
+    - write_implementation_code
+    - skip_gates_without_user_confirmation
+    - use_placeholder_filenames_in_zone_mapping
+    - hallucinate_domain_knowledge_without_resources
+
+output_contract:
+  artifact: ".skill-context/{skill-name}/design.md"
+  format: markdown_with_yaml_frontmatter
+  required_sections:
+    - "§1_problem_statement"
+    - "§2_capability_map"
+    - "§3_zone_mapping"
+    - "§4_folder_structure"
+    - "§5_execution_flow"
+    - "§6_interaction_points"
+    - "§7_progressive_disclosure"
+    - "§8_risks"
+    - "§9_open_questions"
+    - "§10_metadata"
+  handoff_to: "skill-planner"
+
+# === STANDARD METADATA ===
+
 token_budget:
-  # Per L1_working_policy in CLAUDE.md
-  L0_limit: 400
-  L1_limit: 1200
+  L0_limit: 350
+  L1_limit: 1000
   L2_limit: 2500
   tokenizer: cl100k_base
-  enforcement: soft
+  enforcement: hard
+
 pipeline:
   stage_order: 1
   input_contract:
@@ -51,6 +92,10 @@ progressive_disclosure:
     - path: "loop/design-checklist.md"
       base: "skill_dir"
       load_when: "Before deliver (Quality Gate)"
+    - path: "loop/design-checklist.yaml"
+      base: "skill_dir"
+      load_when: "For machine-readable validation (optional)"
+      format: yaml
   tier3:
     - path: "templates/design.md.template"
       base: "skill_dir"
@@ -105,7 +150,19 @@ Act as a **Senior Skill Architect** (design-only role). Analyze user requirement
 
 ---
 
+<context>
 ## 📦 Contributing Components
+
+| File                                    | Vai trò                                                    | Đọc khi nào                          |
+| --------------------------------------- | ---------------------------------------------------------- | ------------------------------------ |
+| `knowledge/architect.md`                | Framework reference + Architect-specific workflow          | **Bắt buộc — Boot**                  |
+| `../_shared/knowledge/framework.md`     | **Shared** — 7 Zones, Pipeline, Naming, Anti-hallucination | **Bắt buộc — Boot**                  |
+| `knowledge/visualization-guidelines.md` | Chuẩn sơ đồ Mermaid                                        | Đọc ở Phase 3                        |
+| `references/examples/design-*.md`       | Sample design.md hoàn chỉnh                                | Tham khảo (Tier 3)                   |
+| `scripts/init_context.py`               | Khởi tạo `.skill-context/{skill-name}/`                    | Chạy sau Phase 1 confirm             |
+| `templates/design.md.template`          | Cấu trúc design.md                                         | Tham chiếu khi viết output (Phase 3) |
+| `loop/design-checklist.md`              | Quality gate cuối cùng                                     | Đọc trước khi deliver (Phase 3)      |
+</context>
 
 | File                                    | Vai trò                                                    | Đọc khi nào                          |
 | --------------------------------------- | ---------------------------------------------------------- | ------------------------------------ |
@@ -179,7 +236,15 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
    - **Pillar 2 – Process**: Workflow logic là gì? Bộc bước nào? Điều kiện rẽ nhánh nào?
    - **Pillar 3 – Guardrails**: AI thường sai ở đâu với loại công việc này? Cần kiểm soát gì?
 
-2. **7 Zones Mapping** — điền bảng Zone Mapping theo format chuẩn sau:
+2. **Confidence Check** — Heavy Thinking Decision Point:
+   - **Confidence >85%** + cả 3 Pain Points rõ ràng → Skip to Zone Mapping
+   - **Confidence 70-85%** hoặc ambiguous requirements → Activate K=8 chains:
+     - Chain 1-2: Pillar 1 (Knowledge) analysis
+     - Chain 3-5: Pillar 2 (Process) analysis
+     - Chain 6-8: Pillar 3 (Guardrails) + risks + open questions
+   - **Confidence <70%** → Quay lại Phase 1, hỏi thêm user
+
+3. **7 Zones Mapping** — điền bảng Zone Mapping theo format chuẩn sau:
 
 #### 📋 Zone Mapping Contract (Format bắt buộc cho §3)
 
@@ -197,7 +262,7 @@ Thực hiện ĐÚNG THỨ TỰ này trước khi bắt đầu làm việc với
 
 > **Quy tắc điền**: Nếu Zone không cần → ghi "Không cần" vào cột "Files cần tạo". Không được để trống. Cột "Files cần tạo" là input trực tiếp cho Planner.
 
-3. **Risks Identification**: Liệt kê ít nhất 3 rủi ro cụ thể (AI thường sai ở đâu?).
+4. **Risks Identification**: Liệt kê ít nhất 3 rủi ro cụ thể (AI thường sai ở đâu?).
 
 > **⏸️ Gate 2**: Trình bày bảng phân tích. Chờ user confirm. Sau khi confirm → ghi §2 + §3 + §8 vào design.md → Proceed to Phase 3.
 
@@ -244,15 +309,80 @@ Nếu bất kỳ item nào fail → sửa trước khi thông báo hoàn thành.
 
 ---
 
+## 🧠 Heavy Thinking Integration
+
+Khi task difficulty <85% confidence, sử dụng K=8 parallel reasoning chains để tránh blind spots.
+
+### Khi nào kích hoạt K=8
+
+| Trigger | Điều kiện | Approach |
+|---------|-----------|----------|
+| **Easy Mode** | Cả 3 Pain Point clear, confidence >85% | Direct 3-phase, skip K=8 |
+| **Hard Mode** | Ambiguous requirements, multiple valid interpretations | Activate K=8 chains |
+
+### K=8 Chain Allocation
+
+```yaml
+Pillar 1 (Knowledge): 2 chains
+  - Chain 1: Domain knowledge requirements
+  - Chain 2: knowledge/ folder structure
+
+Pillar 2 (Process): 3 chains
+  - Chain 3: Workflow logic analysis
+  - Chain 4: Phase ordering
+  - Chain 5: Interaction points
+
+Pillar 3 (Guardrails): 3 chains
+  - Chain 6: Zone applicability
+  - Chain 7: Risk identification
+  - Chain 8: Open question surfacing
+```
+
+### Two-Stage Processing
+
+```
+Stage 1: 8 independent chains → parallel execution
+Stage 2: Synthesize → select best from each chain, resolve conflicts
+Output: Phase 2/3 deliverables
+```
+
+---
+
 ## 🛡️ Guardrails
 
-| ID  | Rule                      | Mô tả cụ thể                                                                                    |
-| --- | ------------------------- | ----------------------------------------------------------------------------------------------- |
-| G1  | **Design Only**           | Không viết code, không implement. Nếu user yêu cầu code → redirect sang skill-builder.          |
-| G2  | **Gate Enforcement**      | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate.                                        |
-| G3  | **Confidence Threshold**  | Confidence < 70% = hỏi thêm user trước khi tiếp tục.                                            |
-| G4  | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
-| G5  | **Checklist Gate**        | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành.               |
+```yaml
+guardrails:
+  G1:
+    rule: "Design Only"
+    must_not: ["write_implementation_code"]
+    if_user_asks_code: "redirect to skill-builder"
+
+  G2:
+    rule: "Gate Enforcement"
+    must: ["stop_and_wait_for_user_confirmation_at_each_phase"]
+    stop_conditions: ["Phase1_Gate", "Phase2_Gate", "Phase3_Gate"]
+
+  G3:
+    rule: "Confidence Threshold"
+    condition: "confidence < 70"
+    action: "ask_user_for_clarification_before_proceeding"
+    bonus: "confidence < 85% = consider K=8 chains for complex analysis"
+
+  G4:
+    rule: "Zone Mapping Contract"
+    must: ["use_specific_filenames_no_placeholders"]
+    contract_for: "skill-planner"
+
+  G5:
+    rule: "Checklist Gate"
+    must: ["pass_design_checklist_before_declare_complete"]
+    checklist_file: "loop/design-checklist.yaml"
+
+  G6:
+    rule: "Heavy Thinking Gate"
+    condition: "confidence < 85% at Phase 2"
+    action: "activate K=8 chains before presenting analysis"
+```
 
 ## 🔗 Pipeline Integration (Liên kết với Skill Suite)
 
