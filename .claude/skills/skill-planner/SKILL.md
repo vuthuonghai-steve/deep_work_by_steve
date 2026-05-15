@@ -2,8 +2,15 @@
 name: skill-planner
 description: 'Doc ban thiet ke kien truc (design.md) va tao ke hoach trien khai chi tiet (todo.md). Trigger khi user noi: "lap ke hoach skill", "tao todo.md", "phan ra task tu design.md", "trace design -> task". Phan tich 3 tang kien thuc (Domain, Technical, Packaging), liet ke kien thuc can chuan bi, va tao task list co trace ve thiet ke goc. Skill nay la #2 trong bo Master Skill Suite (Architect -> Planner -> Builder).'
 category: meta
-version: "3.0.0"
+version: "3.1.0"
 case_system: true
+token_budget:
+  # Per L1_working_policy in CLAUDE.md
+  L0_limit: 400
+  L1_limit: 1200
+  L2_limit: 2500
+  tokenizer: cl100k_base
+  enforcement: soft
 pipeline:
   stage_order: 2
   input_contract:
@@ -25,13 +32,15 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+  tier2:
     - path: "knowledge/case-system.md"
       base: "skill_dir"
       triggers: [boot_sequence, entering_planning]
+      load_when: "Boot - Phase 1 context"
     - path: "scripts/check_status.py"
       base: "skill_dir"
       triggers: [boot_sequence]
-  tier2:
+      load_when: "Boot - Status check"
     - path: "knowledge/architect.md"
       base: "skill_dir"
       load_when: "Step READ (audit design.md)"
@@ -47,12 +56,38 @@ progressive_disclosure:
       triggers: [resuming_from_checkpoint]
 ---
 
+<instructions>
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
 > **Tại Boot**, bạn CHỈ đọc Tier 1 files.
 > Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+</instructions>
+
+<context>
+**Tier 1 Files** (Boot - load these first):
+- `SKILL.md` (this file)
+- `../_shared/knowledge/framework.md`
+
+**Tier 2 Files** (Load when needed per Phase):
+- `knowledge/case-system.md` - Case system for planning
+- `scripts/check_status.py` - Status check utility
+- `knowledge/architect.md` - Workflow reference
+- `knowledge/skill-packaging.md` - 3-tier breakdown
+
+**Tier 3 Files** (Optional):
+- `loop/plan-checklist.md` - Quality gate
+- `loop/resume_checklist.md` - Resume from checkpoint
+</context>
+
+<examples>
+**Boot Sequence Example**:
+1. Read SKILL.md (this file)
+2. Read framework.md
+3. Load Tier 2 files per Phase
+4. Proceed to Phase 1
+</examples>
 
 ---
 

@@ -2,6 +2,14 @@
 name: skill-builder
 description: Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop.
 category: meta
+version: "2.1.0"
+token_budget:
+  # Per L1_working_policy in CLAUDE.md
+  L0_limit: 400
+  L1_limit: 1200
+  L2_limit: 2500
+  tokenizer: cl100k_base
+  enforcement: soft
 pipeline:
   stage_order: 3
   input_contract:
@@ -43,12 +51,37 @@ progressive_disclosure:
       load_when: "Phase 5: DELIVER"
 ---
 
+<instructions>
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
 > **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
 > Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+</instructions>
+
+<context>
+**Tier 1 Files** (Boot - load these first):
+- `SKILL.md` (this file)
+- `../_shared/knowledge/framework.md`
+
+**Tier 2 Files** (Load when needed per Phase):
+- `knowledge/architect.md` - Builder workflow
+- `knowledge/build-guidelines.md` - Build standards
+- `knowledge/anthropic-skill-standards.md` - SKILL.md writing standards
+
+**Tier 3 Files** (Optional):
+- `loop/build-checklist.md` - Quality gate
+- `loop/build-log.md` - Build evidence
+</context>
+
+<examples>
+**Boot Sequence Example**:
+1. Read SKILL.md (this file)
+2. Read framework.md
+3. Proceed to Phase 1
+4. Load Tier 2 files as needed per Phase
+</examples>
 
 ---
 

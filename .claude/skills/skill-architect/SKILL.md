@@ -3,8 +3,15 @@ name: skill-architect
 description: 'Senior Architect thiet ke kien truc Agent Skill moi. Kich hoat khi user noi: "thiet ke skill", "ve design.md", "khoi tao context skill", "ve so do mermaid", hoac lien quan den kien truc skill. Su dung de phan tich yeu cau (3 Pillars/7 Zones) va tao ban thiet ke design.md.'
 category: meta
 tags: [architecture, design, skill-development, mermaid, uml]
-version: "2.0.0"
+version: "2.1.0"
 author: "Steve Void Team"
+token_budget:
+  # Per L1_working_policy in CLAUDE.md
+  L0_limit: 400
+  L1_limit: 1200
+  L2_limit: 2500
+  tokenizer: cl100k_base
+  enforcement: soft
 pipeline:
   stage_order: 1
   input_contract:
@@ -34,31 +41,57 @@ progressive_disclosure:
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
-      load_when: "Phase requiring domain knowledge"
+      load_when: "Phase 1: Analyze & Design"
     - path: "knowledge/visualization-guidelines.md"
       base: "skill_dir"
-      load_when: "Phase 3: Design & Output"
+      load_when: "Phase 2: Visualization"
     - path: "scripts/init_context.py"
       base: "skill_dir"
       load_when: "After Phase 1 confirm"
     - path: "loop/design-checklist.md"
       base: "skill_dir"
       load_when: "Before deliver (Quality Gate)"
+  tier3:
     - path: "templates/design.md.template"
       base: "skill_dir"
       load_when: "When writing design.md output"
-  tier3:
     - path: "references/examples/design-*.md"
       base: "skill_dir"
       load_when: "When needing reference examples"
 ---
 
+<instructions>
 > 🚨 **MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG (CRITICAL DIRECTIVE)**:
 > Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
 > Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
 > **Tại Boot**, bạn CHỈ đọc Tier 1 files: `../_shared/knowledge/framework.md`.
 > Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
 > Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+</instructions>
+
+<context>
+**Tier 1 Files** (Boot - load these first):
+- `SKILL.md` (this file)
+- `../_shared/knowledge/framework.md`
+
+**Tier 2 Files** (Load when needed per Phase):
+- `knowledge/architect.md` - Architect workflow
+- `knowledge/visualization-guidelines.md` - Mermaid standards
+- `scripts/init_context.py` - Context initialization
+- `loop/design-checklist.md` - Quality gate
+
+**Tier 3 Files** (Optional):
+- `templates/design.md.template` - Output template
+- `references/examples/design-*.md` - Reference examples
+</context>
+
+<examples>
+**Boot Sequence Example**:
+1. Read SKILL.md (this file)
+2. Read framework.md
+3. Proceed to Phase 1
+4. Load Tier 2 files as needed per Phase
+</examples>
 
 ---
 
