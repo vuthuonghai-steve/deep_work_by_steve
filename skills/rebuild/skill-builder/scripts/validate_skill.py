@@ -426,6 +426,57 @@ class SkillValidator:
         
         return True
 
+    def check_trace_tags(self):
+        """
+        Validate trace tags in todo.md for anti-hallucination enforcement.
+        Checks for: [TỪ DESIGN §N], [CẦN LÀM RÕ], [GỢI Ý BỔ SUNG], [TỪ AUDIT TÀI NGUYÊN]
+        """
+        if not self.todo_path or not os.path.exists(self.todo_path):
+            return True
+
+        self.log("10. Trace Tag Validation Check...")
+
+        with open(self.todo_path, 'r', encoding='utf-8') as f:
+            todo_content = f.read()
+
+        # Standard trace tags that must be present
+        required_tags = {
+            r'\[TỪ DESIGN §\d+\]': 'Design trace',
+            r'\[CẦN LÀM RÕ\]': 'Clarification needed',
+            r'\[GỢI Ý BỔ SUNG\]': 'Suggested addition',
+            r'\[TỪ AUDIT TÀI NGUYÊN\]': 'Resource audit trace',
+        }
+
+        # Legacy/invalid tags that should NOT appear
+        legacy_tags = {
+            r'\[GỢI Ý\]': 'Use [GỢI Ý BỔ SUNG] instead',
+            r'\[TỪ AUDIT\]': 'Use [TỪ AUDIT TÀI NGUYÊN] instead',
+            r'\[TỪ AUDIT CUSTOM\]': 'Invalid tag format',
+            r'\[CẦU LÀM RÕ\]': 'Typo - use [CẦN LÀM RÕ]',
+        }
+
+        issues = []
+        for pattern, name in required_tags.items():
+            count = len(re.findall(pattern, todo_content, re.IGNORECASE))
+            if count > 0:
+                self.log(f"   -> {name}: {count} found")
+            else:
+                self.warnings.append(f"WARNING: No instances of '{name}' tag found in todo.md")
+                issues.append(f"missing_{name}")
+
+        for pattern, fix_suggestion in legacy_tags.items():
+            count = len(re.findall(pattern, todo_content, re.IGNORECASE))
+            if count > 0:
+                self.errors.append(f"ERROR: Found legacy/invalid tag matching '{pattern}' - {fix_suggestion}")
+                issues.append(f"legacy_tag")
+
+        if not issues:
+            self.log("   -> All trace tags VALID")
+        else:
+            self.log(f"   -> Trace tag issues: {issues}", "WARN")
+
+        return len([i for i in issues if i.startswith('legacy')]) == 0
+
     def report(self):
         print("\n" + "="*50)
         print("   AGENT SKILL VALIDATION REPORT")
@@ -442,7 +493,8 @@ class SkillValidator:
         self.check_context_resource_coverage()
         self.check_fidelity_heuristics()
         self.check_todo_cross_reference()
-        
+        self.check_trace_tags()
+
         print("="*50)
         final_status = "PASS" if not self.errors else "FAIL"
         if self.warnings and final_status == "PASS":

@@ -58,6 +58,18 @@ progressive_disclosure:
 
 # Skill Planner — Multi-Perspective Design-to-Plan Converter
 
+## Workflow Progress Tracker
+
+Copy this checklist into your response and mark progress:
+
+```markdown
+### [skill-planner] Progress:
+- [ ] Step READ — Đọc Input & Audit Tài nguyên
+- [ ] Step ANALYZE — Phân tích 3 Tầng & Audit Kiến thức
+- [ ] Step WRITE — Ghi todo.md
+- [ ] Step VERIFY — Kiểm chứng & Đóng băng Kế hoạch
+```
+
 ## 🚀 Boot Sequence (MANDATORY — Thực hiện ĐÚNG THỨ TỰ)
 
 ### Step 1: Read SKILL.md

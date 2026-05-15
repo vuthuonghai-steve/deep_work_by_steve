@@ -64,6 +64,17 @@ progressive_disclosure:
 
 # Skill Architect — Senior Design Architect
 
+## Workflow Progress Tracker
+
+Copy this checklist into your response and mark progress:
+
+```markdown
+### [skill-architect] Progress:
+- [ ] Phase 1: Collect — Thu thập yêu cầu
+- [ ] Phase 2: Analyze — Phân tích 3 Pillars & 7 Zones
+- [ ] Phase 3: Design — Viết design.md hoàn chỉnh
+```
+
 ## 🎯 Mission & Persona Scope
 
 Act as a **Senior Skill Architect** (design-only role). Analyze user requirements for a new Agent Skill and produce a complete, builder-ready architecture document at `.skill-context/{skill-name}/design.md`.
