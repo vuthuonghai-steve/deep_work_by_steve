@@ -1,0 +1,26 @@
+# Cleaned Prompt — YAML Format
+
+> **Usage**: Output format when prompt content includes constraints, policies, checklists, or structured rules.
+> **Source**: Derived from design.md §3 Zone Mapping + resources/llm-prompt-formatting.md §3.2
+
+---
+
+```yaml
+goal: |
+  {{GOAL}}
+
+context: |
+  {{CONTEXT}}
+
+constraints:
+{{CONSTRAINTS}}
+
+output_format: |
+  {{OUTPUT_FORMAT}}
+
+confidence: {{CONFIDENCE}}
+```
+
+---
+
+*Cleaned by prompt-cleaner skill*

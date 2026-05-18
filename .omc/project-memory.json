@@ -108,6 +108,12 @@
       "type": "file"
     },
     {
+      "path": ".skill-context/prompt-cleaner/todo.md",
+      "accessCount": 2,
+      "lastAccessed": 1779104524494,
+      "type": "file"
+    },
+    {
       "path": "",
       "accessCount": 1,
       "lastAccessed": 1779094407686,
@@ -135,6 +141,42 @@
       "path": "docs/sessions/2026-05-18--skill-suite-format-improvement.md",
       "accessCount": 1,
       "lastAccessed": 1779102188214,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/haevy-thinking/heavy-thinking-tree-plan.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104430992,
+      "type": "file"
+    },
+    {
+      "path": "docs/raw/brainstorm/skill-suite-improvement-raw-notes/chain-04-guardrails-anti-hallucination-analysis.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104431000,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/ai-agents.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104440394,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/skill-suite-pipeline-workflow.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104440427,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/haevy-thinking/heavy-thinking.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104440451,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/llm-prompt-formatting.md",
+      "accessCount": 1,
+      "lastAccessed": 1779104489290,
       "type": "file"
     }
   ],

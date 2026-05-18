@@ -200,7 +200,10 @@ If critical command fails:
 ## Scripts & Tools
 
 - Validator: `scripts/validate_skill.py` (relative to skill root)
+- Validator: `scripts/validate_skill.py` (relative to skill root)
+- Sync: `scripts/sync-skills.sh` — sync rebuilt skills to `.hermes/skills/` and `.claude/`
 
+## Examples
 ## Examples
 
 **Example 1 — Design to Zone Mapping:**

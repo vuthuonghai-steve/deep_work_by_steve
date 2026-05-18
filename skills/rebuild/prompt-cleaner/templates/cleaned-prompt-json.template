@@ -1,0 +1,16 @@
+{
+  "prompt": {
+    "goal": "{{GOAL}}",
+    "context": "{{CONTEXT}}",
+    "constraints": "{{CONSTRAINTS}}",
+    "output_format": "{{OUTPUT_FORMAT}}",
+    "confidence": "{{CONFIDENCE}}",
+    "source_citations": [
+      {{CITE}}
+    ]
+  },
+  "metadata": {
+    "cleaned_by": "prompt-cleaner",
+    "format": "json"
+  }
+}
