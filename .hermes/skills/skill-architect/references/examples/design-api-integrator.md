@@ -5,40 +5,40 @@
 
 ---
 
-## 1. Problem Statement
+## 1. Problem Statement  [TỪ USER INPUT]
 
-**Vấn đề**: Khi cần tích hợp API backend vào frontend, developer phải:
+**Vấn đề**: Khi cần tích hợp API backend vào frontend, developer phải:  [TỪ NGUỒN EXTERNAL: frontend-dev-pain-points]
 - Tìm hiểu cấu trúc API endpoint thủ công
 - Viết code request/response lặp đi lặp lại
 - Đồng bộ types giữa backend và frontend
 
-**Người dùng**: Frontend developer sử dụng Next.js + PayloadCMS
+**Người dùng**: Frontend developer sử dụng Next.js + PayloadCMS  [TỪ USER INPUT]
 
-**Lý do cần skill**: Tự động hóa quá trình nghiên cứu API, tạo typed client, và sync data structure.
+**Lý do cần skill**: Tự động hóa quá trình nghiên cứu API, tạo typed client, và sync data structure.  [GỢI Ý BỔ SUNG]
 
 ---
 
-## 2. Capability Map
+## 2. Capability Map  [TỪ DESIGN §1]
 
-### 2.1 Tri thức (Knowledge — Pillar 1)
+### 2.1 Tri thức (Knowledge — Pillar 1)  [TỪ NGUỒN EXTERNAL: payloadcms-docs]
 - Cấu trúc PayloadCMS API endpoints
 - TypeScript typing patterns cho API responses
 - Next.js API routes conventions
 
-### 2.2 Quy trình (Process — Pillar 2)
+### 2.2 Quy trình (Process — Pillar 2)  [TỪ DESIGN §1]
 1. Nhận input: đường dẫn file API hoặc collection name
 2. Phân tích endpoint structure (GET/POST/PUT/DELETE)
 3. Tạo typed API client với fetch wrapper
 4. Sync DTO types vào frontend
 
-### 2.3 Kiểm soát (Guardrails — Pillar 3)
+### 2.3 Kiểm soát (Guardrails — Pillar 3)  [GỢI Ý BỔ SUNG]
 - Validate input path tồn tại
 - Không expose sensitive fields (password, token)
 - Warn khi API có breaking changes
 
 ---
 
-## 3. Zone Mapping
+## 3. Zone Mapping  [TỪ DESIGN §2]
 
 | Zone | Files cần tạo | Nội dung | Bắt buộc? |
 |------|--------------|----------|-----------|

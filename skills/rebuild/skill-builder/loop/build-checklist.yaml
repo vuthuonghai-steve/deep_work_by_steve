@@ -92,6 +92,34 @@ quality_gates:
         description: "stage: builder và KHÔNG có handoff field"
         rule: "builder_stage_correct"
 
+  format_compliance:
+    description: "Format Standards Compliance (BẮT BUỘC)"
+    checks:
+      - id: "F1"
+        description: "XML tags present: <instructions>, <context>, <examples>, <output_contract>"
+        rule: "xml_tags_present"
+        severity: MUST
+      - id: "F2"
+        description: "YAML blocks use must:, must_not:, priority_order:"
+        rule: "yaml_keys_present"
+        severity: MUST
+      - id: "F3"
+        description: "Trace tags: [TỪ DESIGN §N], [GỢI Ý BỔ SUNG], [TỪ AUDIT TÀI NGUYÊN], [CẦN LÀM RÕ]"
+        rule: "trace_tags_present"
+        severity: MUST
+      - id: "F4"
+        description: "No legacy trace tags: [GỢI Ý], [TỪ AUDIT], [TỪ AUDIT CUSTOM], [CẦU LÀM RÕ]"
+        rule: "no_legacy_tags"
+        severity: MUST
+      - id: "F5"
+        description: "SKILL.md ≤ 500 lines, knowledge/ ≤ 200 lines per file"
+        rule: "token_budget_compliance"
+        severity: MUST
+      - id: "F6"
+        description: "YAML frontmatter at line 1 of SKILL.md"
+        rule: "yaml_frontmatter_line1"
+        severity: MUST
+
   completeness_performance:
     description: "Hoàn thiện & Chất lượng"
     checks:

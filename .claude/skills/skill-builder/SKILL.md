@@ -25,6 +25,8 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+    - path: "knowledge/format-standards.md"
+      base: "skill_dir"
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -220,6 +222,25 @@ guardrails:
   G7_zone_contract_block:
     description: "CHỉ tạo file trong design.md §3. Không tự ý thêm."
     must_not: "Create files not in §3 Zone Mapping"
+  G8_format_compliance:
+    description: "Output phải tuân thủ format-standards.md"
+    must:
+      - use_yaml_for_constraints
+      - use_xml_tags_for_boundaries
+      - use_trace_tags_for_all_content
+      - follow_token_budget
+      - yaml_frontmatter_line1
+    must_not:
+      - output_missing_trace_tags
+      - use_placeholder_filenames_in_zone_mapping
+      - skip_format_validation
+    reject_if:
+      - missing_trace_tags
+      - missing_xml_boundaries
+      - missing_yaml_must_must_not
+      - token_budget_exceeded
+      - yaml_frontmatter_not_line1
+    enforcement: hard
 ```
 
 ## Error Policy

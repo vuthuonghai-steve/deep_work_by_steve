@@ -477,6 +477,84 @@ class SkillValidator:
 
         return len([i for i in issues if i.startswith('legacy')]) == 0
 
+    def check_format_compliance(self):
+        """
+        Validate format standards compliance in built skill.
+        Checks: XML tags, YAML blocks, trace tags, token budget.
+        """
+        self.log("11. Format Standards Compliance Check...")
+
+        skill_md_path = os.path.join(self.skill_path, "SKILL.md")
+        if not os.path.exists(skill_md_path):
+            self.warnings.append("WARNING: SKILL.md not found, skipping format compliance")
+            return True
+
+        with open(skill_md_path, 'r', encoding='utf-8') as f:
+            skill_content = f.read()
+            skill_lines = skill_content.split('\n')
+
+        # F1: XML tags presence
+        required_xml_tags = ['<instructions>', '<context>', '<examples>', '<output_contract>']
+        for tag in required_xml_tags:
+            if tag in skill_content:
+                self.log(f"   -> XML tag {tag}: FOUND")
+            else:
+                self.warnings.append(f"WARNING: Missing XML tag '{tag}' in SKILL.md")
+
+        # F2: YAML frontmatter at line 1
+        if skill_lines[0].strip() == '---':
+            self.log("   -> YAML frontmatter at line 1: OK")
+        else:
+            self.errors.append("ERROR: YAML frontmatter must be at line 1 of SKILL.md")
+
+        # F3: YAML keys in content
+        required_yaml_keys = ['must:', 'must_not:', 'priority_order:']
+        for key in required_yaml_keys:
+            if key in skill_content:
+                self.log(f"   -> YAML key '{key}': FOUND")
+            else:
+                self.warnings.append(f"WARNING: Missing YAML key '{key}' in SKILL.md")
+
+        # F4: Trace tags (if build-log exists in context)
+        context_dir = self.get_context_dir()
+        build_log_path = os.path.join(context_dir, "build-log.md") if context_dir else None
+        if build_log_path and os.path.exists(build_log_path):
+            with open(build_log_path, 'r', encoding='utf-8') as f:
+                log_content = f.read()
+
+            valid_trace_tags = [
+                r'\[TỪ DESIGN §\d+\]',
+                r'\[GỢI Ý BỔ SUNG\]',
+                r'\[TỪ AUDIT TÀI NGUYÊN\]',
+                r'\[CẦN LÀM RÕ\]',
+            ]
+            for pattern in valid_trace_tags:
+                count = len(re.findall(pattern, log_content, re.IGNORECASE))
+                if count > 0:
+                    self.log(f"   -> Trace tag {pattern}: {count} found")
+
+        # F5: Token budget check (SKILL.md ≤ 500 lines)
+        if len(skill_lines) > 500:
+            self.errors.append(f"ERROR: SKILL.md exceeds 500 lines ({len(skill_lines)} lines)")
+        else:
+            self.log(f"   -> SKILL.md line count: {len(skill_lines)} (limit: 500)")
+
+        # Check knowledge files line count (≤ 200 lines each)
+        knowledge_dir = os.path.join(self.skill_path, "knowledge")
+        if os.path.exists(knowledge_dir):
+            for root, _, files in os.walk(knowledge_dir):
+                for file in files:
+                    if file.endswith('.md'):
+                        file_path = os.path.join(root, file)
+                        with open(file_path, 'r', encoding='utf-8') as f:
+                            lines = f.readlines()
+                            if len(lines) > 200:
+                                rel_path = os.path.relpath(file_path, self.skill_path)
+                                self.warnings.append(f"WARNING: {rel_path} exceeds 200 lines ({len(lines)} lines)")
+
+        self.log("   -> Format compliance check complete")
+        return len([e for e in self.errors if 'format' in e.lower() or 'yaml' in e.lower() or 'xml' in e.lower() or '500' in e]) == 0
+
     def report(self):
         print("\n" + "="*50)
         print("   AGENT SKILL VALIDATION REPORT")
@@ -494,6 +572,7 @@ class SkillValidator:
         self.check_fidelity_heuristics()
         self.check_todo_cross_reference()
         self.check_trace_tags()
+        self.check_format_compliance()
 
         print("="*50)
         final_status = "PASS" if not self.errors else "FAIL"

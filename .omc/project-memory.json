@@ -91,8 +91,8 @@
     },
     {
       "path": ".skill-context/skill-suite-fix/design.md",
-      "accessCount": 4,
-      "lastAccessed": 1779099688106,
+      "accessCount": 5,
+      "lastAccessed": 1779102188135,
       "type": "file"
     },
     {
@@ -102,16 +102,16 @@
       "type": "file"
     },
     {
+      "path": ".skill-context/skill-suite-fix/todo.md",
+      "accessCount": 2,
+      "lastAccessed": 1779102188163,
+      "type": "file"
+    },
+    {
       "path": "",
       "accessCount": 1,
       "lastAccessed": 1779094407686,
       "type": "directory"
-    },
-    {
-      "path": ".skill-context/skill-suite-fix/todo.md",
-      "accessCount": 1,
-      "lastAccessed": 1779094911885,
-      "type": "file"
     },
     {
       "path": "CLAUDE.md",
@@ -129,6 +129,12 @@
       "path": ".hermes/skills/skill-architect/references/format-standards.md",
       "accessCount": 1,
       "lastAccessed": 1779099224546,
+      "type": "file"
+    },
+    {
+      "path": "docs/sessions/2026-05-18--skill-suite-format-improvement.md",
+      "accessCount": 1,
+      "lastAccessed": 1779102188214,
       "type": "file"
     }
   ],

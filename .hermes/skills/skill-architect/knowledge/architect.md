@@ -5,12 +5,54 @@
 
 ---
 
+<context>
 ## Quick Reference
 
 For complete framework details (7 Zones, Pipeline Flow, Naming Conventions, Anti-hallucination), see:
 ```
 ../../_shared/knowledge/framework.md
 ```
+</context>
+
+---
+
+## Source Attribution Rules (Anti-Hallucination)
+
+Every section in design.md MUST trace content to source.
+
+### Valid Trace Tags
+
+| Tag | Meaning | Usage |
+|-----|---------|-------|
+| `[TỪ DESIGN §N]` | Derived directly from design.md section N | §2 → §3 mapping |
+| `[TỪ NGUỒN EXTERNAL]` | From user's resources/ folder | Domain knowledge |
+| `[GỢI Ý BỔ SUNG]` | Suggested by Architect, not in design | Rationale |
+| `[CẦN LÀM RÕ]` | Needs user clarification | Blockers |
+
+### Required Attribution by Section
+
+```yaml
+section_attribution:
+  §2_capability_map:
+    knowledge_pillar: "[TỪ NGUỒN EXTERNAL]"  # hoặc user input
+    process_pillar: "[TỪ DESIGN §1]"          # từ pain point
+    guardrails_pillar: "[GỢI Ý BỔ SUNG]"      # architect expertise
+
+  §3_zone_mapping:
+    all_zones: "[TỪ DESIGN §2]"                # từ capability map
+    files_traced: "[TỪ NGUỒN EXTERNAL]"       # nếu từ resource
+
+  §4_folder_structure:
+    structure: "[TỪ DESIGN §3]"                # phản ánh zone mapping
+    diagrams: "[TỪ DESIGN §3]"                  # match §3 exactly
+```
+
+### Anti-Hallucination Checklist
+
+- [ ] Mỗi sentence trong §2 có trace tag
+- [ ] Mỗi file trong §3 có trace tag
+- [ ] Risk mitigation có `[GỢI Ý BỔ SUNG]` hoặc `[TỪ NGUỒN EXTERNAL]`
+- [ ] Open Questions được flag với `[CẦN LÀM RÕ]`
 
 ---
 

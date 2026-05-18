@@ -71,21 +71,30 @@ quality_gates:
 
   trace_validation:
     enabled: true
+    severity: MUST
     valid_tags:
       - "[TỪ DESIGN §N]"
       - "[GỢI Ý BỔ SUNG]"
       - "[TỪ AUDIT TÀI NGUYÊN]"
       - "[CẦN LÀM RÕ]"
+    legacy_tags:
+      - "[GỢI Ý]"  # Use [GỢI Ý BỔ SUNG] instead
+      - "[TỪ AUDIT]"  # Use [TỪ AUDIT TÀI NGUYÊN] instead
+      - "[TỪ AUDIT CUSTOM]"  # Invalid format
+      - "[CẦU LÀM RÕ]"  # Typo - use [CẦN LÀM RÕ]
     checks:
       - id: "T1"
         description: "Every task has trace tag"
         rule: "all_tasks_traced"
+        severity: MUST
       - id: "T2"
-        description: "No invalid trace tags"
+        description: "No legacy/invalid trace tags"
         rule: "only_valid_tags"
+        severity: MUST
       - id: "T3"
         description: "Trace tags match design.md sections"
         rule: "sections_exist"
+        severity: MUST
 
   blockers:
     checks:

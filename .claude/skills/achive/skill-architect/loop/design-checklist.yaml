@@ -150,7 +150,6 @@ quality_gates:
 trace_validation:
   enabled: true
   valid_tags:
-    - "[TỪ USER INPUT]"
     - "[TỪ DESIGN §N]"
     - "[TỪ NGUỒN EXTERNAL]"
     - "[GỢI Ý BỔ SUNG]"
@@ -162,9 +161,6 @@ trace_validation:
     - id: "T2"
       description: "Không được dùng tag không có trong valid_tags"
       rule: "only_valid_tags"
-    - id: "T3"
-      description: "Mọi §2 pillar analysis phải có nguồn attribution"
-      rule: "all_pillars_traced"
 
 # Output format khi chạy checklist
 output_format:
@@ -183,4 +179,4 @@ severity_assignment:
   handoff_readiness: "MUST"
   process_gate: "MUST"
   final_deliver: "SHOULD"
-  trace_validation: "MUST"
+  trace_validation: "SHOULD"

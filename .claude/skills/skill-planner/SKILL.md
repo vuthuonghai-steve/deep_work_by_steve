@@ -31,6 +31,9 @@ progressive_disclosure:
     - path: "scripts/check_status.py"
       base: "skill_dir"
       triggers: [boot_sequence]
+    - path: "knowledge/format-standards.md"
+      base: "skill_dir"
+      triggers: [boot_sequence]
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -294,6 +297,23 @@ guardrails:
   G5_resource_gate:
     description: "Planner chỉ đánh dấu 'Complete' khi resources/ đã đủ cho Builder"
     must: "All critical resources status: ✅ before ready_for_builder"
+  G6_format_compliance:
+    description: "Output phải tuân thủ format-standards.md"
+    must:
+      - use_yaml_for_constraints
+      - use_xml_tags_for_boundaries
+      - use_trace_tags_for_all_content
+      - follow_token_budget
+    must_not:
+      - output_missing_trace_tags
+      - use_placeholder_filenames_in_zone_mapping
+      - skip_format_validation
+    reject_if:
+      - missing_trace_tags
+      - missing_xml_boundaries
+      - missing_yaml_must_must_not
+      - token_budget_exceeded_without_justification
+    enforcement: hard
 ```
 
 ## Error Handling
