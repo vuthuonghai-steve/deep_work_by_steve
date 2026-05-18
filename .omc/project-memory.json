@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1778763872520,
+  "lastScanned": 1779090057008,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -35,7 +35,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1778763872518,
+      "lastAccessed": 1779090056998,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -48,27 +48,27 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1778763872519,
+      "lastAccessed": 1779090057000,
       "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
-      "fileCount": 6,
-      "lastAccessed": 1778763872519,
+      "fileCount": 8,
+      "lastAccessed": 1779090057002,
       "keyFiles": [
+        "audit.md",
+        "checklist.md",
         "data.json",
         "data.yaml",
-        "r.md",
-        "temp.json",
-        "temp.md"
+        "r.md"
       ]
     },
     "knowledge": {
       "path": "knowledge",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1778763872520,
+      "lastAccessed": 1779090057003,
       "keyFiles": [
         "README.md",
         "index.md"
@@ -78,309 +78,57 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1778763872520,
+      "lastAccessed": 1779090057003,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
-      "path": ".claude/skills/skill-architect/SKILL.md",
-      "accessCount": 40,
-      "lastAccessed": 1778818815854,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-planner/SKILL.md",
-      "accessCount": 27,
-      "lastAccessed": 1778820067375,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/validators/schema_validator.py",
-      "accessCount": 18,
-      "lastAccessed": 1778813999076,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-architect/knowledge/architect.md",
-      "accessCount": 8,
-      "lastAccessed": 1778818876262,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/knowledge/framework.md",
-      "accessCount": 7,
-      "lastAccessed": 1778816954837,
-      "type": "file"
-    },
-    {
-      "path": "CLAUDE.md",
-      "accessCount": 6,
-      "lastAccessed": 1778819078045,
-      "type": "file"
-    },
-    {
-      "path": "info_temp/checklist.md",
+      "path": "info_temp/temp.md",
       "accessCount": 5,
-      "lastAccessed": 1778812245157,
+      "lastAccessed": 1779097426041,
       "type": "file"
     },
     {
-      "path": ".skill-context/skill-suite-upgrade/design.md",
+      "path": ".skill-context/skill-suite-fix/design.md",
       "accessCount": 4,
-      "lastAccessed": 1778811487450,
+      "lastAccessed": 1779099688106,
       "type": "file"
     },
     {
-      "path": ".claude/skills/skill-planner/knowledge/architect.md",
-      "accessCount": 3,
-      "lastAccessed": 1778803676863,
-      "type": "file"
-    },
-    {
-      "path": "info_temp/audit.md",
-      "accessCount": 3,
-      "lastAccessed": 1778812245211,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/heavy-thinking-manual/knowledge/k-chains-lens.md",
+      "path": ".hermes/skills/skill-architect/SKILL.md",
       "accessCount": 2,
-      "lastAccessed": 1778803583100,
-      "type": "file"
-    },
-    {
-      "path": ".hermes/skills/skill-planner/SKILL.md",
-      "accessCount": 2,
-      "lastAccessed": 1778803651421,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/deliberation.md",
-      "accessCount": 2,
-      "lastAccessed": 1778804997993,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/prepared-context.json",
-      "accessCount": 2,
-      "lastAccessed": 1778804998449,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/checklist.yaml",
-      "accessCount": 2,
-      "lastAccessed": 1778804998807,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-planner/knowledge/skill-packaging.md",
-      "accessCount": 2,
-      "lastAccessed": 1778810850488,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/skill-suite-upgrade/todo.md",
-      "accessCount": 2,
-      "lastAccessed": 1778811487529,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/validators/validate_all.py",
-      "accessCount": 2,
-      "lastAccessed": 1778813973738,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/validators/xml_tag_validator.py",
-      "accessCount": 2,
-      "lastAccessed": 1778814046803,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/session-learner",
-      "accessCount": 1,
-      "lastAccessed": 1778238101267,
-      "type": "directory"
-    },
-    {
-      "path": ".skill-context/session-learner/todo.md",
-      "accessCount": 1,
-      "lastAccessed": 1778238106554,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/session-learner/design.md",
-      "accessCount": 1,
-      "lastAccessed": 1778238106603,
+      "lastAccessed": 1779099212063,
       "type": "file"
     },
     {
       "path": "",
       "accessCount": 1,
-      "lastAccessed": 1778238113765,
+      "lastAccessed": 1779094407686,
       "type": "directory"
     },
     {
-      "path": ".hermes/skills/skill-architect/SKILL.md",
+      "path": ".skill-context/skill-suite-fix/todo.md",
       "accessCount": 1,
-      "lastAccessed": 1778764272221,
+      "lastAccessed": 1779094911885,
       "type": "file"
     },
     {
-      "path": ".claude/skills/heavy-thinking-manual/knowledge/context-sources.md",
+      "path": "CLAUDE.md",
       "accessCount": 1,
-      "lastAccessed": 1778803413821,
+      "lastAccessed": 1779096679665,
       "type": "file"
     },
     {
-      "path": ".claude/skills/heavy-thinking-manual/data/trigger-keywords.md",
+      "path": ".claude/skills/_shared/validators/schema_validator.py",
       "accessCount": 1,
-      "lastAccessed": 1778803413845,
+      "lastAccessed": 1779099224510,
       "type": "file"
     },
     {
-      "path": ".claude/skills/heavy-thinking-manual/knowledge/deliberation-process.md",
+      "path": ".hermes/skills/skill-architect/references/format-standards.md",
       "accessCount": 1,
-      "lastAccessed": 1778803420758,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/heavy-thinking-manual/loop/quality-gate.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803583136,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/skill-planner-v21/design.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803649848,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/skill-architect-v21/design.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803649867,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/spec-generator-redesign/design.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803666313,
-      "type": "file"
-    },
-    {
-      "path": ".skill-context/spec-generator-redesign/todo.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803666397,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-planner/scripts/validate-todo.py",
-      "accessCount": 1,
-      "lastAccessed": 1778803689032,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/task-meta.yaml",
-      "accessCount": 1,
-      "lastAccessed": 1778803817224,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/context-sources.json",
-      "accessCount": 1,
-      "lastAccessed": 1778803817635,
-      "type": "file"
-    },
-    {
-      "path": ".task-context/2026-05-15-skill-suite-upgrade-001/analysis-chains.md",
-      "accessCount": 1,
-      "lastAccessed": 1778803818000,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-planner/scripts/check_status.py",
-      "accessCount": 1,
-      "lastAccessed": 1778805842027,
-      "type": "file"
-    },
-    {
-      "path": "skills/raw/skill-architect/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810540639,
-      "type": "file"
-    },
-    {
-      "path": "skills/raw/skill-planner/SKILL.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810540662,
-      "type": "file"
-    },
-    {
-      "path": "skills/raw/_shared/knowledge/framework.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810562156,
-      "type": "file"
-    },
-    {
-      "path": "skills/raw/skill-architect/knowledge/architect.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810571090,
-      "type": "file"
-    },
-    {
-      "path": "skills/raw/skill-planner/knowledge/skill-packaging.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810571196,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-planner/knowledge/case-system.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810850420,
-      "type": "file"
-    },
-    {
-      "path": "info_temp/temp.md",
-      "accessCount": 1,
-      "lastAccessed": 1778810857710,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/validators/trace_validator.py",
-      "accessCount": 1,
-      "lastAccessed": 1778811390418,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/achive/skill-architect/data/skill-schema.json",
-      "accessCount": 1,
-      "lastAccessed": 1778812163253,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/schemas/design.schema.yaml",
-      "accessCount": 1,
-      "lastAccessed": 1778812321841,
-      "type": "file"
-    },
-    {
-      "path": "knowledge/programming/hermes-skill-v3-patterns.md",
-      "accessCount": 1,
-      "lastAccessed": 1778813202932,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/_shared/knowledge/token-budget-standard.md",
-      "accessCount": 1,
-      "lastAccessed": 1778813435259,
-      "type": "file"
-    },
-    {
-      "path": ".claude/skills/skill-architect/loop/design-checklist.md",
-      "accessCount": 1,
-      "lastAccessed": 1778816954859,
+      "lastAccessed": 1779099224546,
       "type": "file"
     }
   ],

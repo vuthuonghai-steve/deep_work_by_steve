@@ -31,6 +31,9 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+    - path: "references/format-standards.md"
+      base: "skill_dir"
+      load_when: "Boot — REQUIRED for AI-first format knowledge"
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -219,7 +222,35 @@ Nếu bất kỳ item nào fail → sửa trước khi thông báo hoàn thành.
 | G2  | **Gate Enforcement**      | Mỗi Phase PHẢI dừng chờ user confirm. Không bỏ qua gate.                                        |
 | G3  | **Confidence Threshold**  | Confidence < 70% = hỏi thêm user trước khi tiếp tục.                                            |
 | G4  | **Zone Mapping Contract** | §3 Zone Mapping PHẢI có tên file cụ thể (không placeholder). Đây là contract chính cho Planner. |
-| G5  | **Checklist Gate**        | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thành.               |
+| G5  | **Checklist Gate**        | Đọc `loop/design-checklist.md` và pass tất cả items trước khi declare hoàn thnh.               |
+
+## 📐 Format Standards (Output Contract)
+
+Design documents MUST use hybrid XML+YAML+Markdown format:
+
+```xml
+<task>Problem statement summary</task>
+<constraints>
+```yaml
+must:
+  - constraint 1
+  - constraint 2
+must_not:
+  - prohibition 1
+priority_order:
+  - first_priority
+  - second_priority
+```
+</constraints>
+<examples>Concrete usage examples</examples>
+```
+
+- **YAML frontmatter**: Required for zone_mapping, progressive_disclosure, handoff metadata
+- **XML tags**: Use `<task>`, `<context>`, `<constraints>`, `<examples>`, `<output_contract>` for semantic boundaries
+- **YAML blocks**: For constraints, policies, checklists within body sections
+- **Markdown**: For prose, tables, Mermaid diagrams
+
+> ⚠️ **Non-negotiable**: design.md output from this skill MUST follow this format. Skills that don't enforce it need patching.
 
 ## 🔗 Pipeline Integration (Liên kết với Skill Suite)
 

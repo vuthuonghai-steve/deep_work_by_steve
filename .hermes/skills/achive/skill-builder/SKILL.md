@@ -33,6 +33,12 @@ progressive_disclosure:
       base: "skill_dir"
     - path: "../_shared/knowledge/framework.md"
       base: "skill_dir"
+    - path: "references/format-standards.md"
+      base: "skill_dir"
+      load_when: "Boot — REQUIRED for AI-first format knowledge"
+  tier2:
+      base: "skill_dir"
+      load_when: "Boot — REQUIRED for AI-first format knowledge"
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -148,7 +154,41 @@ Finalize `loop/build-log.md`. Present results in `.skill-context/{skill-name}/bu
 | G7 | **Build-log Mandatory** | Ghi quyết định, phản biện, file tạo vào build-log.md. |
 | G8 | **Context Coverage** | Không bỏ sót file critical; có evidence trong Resource Usage Matrix. |
 | G9 | **Knowledge Fidelity** | Không summarize tài nguyên Critical. Transform 100% tri thức. |
-| G10| **Zone Contract Block** | CHỈ tạo file trong `design.md §3`. Không tự ý thêm. |
+| G10| **Zone Contract Block** | CHỉ tạo file trong `design.md §3`. Không tự ý thêm. |
+
+## 📐 Format Standards (SKILL.md Output Contract)
+
+Built SKILL.md files MUST follow Anthropic + Hybrid format:
+
+```xml
+<task>What this skill does and when to trigger it</task>
+<constraints>
+```yaml
+must:
+  - requirement 1
+  - requirement 2
+must_not:
+  - prohibition 1
+priority_order:
+  - first_priority
+  - second_priority
+```
+</constraints>
+<output_contract>Expected output format and success criteria</output_contract>
+<examples>Concrete usage examples</examples>
+```
+
+**Anthropic YAML frontmatter** (line 1):
+```yaml
+---
+name: skill-name
+description: Does X. Use when you need Y (third person, ≤1024 chars).
+---
+```
+
+**Progressive Disclosure**: Files load per-phase, not all at boot.
+
+> ⚠️ **Non-negotiable**: Built SKILL.md files must use YAML frontmatter + XML semantic tags + YAML constraint blocks.
 
 ## Error Policy
 

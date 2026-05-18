@@ -31,6 +31,9 @@ progressive_disclosure:
     - path: "scripts/check_status.py"
       base: "skill_dir"
       triggers: [boot_sequence]
+    - path: "references/format-standards.md"
+      base: "skill_dir"
+      load_when: "Boot — REQUIRED for AI-first format knowledge"
   tier2:
     - path: "knowledge/architect.md"
       base: "skill_dir"
@@ -239,6 +242,34 @@ Present the completed todo.md to the user for review.
 | G3 | No inventing        | Only DECOMPOSE the design — do NOT add new requirements            |
 | G4 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
 | G5 | Resource Gate       | Planner chỉ đánh dấu 'Complete' khi `resources/` đã đủ cho Builder |
+
+## 📐 Format Standards (Output Contract)
+
+Todo documents MUST use hybrid XML+YAML+Markdown format:
+
+```xml
+<task>Implementation goal summary</task>
+<constraints>
+```yaml
+must:
+  - requirement 1
+  - requirement 2
+must_not:
+  - prohibition 1
+priority_order:
+  - critical_first
+  - high_second
+```
+</constraints>
+<examples>Phase breakdown examples with trace tags</examples>
+```
+
+- **YAML frontmatter**: Required for artifact_type, skill_name, stage, status
+- **XML tags**: Use `<task>`, `<context>`, `<constraints>`, `<examples>` for semantic boundaries
+- **YAML blocks**: For priority_order, must/must_not constraints, pre-requisite tiering
+- **Trace tags**: REQUIRED — `[TỪ DESIGN §N]`, `[TỪ AUDIT TÀI NGUYÊN]`, `[GỢI Ý BỔ SUNG]`, `[CẦN LÀM RÕ]`
+
+> ⚠️ **Non-negotiable**: todo.md output from this skill MUST follow this format with proper trace tags.
 
 ## Error Handling
 
