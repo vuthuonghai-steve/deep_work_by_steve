@@ -79,6 +79,7 @@ stop_conditions:
 | `policy/guardrails.md` | Checking G1-G7 constraints |
 | `knowledge/architect.md` | 3 Pillars analysis |
 | `knowledge/visualization-guidelines.md` | Mermaid diagram standards |
+| `knowledge/design-exemplars.md` | **Section content spec + good/bad exemplars** — LOAD BEFORE WRITING ANY § |
 
 ### Tier 3 (On-demand)
 | File | Load when |

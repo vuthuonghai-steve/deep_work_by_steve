@@ -1,0 +1,27 @@
+# Sync Locations Configuration
+
+source_base: "/home/steve/Work-space/deep_work_by_steve/skills/rebuild"
+
+destinations:
+  workspace_hermes:
+    path: "/home/steve/Work-space/deep_work_by_steve/.hermes/skills"
+    description: "Workspace-level Hermes skills"
+    git_tracked: true
+
+  workspace_claude:
+    path: "/home/steve/Work-space/deep_work_by_steve/.claude/skills"
+    description: "Workspace-level Claude skills"
+    git_tracked: true
+
+  user_hermes:
+    path: "/home/steve/.hermes/skills"
+    description: "User-level Hermes skills (global)"
+    git_tracked: false
+
+  user_claude:
+    path: "/home/steve/.claude/skills"
+    description: "User-level Claude skills (global)"
+    git_tracked: false
+
+# Skills to monitor - auto-detected from source directory
+# The script reads all directories with SKILL.md automatically
