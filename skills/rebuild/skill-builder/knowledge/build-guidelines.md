@@ -4,7 +4,105 @@
 
 ---
 
-## 0. CHUẨN ANTHROPIC — BẮT BUỘC ĐỌC KHI VIẾT SKILL.MD
+## 0. CHUẨN CLAUDE.MD — 4 LAYER KNOWLEDGE SEPARATION (BẮT BUỘC)
+
+### Tại sao cần tách?
+
+LLM không xử lý Markdown/YAML như compiler. Nó phản ứng với **cấu trúc** và **ranh giới ngữ nghĩa**. Khi tất cả trộn lẫn:
+- Model khó phân biệt đâu là instruction, đâu là reference
+- Token budget explosion → context overload
+- Chất lượng output giảm
+
+### 4 Layers từ CLAUDE.md §5:
+
+```yaml
+knowledge_layers:
+  L0_anchor_rules:
+    purpose: "Luật nền, mục tiêu, giới hạn tuyệt đối"
+    location: "SKILL.md (root)"
+    format: "YAML frontmatter + XML boundaries"
+    token_budget: "150-400 tokens"
+
+  L1_working_policy:
+    purpose: "Quy ước làm việc, constraints, output contract"
+    location: "policy/{skill-name}.yaml"
+    format: "YAML with must/must_not/constraints"
+    token_budget: "400-1200 tokens"
+
+  L2_domain_context:
+    purpose: "Domain knowledge, glossary, data flow"
+    location: "knowledge/*.md"
+    format: "Markdown + tables"
+    load_policy: "on-demand"
+
+  L3_evidence_examples:
+    purpose: "Spec, logs, examples, fixtures"
+    location: "examples/, specs/"
+    format: "XML wrapper + Markdown/YAML"
+    load_policy: "task-specific"
+```
+
+### Format Selection từ CLAUDE.md §3-§4:
+
+```yaml
+format_selection_rules:
+  markdown:
+    use_for: [explanation, rationale, overview, domain_knowledge]
+    avoid_for: [hard_rules_without_schema, long_mixed_policy_blocks]
+
+  yaml:
+    use_for: [constraints, policies, checklists, routing, output_contracts, acceptance_criteria]
+    avoid_for: [long_prose, complex_narrative_context]
+
+  xml_like_tags:
+    use_for: [semantic_boundaries, separating_context_from_instruction, wrapping_examples]
+    avoid_for: [excessive_micro_tagging]
+```
+
+### SKILL.md LAYOUT CHUẨN:
+
+```markdown
+---
+name: skill-name
+description: "WHAT + WHEN trigger"
+---
+
+# Skill Name
+
+## Mission
+[Markdown - 2-3 sentences]
+
+<instructions>
+[YAML block - imperative commands]
+</instructions>
+
+## Boot Sequence
+[YAML or Markdown table]
+
+## Workflow
+[Markdown - phase overview]
+
+## Output Contract
+```yaml
+[YAML block]
+```
+
+## References
+| File | Load When |
+|------|-----------|
+| policy/{name}.yaml | Always |
+| knowledge/domain.md | Phase 2+ |
+```
+
+**KEY RULES:**
+- SKILL.md = L0 ONLY (≤400 tokens)
+- Constraints/Policy = YAML in `policy/{skill-name}.yaml`
+- Domain knowledge = Markdown in `knowledge/`
+- NO prose constraints in SKILL.md body
+
+---
+
+## 1. CHUẨN ANTHROPIC — BẮT BUỘC ĐỌC KHI VIẾT SKILL.MD
 
 Trước khi viết `SKILL.md`, đọc [anthropic-skill-standards.md](anthropic-skill-standards.md).
 File này chứa các yêu cầu bắt buộc từ Anthropic về cấu trúc, discovery, và hiệu quả của skill.
@@ -16,7 +114,7 @@ File này chứa các yêu cầu bắt buộc từ Anthropic về cấu trúc, d
 - Progressive Disclosure: files load đúng phase (không front-load)
 - Workflow Tracker Checklist nếu có 3+ phases hoặc Interaction Points
 - Examples file nếu có mapping trừu tượng
-- SKILL.md body ≤ 500 lines
+- **SKILL.md ≤ 400 tokens (L0 budget)** — nếu vượt, tách vào `policy/`
 
 ---
 

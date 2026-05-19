@@ -162,11 +162,58 @@ Execute todo.md phase by phase. Create files ONLY in design.md §3.
 
 - `knowledge/build-guidelines.md` — Content writing rules
 - `knowledge/anthropic-skill-standards.md` — **Required for SKILL.md files**
+- **`{workspace}/CLAUDE.md`** — **MANDATORY: LLM Knowledge Activation Standard** (format selection, token budget, 4 layers)
+
+### CLAUDE.md Compliance Gate (MANDATORY)
+
+Before writing ANY file, memorize these rules:
+
+```yaml
+format_selection:
+  markdown_for: [explanation, rationale, overview, domain_knowledge]
+  yaml_for: [constraints, policies, checklists, output_contracts]
+  xml_tags_for: [semantic_boundaries, separating_context_from_instruction]
+
+token_budget:
+  SKILL_md_L0: "150-400 tokens good, 500-700 warning, >700 SPLIT"
+  L1_policy: "400-1200 tokens"
+  enforcement: hard
+
+four_layers:
+  L0: "SKILL.md = anchor rules, mission, priority_order"
+  L1: "policy/ = working policy, constraints, output_contract"
+  L2: "knowledge/ = domain context, loaded on-demand"
+  L3: "examples/ = evidence, fixtures, loaded task-specific"
+```
+
+**Format Selection Enforcement:**
+| Content Type | Format | SKILL.md Location |
+|-------------|--------|------------------|
+| Guardrails, constraints | **YAML block** | Top of body or `<guardrails>` section |
+| Mission, overview | Markdown | Intro section |
+| Phase workflow | Markdown | Workflow section |
+| Boot sequence | YAML or Markdown table | Designated section |
+| Output contract | **YAML block** | `<output_contract>` XML tag |
+
+**Token Budget Checkpoint (after writing SKILL.md):**
+```
+IF SKILL.md token_count > 700:
+   → STOP, notify user
+   → Split L1 content into policy/{name}.yaml
+   → Keep SKILL.md as pure L0 anchor
+```
 
 Execute `todo.md` phase by phase:
 
 - **Zone Contract**: ONLY create files in `design.md §3` (Zone Mapping). No hallucination.
-- **SKILL.md Writing**: Apply anthropic-skill-standards.md §1-8. YAML frontmatter line 1. Map §7 (PD), §5 (Flow), §6 (Gates). If 3+ phases → add Tracker Checklist. If abstract mappings → reference examples.
+- **SKILL.md Writing**: 
+  1. Apply anthropic-skill-standards.md §1-8
+  2. YAML frontmatter line 1
+  3. Map §7 (PD), §5 (Flow), §6 (Gates)
+  4. If 3+ phases → add Tracker Checklist
+  5. **CLAUDE.md Format**: Guardrails in YAML block, not Markdown prose
+  6. **Token Budget**: Verify ≤700 tokens before proceeding
+- **L1 Separation**: If SKILL.md >400 tokens, extract constraints/policies to `policy/{skill-name}.yaml`
 - **loop/ Writing**: Map `design.md §8` (Risks) into measurable checklist items.
 - **Fidelity Rule**: 1:1 conceptual mapping. If source has 10 items, target MUST have 10 items.
 - **Double-Pass**: After each phase, refine to check for information loss.

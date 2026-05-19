@@ -23,10 +23,5 @@ destinations:
     description: "User-level Claude skills (global)"
     git_tracked: false
 
-# Skills to monitor (all skills in source)
-monitored_skills:
-  - skill-architect
-  - skill-builder
-  - skill-planner
-  - prompt-cleaner
-  # Add more as needed
+# Skills to monitor - auto-detected from source directory
+# The script reads all directories with SKILL.md automatically

@@ -533,11 +533,21 @@ class SkillValidator:
                 if count > 0:
                     self.log(f"   -> Trace tag {pattern}: {count} found")
 
-        # F5: Token budget check (SKILL.md ≤ 500 lines)
-        if len(skill_lines) > 500:
-            self.errors.append(f"ERROR: SKILL.md exceeds 500 lines ({len(skill_lines)} lines)")
+        # F5: Token budget check (SKILL.md ≤ 400 tokens for L0, warn 500-700, >700 FAIL)
+        self.log("   -> Running token count check (CLAUDE.md L0 budget)...")
+        token_count = self._count_tokens(skill_content)
+        self.log(f"   -> SKILL.md token count: {token_count}")
+
+        if token_count > 700:
+            self.errors.append(f"ERROR: SKILL.md exceeds 700 tokens L0 budget ({token_count} tokens). MUST split into policy/ file.")
+        elif token_count > 500:
+            self.warnings.append(f"WARNING: SKILL.md token count ({token_count}) in warning zone (500-700). Consider splitting.")
         else:
-            self.log(f"   -> SKILL.md line count: {len(skill_lines)} (limit: 500)")
+            self.log(f"   -> SKILL.md token count: {token_count} (L0 budget OK: ≤500)")
+
+        # F6: Line count check (legacy check, secondary to token count)
+        if len(skill_lines) > 500:
+            self.warnings.append(f"WARNING: SKILL.md exceeds 500 lines ({len(skill_lines)} lines) - secondary to token budget")
 
         # Check knowledge files line count (≤ 200 lines each)
         knowledge_dir = os.path.join(self.skill_path, "knowledge")
@@ -553,7 +563,30 @@ class SkillValidator:
                                 self.warnings.append(f"WARNING: {rel_path} exceeds 200 lines ({len(lines)} lines)")
 
         self.log("   -> Format compliance check complete")
-        return len([e for e in self.errors if 'format' in e.lower() or 'yaml' in e.lower() or 'xml' in e.lower() or '500' in e]) == 0
+        return len([e for e in self.errors if 'format' in e.lower() or 'yaml' in e.lower() or 'xml' in e.lower() or 'token' in e.lower() or '700' in e]) == 0
+
+    def _count_tokens(self, text: str) -> int:
+        """
+        Count tokens using tiktoken (cl100k_base) for accurate LLM token counting.
+        Falls back to character-based estimation if tiktoken unavailable.
+        """
+        try:
+            import tiktoken
+            enc = tiktoken.get_encoding("cl100k_base")
+            return len(enc.encode(text))
+        except ImportError:
+            # Fallback: estimate ~4 chars per token for English, ~3.5 for Vietnamese
+            # This is rough but better than nothing
+            char_count = len(text)
+            # Rough estimation: mix of English and Vietnamese
+            vietnamese_chars = sum(1 for c in text if '\u00C0' <= c <= '\u1EF3')
+            english_chars = sum(1 for c in text if c.isascii())
+            other_chars = char_count - vietnamese_chars - english_chars
+
+            # Weight: Vietnamese ~3 chars/token, English ~4 chars/token, Other ~4 chars/token
+            estimated_tokens = int(vietnamese_chars / 3) + int(english_chars / 4) + int(other_chars / 4)
+            self.log(f"   -> (tiktoken unavailable, using estimation: ~{estimated_tokens} tokens)")
+            return estimated_tokens
 
     def report(self):
         print("\n" + "="*50)
