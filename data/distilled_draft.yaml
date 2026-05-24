@@ -1,0 +1,48 @@
+artifacts:
+  - knowledge_id: anchor-rules-l0
+    layer: L0
+    format: yaml
+    content: |
+      token_budget:
+        SKILL_md: 400
+        L1_limit: 1200
+        L2_limit: 2500
+        L3_limit: 5000
+      priority_order:
+        - security_and_safety
+        - format_fidelity
+        - token_budget_control
+    confidence_score: 0.98
+
+  - knowledge_id: core-guides-l1
+    layer: L1
+    format: markdown
+    content: |
+      # Hướng Dẫn Cốt Lõi (L1)
+      - Quy trình kiểm định chất lượng bắt buộc phải chạy qua Sequential Pipeline.
+      - Điểm đánh giá trung bình (QA Score) tối thiểu là 9.0/10 để chuyển đổi môi trường production.
+    confidence_score: 0.95
+
+  - knowledge_id: domain-knowledge-l2
+    layer: L2
+    format: markdown
+    content: |
+      # Tri Thức Nghiệp Vụ (L2)
+      - **Micro-skills Architecture**: Kiến trúc 4 thành phần thu thập (`source-gatherer`), chuyển đổi (`format-converter`), kiểm định (`sandbox-validator`), và chỉ mục (`index-builder`).
+      - **Token Economics**: Quản lý chi phí token chặt chẽ thông qua việc phân vùng tri thức và nạp ngữ cảnh tối ưu theo mô hình phân tầng.
+    confidence_score: 0.92
+
+  - knowledge_id: sandbox-test-l3
+    layer: L3
+    format: xml
+    content: |
+      <example>
+        <code>
+          print('Verification succeeded!')
+        </code>
+      </example>
+    confidence_score: 0.97
+    test_code: |
+      import sys
+      print('Verification succeeded!')
+      sys.exit(0)
