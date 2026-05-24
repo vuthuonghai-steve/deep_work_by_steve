@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Prepared Context Schema",
+  "description": "Schema for prepared-context.json - enriched input for implementation",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["task_id", "problem_statement", "core_problems", "prepared_at"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z]+-[a-z0-9]+$"
+    },
+    "prepared_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "problem_statement": {
+      "type": "string",
+      "description": "Original problem from user"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": ["bugfix", "feature", "ideation", "spec"]
+    },
+    "core_problems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/core_problem"
+      }
+    },
+    "prevention_gates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/gate"
+      }
+    },
+    "detection_signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/signal"
+      }
+    },
+    "recovery_procedures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/recovery"
+      }
+    },
+    "enriched_context": {
+      "type": "object",
+      "description": "Aggregated and enriched context from all sources",
+      "properties": {
+        "memory": {
+          "type": "object"
+        },
+        "session": {
+          "type": "object"
+        },
+        "project": {
+          "type": "object"
+        }
+      }
+    },
+    "chain_consensus": {
+      "type": "object",
+      "properties": {
+        "total_findings": {
+          "type": "integer"
+        },
+        "unique_findings": {
+          "type": "integer"
+        },
+        "strong_consensus": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "moderate_consensus": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "finding_a": {
+                "type": "string"
+              },
+              "finding_b": {
+                "type": "string"
+              },
+              "chains": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "resolution": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "implementation_hints": {
+      "type": "object",
+      "properties": {
+        "approach": {
+          "type": "string",
+          "enum": ["conservative", "incremental", "bigbang"]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "rollback_plan": {
+          "type": "string"
+        },
+        "testing_strategy": {
+          "type": "string"
+        }
+      }
+    },
+    "confidence_level": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "Overall confidence in the analysis"
+    },
+    "ready_for_implementation": {
+      "type": "boolean"
+    },
+    "implementation_blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Issues that must be resolved before implementation"
+    }
+  },
+  "definitions": {
+    "core_problem": {
+      "type": "object",
+      "required": ["id", "name", "description", "evidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CP[0-9]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "root_cause": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Chain IDs that identified this problem"
+        },
+        "affected_chains": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "mitigation": {
+          "type": "string"
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "required": ["id", "description", "check"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^PG[0-9]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "check": {
+          "type": "string",
+          "description": "How to verify this gate"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fail_action": {
+          "type": "string"
+        }
+      }
+    },
+    "signal": {
+      "type": "object",
+      "required": ["id", "description", "metric"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^DS[0-9]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string",
+          "description": "How to measure this signal"
+        },
+        "threshold": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "warning", "error", "critical"]
+        }
+      }
+    },
+    "recovery": {
+      "type": "object",
+      "required": ["id", "problem_type", "procedure"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^RP[0-9]+$"
+        },
+        "problem_type": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string",
+          "description": "Step-by-step recovery procedure"
+        },
+        "rollback_steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "escalation": {
+          "type": "string",
+          "description": "When to escalate to human"
+        }
+      }
+    }
+  }
+}

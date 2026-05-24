@@ -1,0 +1,199 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Heavy Thinking Task Metadata Schema"
+description: "Schema for task-meta.yaml in Heavy Thinking Manual output"
+version: "1.0.0"
+
+type: object
+
+required:
+  - task_id
+  - created_at
+  - trigger_keyword
+  - task_type
+  - status
+  - chain_count
+
+properties:
+  task_id:
+    type: string
+    pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z]+-[a-z0-9]+$"
+    description: "Task ID in format {date}-{trigger}-{uuid}"
+    example: "2026-05-11-fix-bug-a1b2c3"
+
+  created_at:
+    type: string
+    format: date-time
+    description: "ISO 8601 timestamp of task creation"
+
+  updated_at:
+    type: string
+    format: date-time
+    description: "ISO 8601 timestamp of last update"
+
+  trigger_keyword:
+    type: string
+    description: "The keyword that triggered this analysis"
+    enum:
+      - "fix bug"
+      - "sửa lỗi"
+      - "bug"
+      - "xây dựng tính năng"
+      - "build feature"
+      - "new feature"
+      - "lên ý tưởng"
+      - "brainstorm"
+      - "ideation"
+      - "tạo spec"
+      - "create spec"
+      - "viết spec"
+
+  task_type:
+    type: string
+    enum:
+      - "bugfix"
+      - "feature"
+      - "ideation"
+      - "spec"
+    description: "Normalized task type"
+
+  status:
+    type: string
+    enum:
+      - "pending"
+      - "context_loading"
+      - "chains_running"
+      - "deliberating"
+      - "writing_output"
+      - "complete"
+      - "failed"
+      - "cancelled"
+    description: "Current workflow status"
+
+  chain_count:
+    type: integer
+    minimum: 1
+    maximum: 16
+    description: "Number of chains executed"
+
+  chains_executed:
+    type: array
+    items:
+      type: object
+      properties:
+        chain_id:
+          type: integer
+          minimum: 1
+          maximum: 16
+        lens:
+          type: string
+        status:
+          type: string
+          enum: ["pending", "running", "complete", "failed", "skipped"]
+        findings_count:
+          type: integer
+        execution_method:
+          type: string
+          enum: ["opencode", "delegate_task", "inline"]
+    description: "Details of each chain execution"
+
+  context_sources:
+    type: object
+    properties:
+      hermes_memory:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: ["loaded", "partial", "unavailable"]
+          size_bytes:
+            type: integer
+      session_history:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: ["loaded", "partial", "unavailable"]
+          size_bytes:
+            type: integer
+      project_files:
+        type: object
+        properties:
+          status:
+            type: string
+            enum: ["loaded", "partial", "unavailable"]
+          size_bytes:
+            type: integer
+          files_loaded:
+            type: integer
+
+  deliberation:
+    type: object
+    properties:
+      total_findings:
+        type: integer
+      unique_findings:
+        type: integer
+      core_problems_count:
+        type: integer
+      consensus_level:
+        type: string
+        enum: ["strong", "moderate", "weak", "none"]
+      status:
+        type: string
+        enum: ["pending", "complete", "failed"]
+
+  output_files:
+    type: object
+    properties:
+      task_meta:
+        type: string
+        format: uri
+      context_sources:
+        type: string
+        format: uri
+      analysis_chains:
+        type: string
+        format: uri
+      deliberation:
+        type: string
+        format: uri
+      prepared_context:
+        type: string
+        format: uri
+      diagrams:
+        type: string
+        format: uri
+      checklist:
+        type: string
+        format: uri
+
+  execution_summary:
+    type: object
+    properties:
+      total_duration_seconds:
+        type: integer
+      context_loading_seconds:
+        type: integer
+      chain_execution_seconds:
+        type: integer
+      deliberation_seconds:
+        type: integer
+      output_writing_seconds:
+        type: integer
+
+  errors:
+    type: array
+    items:
+      type: object
+      properties:
+        phase:
+          type: string
+        error:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        resolution:
+          type: string
+
+additionalProperties: false

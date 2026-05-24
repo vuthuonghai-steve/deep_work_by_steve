@@ -1,0 +1,765 @@
+# ==================================================
+# Path: /home/steve/Documents/KLTN/.agent/skills/skill-planner
+# Detected tech: Unknown
+# ==================================================
+
+## DIRECTORY STRUCTURE
+```
+skill-planner/
+├── knowledge/
+│   ├── architect.md
+│   └── skill-packaging.md
+├── loop/
+│   └── plan-checklist.md
+└── SKILL.md
+```
+
+## FILE CONTENTS
+
+### SKILL.md
+```md
+---
+name: skill-planner
+description: 'Doc ban thiet ke kien truc (design.md) va tao ke hoach trien khai chi tiet (todo.md). Trigger khi user noi: "lap ke hoach skill", "tao todo.md", "phan ra task tu design.md", "trace design -> task". Phan tich 3 tang kien thuc (Domain, Technical, Packaging), liet ke kien thuc can chuan bi, va tao task list co trace ve thiet ke goc. Skill nay la #2 trong bo Master Skill Suite (Architect -> Planner -> Builder).'
+---
+# Skill Planner
+
+## Mission
+
+Act as a **Senior Skill Planner**. Read the architecture design document
+(`design.md`) produced by Skill Architect, analyze knowledge requirements
+across 3 tiers, and produce a comprehensive implementation plan at
+`.skill-context/{skill-name}/todo.md`.
+
+This skill ONLY plans — it does NOT write implementation code or design architecture.
+
+## Mandatory Boot Sequence
+
+1. Read this `SKILL.md` file.
+2. Read `knowledge/skill-packaging.md` — the skill packaging framework (3 tiers, conversion checklist, anti-hallucination).
+3. Read `knowledge/architect.md` — the master 7-Zone architecture framework.
+4. Determine the skill name from user input or context.
+5. Proceed to Step READ.
+
+## Step READ — Đọc Input & Audit Tài nguyên
+
+Read all available input sources and audit current state:
+
+1. **Master Design** (REQUIRED): Refer to `knowledge/architect.md` and read `.skill-context/DESIGN.md` to understand the overarching standards and the 7-Zone framework.
+   
+2. **design.md** (REQUIRED): Read `.skill-context/{skill-name}/design.md`.
+   - Extract Zone Mapping (§3) and Capability Map (§2) as the primary analysis targets.
+
+3. **Audit resources/** (IF EXISTS): List all files in `.skill-context/{skill-name}/resources/`.
+   - For each file: Read filename and content.
+   - **Evaluative Audit**: Planner must judge if the content is "Thin" (lack of detail) or "Rich" (ready for Builder implementation).
+
+4. **Context prompt** (IF EXISTS): Integrate user specific instructions.
+
+## Step ANALYZE — Phân tích 3 Tầng & Audit Kiến thức
+
+Apply the 3-tier knowledge model from `knowledge/skill-packaging.md`.
+
+For EACH Zone that has content in design.md §3 (Zone Mapping):
+
+1. **Tier 1 — Domain (THE AUDIT)**: What domain knowledge is needed?
+   - **Audit Logic**: Đối chiếu kiến thức cần thiết với "Danh sách tài nguyên hiện có" (từ Step READ).
+   - **Case 1: Đã có đủ** → Ghi Status: `✅` trong Pre-requisites table.
+   - **Case 2: Chưa có hoặc Sơ sài** (ví dụ file rỗng, chỉ có heading) → Ghi Status: `⬜` trong Pre-requisites table **VÀ** sinh một **TASK** trong Phase 1: "Chuẩn bị/Soạn thảo tài liệu domain cho {Topic} tại resources/{topic}.md". [TỪ AUDIT TÀI NGUYÊN]
+
+2. **Tier 2 — Technical**: What tools, syntax, or technical skills are needed to implement this zone?
+   - Example: Mermaid syntax, Python scripting, YAML format.
+   - If documentation for these tools is missing → sinh pre-requisite entry.
+
+3. **Tier 3 — Packaging**: How to map this into the specific zone of the agent skill? What files to create, what format to follow?
+   - Example: Create `knowledge/uml-standards.md` following progressive disclosure principles.
+
+For each tier, generate:
+- **Pre-requisite entries**: Knowledge/Resource needed, Status (✅ Found / ⬜ Missing).
+- **Task entries**: Specific implementation steps WITH Resource Acquisition tasks if missing.
+
+Zones marked "Không cần" or empty → SKIP entirely.
+
+Apply the **Conversion Checklist** from skill-packaging.md for each Zone:
+- Domain knowledge needed? → pre-req entry
+- Tools/techniques needed? → pre-req entry
+- Process to standardize? → task for SKILL.md phases
+- Judgment to guard against? → task for loop/ checklist
+- Output format needed? → task for templates/
+
+## Step WRITE — Ghi todo.md
+
+Write the analysis results to `.skill-context/{skill-name}/todo.md`.
+
+**If todo.md already exists with content**: Ask user — overwrite or append?
+
+The file MUST contain exactly 5 sections:
+
+```
+## 1. Pre-requisites
+  Table with columns: #, Knowledge/Resource, Tier (Domain/Technical/Packaging),
+  Purpose, Trace, Status
+
+## 2. Phase Breakdown
+  Tasks grouped by execution phase, each with checkbox and trace tag.
+  Order tasks by dependency (what must be done first).
+  Each task: - [ ] Task description [TỪ DESIGN §N] or [GỢI Ý BỔ SUNG]
+  **High-fidelity Constraint**: For tasks involving Zone Knowledge or Data, use active, high-fidelity verbs such as "Transform 100% of...", "Implement Exhaustively...", or "Generate with high-fidelity...". ALWAYS specify the source section or file from `resources/` (e.g., `From resources/research.md #3.2`).
+
+## 3. Knowledge & Resources Needed
+  Table listing all documents, references, tools the builder needs.
+
+## 4. Definition of Done
+  Checklist of completion criteria.
+
+## 5. Notes
+  Open questions, things to clarify, supplementary suggestions.
+  Items from design.md that were unclear → mark [CẦN LÀM RÕ]
+```
+
+### Trace Tag Format
+
+Every item MUST end with a trace tag:
+- `[TỪ DESIGN §N]` — derived directly from design.md section N
+- `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
+- `[TỪ AUDIT TÀI NGUYÊN]` — generated because a required resource was found missing during audit
+- `[CẦN LÀM RÕ]` — unclear in design.md, needs clarification
+
+## Step VERIFY — Kiểm chứng & Đóng băng Kế hoạch
+
+Sau khi viết `todo.md`, Planner thực hiện bước tự kiểm tra cuối cùng:
+
+1. **Resource Integrity Check**: Đối chiếu bảng Pre-requisites với thực tế `resources/`.
+   - Nếu bất kỳ tài nguyên Sống còn (Crucial) nào ghi `Status: ⬜`, Planner PHẢI thông báo: "Kế hoạch chưa thể hoàn thành vì thiếu tài nguyên kiến thức."
+   - Planner hỗ trợ user soạn thảo bản nháp (draft) các resources thiếu trước khi xác nhận xong.
+
+2. **Standard Alignment**: Kiểm tra xem các task và pre-requisites có tuân thủ `architect.md` (7 Zones) và `DESIGN.md` (Master Suite workflow) không.
+
+3. **DoD Verification**: Đảm bảo bảng Definition of Done trong `todo.md` bao quát hết các zone trong thiết kế.
+
+## Confirm
+
+Present the completed todo.md to the user for review.
+
+- If user confirms → mark planning as complete.
+- If user requests changes → update todo.md accordingly and present again.
+
+## Guardrails
+
+| G1 | Trace required      | Every item in todo.md MUST trace back to `design.md §N`            |
+| G2 | Label sources       | Mark `[TỪ DESIGN]` / `[GỢI Ý]` / `[TỪ AUDIT CUSTOM]`              |
+| G3 | No inventing        | Only DECOMPOSE the design — do NOT add new requirements            |
+| G4 | List, don't do      | List knowledge needed → user prepares. Do NOT search/generate      |
+| G5 | Ground in design.md | design.md is the ONLY ground truth. If unclear → Notes [CẦN LÀM RÕ] |
+| G6 | **Resource Gate**   | Planner chỉ được đánh dấu 'Complete' khi `resources/` đã đủ dữ liệu domain để Builder làm việc. |
+
+## Error Handling
+
+- If `design.md` not found → Report error, suggest running Skill Architect first.
+- If design.md Zone Mapping (§3) is empty → Report: "Design has no Zone Mapping. Cannot plan."
+- If information is unclear → Write to Notes section with `[CẦN LÀM RÕ]` tag.
+- If user asks to write code → Decline. Suggest using `skill-builder` instead.
+
+## Related Skills
+
+- **Skill Architect** (`skill-architect`): Creates `design.md` — input for this skill.
+- **Skill Builder** (`skill-builder`): Reads `design.md` + `todo.md`, implements the skill.
+
+## Context Directory
+
+Input and output live in `.skill-context/{skill-name}/` at project root:
+
+```
+.skill-context/{skill-name}/
+├── design.md       ← Skill Architect writes here (INPUT)
+├── todo.md         ← THIS SKILL writes here (OUTPUT)
+├── build-log.md    ← Skill Builder writes here
+└── resources/      ← User-provided reference documents (INPUT)
+```
+
+```
+
+### loop/plan-checklist.md
+```md
+# Plan Quality & Resource Checklist
+
+> Dùng trong Step VERIFY của Skill Planner
+
+## 1. Resource Verification (Cốt lõi)
+
+- [ ] **Existence**: Mọi tài nguyên liệt kê trong `todo.md` §Pre-requisites đều có file tương ứng trong `resources/`.
+- [ ] **Richness**: Tài liệu trong `resources/` không phải là file rỗng. Có đủ thông tin "hành động được" (actionable).
+- [ ] **Traceability**: `todo.md` chỉ ra rõ task nào sử dụng tài nguyên nào tại §3 Knowledge & Resources.
+
+## 2. Structure & Standard Alignment
+
+- [ ] **7-Zone Check**: Kế hoạch có bao phủ đủ các Zone quan trọng đã định nghĩa trong `design.md §3`.
+- [ ] **Phase Order**: Các phase được sắp xếp theo trình tự logic (Knowledge/Audit → Setup → Build → Verify).
+- [ ] **Trace Tag Check**: Mọi task đều có tag `[TỪ DESIGN]`, `[GỢI Ý]`, hoặc `[TỪ AUDIT]`.
+
+## 3. Definition of Done (DoD)
+
+- [ ] DoD có bao gồm tiêu chí về chất lượng tài nguyên kiến thức không?
+- [ ] DoD có yêu cầu Builder phải chạy script verify trước khi bàn giao không?
+
+## 4. Gatekeeper Rule
+
+- [ ] Planner có đang để trạng thái `🟢 COMPLETE` trong khi tài nguyên quan trọng vẫn là `⬜ Missing` không? (NẾU CÓ -> Chuyển về `⚪ PENDING`).
+
+```
+
+### knowledge/skill-packaging.md
+```md
+# Skill Packaging — Đóng gói Kỹ năng Con người thành Agent Skill
+
+> Tài liệu nền tảng cho Skill Planner
+> Mục đích: Hướng dẫn cách phân tích và chuyển đổi kỹ năng con người
+> thành Agent Skill có cấu trúc.
+
+---
+
+## 1. Nguyên tắc Đóng gói
+
+Mọi kỹ năng con người đều gồm 3 thành phần:
+
+```
+KỸ NĂNG CON NGƯỜI = KIẾN THỨC + QUY TRÌNH + PHÁN ĐOÁN
+TRẠNG THÁI SẴN SÀNG = TÀI LIỆU RICH (Đủ chi tiết) + TRACEABILITY (Dẫn nguồn)
+```
+
+## 2. Tiêu chuẩn Sẵn sàng của Tài nguyên (Resource Readiness)
+
+Một tài nguyên kiến thức trong `resources/` chỉ được coi là đạt chuẩn (✅) khi:
+1. **Content Density**: Không được là file rỗng hoặc chỉ có heading chung chung. Phải có quy tắc (rules), ví dụ (examples), hoặc quy trình (procedures) cụ thể.
+2. **Context Alignment**: Phải giải quyết được ít nhất một "Blind Spot" hoặc "Domain Knowledge" được liệt kê trong `design.md`.
+3. **Builder Friendly**: Thông tin phải ở dạng mà Builder có thể copy/transform thành các file `knowledge/` trong skill package.
+
+**Quy tắc Gatekeeper**:
+- Planner **KHÔNG ĐƯỢC** đánh dấu hoàn thành (🟢 COMPLETE) nếu còn tài nguyên quan trọng ở trạng thái `⬜ Missing`.
+- Nếu tài nguyên quan trọng thiếu, Planner phải yêu cầu user cung cấp hoặc hỗ trợ user viết nháp.
+
+| Thành phần | Ở con người | Ở Agent Skill | Zone tương ứng |
+|-----------|-------------|---------------|----------------|
+| **Kiến thức** | Học từ sách, kinh nghiệm, training | `knowledge/` files | Knowledge Zone |
+| **Quy trình** | Trình tự bước làm, know-how | `SKILL.md` phases/steps | Core Zone |
+| **Phán đoán** | Trực giác, kinh nghiệm xử lý tình huống | `loop/` checklists + guardrails | Loop Zone |
+
+**Nguyên tắc cốt lõi**: AI cần cả 3 thành phần ở dạng **TƯỜNG MINH** (explicit).
+- Kiến thức ngầm (tacit) → phải được viết ra thành tài liệu
+- Quy trình trong đầu → phải được code hóa thành steps
+- Phán đoán bằng cảm giác → phải được chuyển thành rules/checklists
+
+---
+
+## 2. Mô hình 3 Tầng Kiến thức
+
+Khi phân tích mỗi Zone trong design.md, Planner PHẢI hỏi 3 câu hỏi theo 3 tầng:
+
+| Tầng | Tên | Câu hỏi chuẩn | Logic Audit (MỚI) |
+|------|-----|---------------|-------------------|
+| **1** | **Domain** | "Kiến thức miền nào cần để HIỂU bản chất thứ cần làm?" | **BẮT BUỘC Audit**: Kiểm tra thư mục `resources/`. Nếu chưa có tài liệu tương ứng → sinh **TASK** chuẩn bị tài liệu. Nếu đã có → sinh **PRE-REQ** và đánh dấu `✅`. |
+| **2** | **Technical** | "Công cụ/kỹ thuật nào cần để TRIỂN KHAI?" | Kiểm tra tài liệu kỹ thuật/hướng dẫn tool. |
+| **3** | **Packaging** | "Làm sao MAP vào Zone tương ứng của agent skill?" | Ghi domain rules vào `knowledge/`. Tạo templates, script validation, và loop checklist. |
+
+### Cách áp dụng:
+
+```
+├── Hỏi Tầng 1 (Domain):
+│   ├── Audit `resources/`: Tài liệu X đã có chưa?
+│   ├── CÓ → Sinh PRE-REQUISITE (đánh dấu ✅)
+│   └── KHÔNG → Sinh **TASK**: "Soạn thảo tài liệu X" [TỪ AUDIT TÀI NGUYÊN]
+│
+├── Hỏi Tầng 2 (Technical):
+│   → Sinh PRE-REQUISITE: "User cần chuẩn bị tài liệu kỹ thuật Y"
+│
+└── Hỏi Tầng 3 (Packaging):
+    → Sinh TASK: "Tạo file Z trong zone T" [TỪ DESIGN §N]
+```
+
+---
+
+## 3. Checklist Chuyển đổi
+
+Cho MỖI Zone trong design.md §3, hỏi 5 câu hỏi sau:
+
+| # | Câu hỏi | Nếu CÓ → Sinh gì? | Ví dụ |
+|---|---------|---------------------|-------|
+| C1 | Kiến thức miền nào cần? | Audit `resources/`. Nếu thiếu sinh **Task soạn thảo**, nếu đủ sinh **Pre-req ✅** | "Soạn thảo tài liệu cấu trúc UML Sequence" |
+| C2 | Công cụ/kỹ thuật nào cần? | Pre-req: liệt kê tài liệu kỹ thuật | "Cần tham khảo Mermaid docs" |
+| C3 | Quy trình nào cần chuẩn hóa? | Task: tạo phase/step trong SKILL.md | "Tạo Phase 2: Vẽ diagram" |
+| C4 | Phán đoán nào cần guardrail? | Task: tạo checklist trong loop/ | "Tạo loop/diagram-quality-checklist.md" |
+| C5 | Output nào cần khuôn mẫu? | Task: tạo template trong templates/ | "Tạo templates/sequence.mmd" |
+
+**Quy tắc**:
+- Nếu câu trả lời là "Không cần" → bỏ qua, không sinh entry
+- Mọi entry sinh ra PHẢI có trace tag
+- C1, C2 sinh PRE-REQUISITES (user chuẩn bị)
+- C3, C4, C5 sinh TASKS (builder thực hiện)
+
+---
+
+## 4. Nguyên tắc Chống Ảo giác
+
+### 4 nguyên tắc BẮT BUỘC:
+
+| # | Nguyên tắc | Giải thích | Vi phạm = |
+|---|-----------|-----------|-----------|
+| AH1 | **Trace bắt buộc** | Mọi task/pre-req trong todo.md PHẢI chỉ về section cụ thể trong design.md | Viết task không có `[TỪ DESIGN §N]` |
+| AH2 | **Không phát minh** | Chỉ PHÂN RÃ thiết kế thành steps, KHÔNG thêm requirements mới | Viết requirement mà design.md không đề cập |
+| AH3 | **Không đoán domain** | Nếu không chắc về kiến thức miền → liệt kê để user cung cấp | Tự viết nội dung domain knowledge |
+| AH4 | **Đánh dấu nguồn** | Mọi entry phải ghi rõ nguồn | Không phân biệt `[TỪ DESIGN]` và `[GỢI Ý]` |
+| AH5 | **Verify or Fail** | Phải xác minh tài nguyên thực tế trước khi kết thúc planning | Hoàn thành planning khi resources còn trống |
+
+### Tags chuẩn:
+
+```
+[TỪ DESIGN §N]    — Nội dung lấy trực tiếp từ design.md section N
+[GỢI Ý BỔ SUNG]   — Planner gợi ý thêm, KHÔNG CÓ trong design.md
+[CẦN LÀM RÕ]      — Design.md không rõ ràng, cần user làm rõ
+```
+
+### Quy tắc XỬ LÝ khi gặp mập mờ:
+
+```
+Design.md rõ ràng?
+├── CÓ → Sinh entry với [TỪ DESIGN §N]
+├── MẬP MỜ → Sinh entry với [CẦN LÀM RÕ] vào Notes
+└── KHÔNG CÓ nhưng hữu ích → Sinh entry với [GỢI Ý BỔ SUNG]
+```
+
+---
+
+## Tóm tắt
+
+```
+Planner đọc design.md
+    │
+    ├── Với mỗi Zone có nội dung (§3):
+    │   ├── 3 Tầng kiến thức → sinh pre-reqs + tasks
+    │   └── 5 Câu checklist → sinh pre-reqs + tasks
+    │
+    ├── Mọi entry có trace tag (AH1, AH4)
+    ├── Không bịa requirements (AH2)
+    ├── Không đoán domain (AH3)
+    │
+    └── Output: todo.md (5 sections)
+```
+
+```
+
+### knowledge/architect.md
+```md
+# AGENT SKILL FRAMEWORK - TÀI LIỆU KIẾN TRÚC
+
+================================================================================
+                        PHẦN 1: TỔNG QUAN KIẾN TRÚC
+================================================================================
+
+## 1.1. Mô hình Meta-Skill Framework
+
+Mô hình này định nghĩa cách tiếp cận tổng thể để xây dựng một bộ Agent Skill
+có cấu trúc, logic và khả năng kiểm soát chất lượng.
+
+```mermaid
+graph TD
+    subgraph MetaSkillFramework [MÔ HÌNH KIỂM CÁCH - META-SKILL FRAMEWORK]
+        P1[PHA 1: NHẬN DIỆN<br/>Input/Output] --> P2[PHA 2: CHIẾN LƯỢC<br/>Checklist/Plan]
+        P2 --> P3[PHA 3: THỰC THI<br/>Research/Action]
+        
+        P1 --> D1[Dữ liệu Gốc]
+        P2 --> D2[Quy trình Chuẩn]
+        P3 --> D3[Tương tác & Thẩm định]
+        
+        D1 --> LC[VÒNG LẶP KIỂM SOÁT<br/>Verify/Fix/Loop]
+        D2 --> LC
+        D3 --> LC
+    end
+
+    style MetaSkillFramework fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style LC fill:#e1f5fe,stroke:#01579b
+```
+
+
+## 1.2. Kiến trúc "Ngôi nhà" (Building Metaphor)
+
+```mermaid
+graph TD
+    Outcome[MÁI NHÀ: GIÁ TRỊ ĐẦU RA - Outcome<br/>- Sản phẩm hoàn thiện, chính xác, có thẩm mỹ<br/>- Người dùng hài lòng và tin tưởng]
+    
+    subgraph Pillars [CÁC TRỤ CỘT]
+        T1[TRỤ 1: TRI THỨC<br/>Knowledge]
+        T2[TRỤ 2: QUY TRÌNH<br/>Logic/Steps]
+        T3[TRỤ 3: KIỂM SOÁT<br/>Guardrails]
+    end
+    
+    Foundation[NỀN MÓNG: NGHIÊN CỨU & PHÂN TÍCH<br/>Input, Tools, Environment, User Pain-points]
+    
+    Foundation --> Pillars
+    Pillars --> Outcome
+
+    style Outcome fill:#e8f5e9,stroke:#2e7d32
+    style Foundation fill:#fff3e0,stroke:#ef6c00
+    style Pillars fill:#f3e5f5,stroke:#7b1fa2
+```
+
+
+================================================================================
+                  PHẦN 2: CÁC THÀNH PHẦN KIẾN TRÚC (ZONES)
+================================================================================
+
+## 2.1. Cấu trúc thư mục chuẩn
+
+```mermaid
+mindmap
+  root((your-skill-name))
+    SKILL.md:::core
+    .skillfish.json
+    knowledge
+      standards.md
+      best-practices.md
+      design-patterns.md
+    scripts
+      python
+        analyzer.py
+        validator.py
+        generator.py
+      javascript
+        formatter.js
+        mermaid-render.js
+      bash
+        scan-project.sh
+        setup-env.sh
+        export-diagram.sh
+    templates
+      sequence.mmd
+      class.mmd
+      activity.mmd
+    data
+      config.yaml
+      schema.json
+      seed-data.csv
+    loop
+      checklist.md
+      tasks.md
+      phase-verify.md
+      final-verify.md
+      test-cases
+        login-flow.md
+        order-flow.md
+    assets
+      icons
+      fonts
+      images
+
+    classDef core fill:#f96
+```
+
+
+## 2.2. Chi tiết từng Zone
+
+| ZONE | MỤC ĐÍCH | VÍ DỤ NỘI DUNG | KHI NÀO AI ĐỌC? |
+| :--- | :--- | :--- | :--- |
+| **SKILL.md (Core)** | Linh hồn điều khiển | Persona, Steps, Guardrails | LUÔN LUÔN (khi skill được kích hoạt) |
+| **knowledge/** | Tri thức chuẩn | UML rules, Design patterns | Khi cần tham khảo quy tắc |
+| **scripts/** | Công cụ tự động hóa | Python analyzer, Bash generator | Khi cần thực thi logic phức tạp |
+| **templates/** | Mẫu đầu ra | Mermaid templates, Code stubs | Khi cần tạo output chuẩn |
+| **data/** | Cấu hình & dữ liệu cứng | YAML config, JSON schema | Khi cần đọc cấu hình cố định |
+| **loop/** | Kiểm soát chất lượng | Checklist, Tasks, Test cases | SAU mỗi phase để tự kiểm tra |
+| **assets/** | Tài nguyên tĩnh | Icons, Fonts, Images | Khi tạo output có media |
+
+
+
+================================================================================
+                     PHẦN 3: WORKFLOW XÂY DỰNG SKILL
+================================================================================
+
+## 3.1. Quy trình 5 bước
+
+```mermaid
+flowchart LR
+    B1[BƯỚC 1: KHẢO SÁT<br/>Research] --> B2[BƯỚC 2: THIẾT KẾ<br/>Design]
+    B2 --> B3[BƯỚC 3: XÂY DỰNG<br/>Build]
+    B3 --> B4[BƯỚC 4: KIỂM ĐỊNH<br/>Verify]
+    B4 --> B5[BƯỚC 5: BẢO TRÌ<br/>Maintenance]
+
+    subgraph Details [Chi tiết từng bước]
+        direction TB
+        D1["- Xác định Pain Point<br/>- Thu thập Use Cases<br/>- Liệt kê Input/Output"]
+        D2["- Phân vùng thành phần<br/>- Vẽ sơ đồ kiến trúc<br/>- Định nghĩa luồng làm việc"]
+        D3["- Tạo cấu trúc thư mục<br/>- Nạp dữ liệu vào các vùng<br/>- Viết SKILL.md"]
+        D4["- Chạy Test Cases<br/>- Verify Checklist<br/>- Rollback nếu Fail"]
+        D5["- Feedback Loop<br/>- Version Control<br/>- Cập nhật Skill"]
+    end
+
+    B1 -.-> D1
+    B2 -.-> D2
+    B3 -.-> D3
+    B4 -.-> D4
+    B5 -.-> D5
+
+    style B1 fill:#f9f,stroke:#333
+    style B5 fill:#0ff,stroke:#333
+```
+
+
+## 3.2. Chi tiết từng bước
+
+### Bước 1: Khảo sát (Research & Discovery)
+
+    Mục tiêu: Hiểu rõ "vùng đất" mình định xây.
+    
+    Việc cần làm:
+    [1] Xác định Input: Người dùng sẽ đưa cái gì? (Rác hay vàng?)
+    [2] Xác định Tools: AI sẽ dùng Terminal, Browser hay Library nào?
+    [3] Tìm ra "Điểm mù" của AI: AI thường sai ở đâu trong công việc này?
+
+### Bước 2: Thiết kế (System Design)
+
+    Mục tiêu: Tạo ra logic "tường minh" cho AI.
+    
+    Việc cần làm:
+    [1] Xây dựng Quy trình logic (Flowchart): Bước A -> Bước B
+    [2] Xác định Điểm dừng tương tác: Khi nào AI PHẢI hỏi người dùng?
+    [3] Định nghĩa Định dạng Output: Mermaid, Markdown, hay Code?
+
+### Bước 3: Xây dựng (Build)
+
+    Mục tiêu: Viết file SKILL.md và nạp tài nguyên.
+    
+    Việc cần làm:
+    [1] Persona: Định vị AI là Senior Architect hay Senior Coder
+    [2] Phase-based Steps: Chia nhỏ công việc thành các Pha
+    [3] Tạo templates, scripts, knowledge files
+
+### Bước 4: Kiểm định (Verify)
+
+    Mục tiêu: Đảm bảo Skill hoạt động đúng.
+    
+    Việc cần làm:
+    [1] Chạy Test Cases
+    [2] Verify Checklist
+    [3] Rollback nếu phát hiện lỗi
+
+### Bước 5: Bảo trì (Maintenance)
+
+    Mục tiêu: Giữ cho Skill không bị "lỗi thời".
+    
+    Việc cần làm:
+    [1] Feedback Loop: Ghi lại chỗ AI làm dở
+    [2] Version Control: Cập nhật khi môi trường thay đổi
+
+
+================================================================================
+                   PHẦN 4: CƠ CHẾ KIỂM SOÁT (LOOP/VERIFY)
+================================================================================
+
+## 4.1. Hai chế độ kiểm soát
+
+```mermaid
+flowchart TD
+    subgraph LoopZone [VÙNG LOOP - KIỂM SOÁT CHẤT LƯỢNG]
+        direction TB
+        Simple[SIMPLE MODE<br/>1 lần cuối]
+        Phase[PHASE MODE<br/>Mỗi phase]
+        
+        SimpleCheck{Khi nào dùng?}
+        PhaseCheck{Khi nào dùng?}
+        
+        SimpleFlow[Input -> Work -> Output<br/>-> VERIFY]
+        PhaseFlow[Phase 1 -> V<br/>Phase 2 -> V<br/>Phase 3 -> V<br/>Final -> VV]
+
+        Simple --> SimpleCheck
+        Phase --> PhaseCheck
+        
+        SimpleCheck -->|Yêu cầu đơn giản| SimpleFlow
+        PhaseCheck -->|Yêu cầu phức tạp| PhaseFlow
+    end
+
+    style Simple fill:#fff9c4,stroke:#fbc02d
+    style Phase fill:#c8e6c9,stroke:#388e3c
+```
+
+
+## 4.2. Cấu trúc thư mục loop/
+
+```
+loop/
++-- checklist.md            <-- Danh sách kiểm tra chung
++-- tasks.md                <-- Công việc cần hoàn thành
++-- phase-verify.md         <-- Checklist riêng cho từng Phase
++-- final-verify.md         <-- Checklist kiểm tra cuối cùng
++-- test-cases/
+    +-- login-flow.md
+    +-- order-flow.md
+```
+
+
+================================================================================
+                    PHẦN 5: VÙNG SCRIPTS (CÔNG CỤ)
+================================================================================
+
+## 5.1. Ba loại script
+
+```mermaid
+graph LR
+    subgraph ScriptsZone [VÙNG SCRIPTS - CÔNG CỤ THỰC THI]
+        direction TB
+        Python[Python<br/>Xử lý logic, phân tích text]
+        JS[JavaScript<br/>Xử lý frontend, JSON, DOM]
+        Bash[Bash<br/>Lệnh hệ thống, file system]
+        
+        Python --- P1[analyzer.py<br/>validator.py<br/>generator.py]
+        JS --- J1[formatter.js<br/>mermaid-render.js]
+        Bash --- B1[scan-project.sh<br/>setup-env.sh<br/>export-diagram.sh]
+    end
+
+    style Python fill:#e3f2fd,stroke:#1e88e5
+    style JS fill:#fffde7,stroke:#fdd835
+    style Bash fill:#f5f5f5,stroke:#757575
+```
+
+
+## 5.2. Ma trận chọn script theo công việc
+
+| LOẠI CÔNG VIỆC | SCRIPT ƯU TIÊN |
+| :--- | :--- |
+| **Phân tích text, NLP** | Python |
+| **Xử lý JSON, format data** | JavaScript |
+| **Quét thư mục, đọc cấu trúc** | Bash |
+| **Validate syntax** | Python |
+| **Render diagram** | JavaScript |
+| **Tạo file, copy template** | Bash |
+| **Gọi API bên ngoài** | Python/JS |
+
+
+
+================================================================================
+               PHẦN 6: PROGRESSIVE DISCLOSURE (NẠP TÀI NGUYÊN)
+================================================================================
+
+## 6.1. Hai tầng nạp file
+
+```mermaid
+flowchart TD
+    subgraph ProgressiveDisclosure [CƠ CHẾ NẠP TÀI NGUYÊN]
+        direction TB
+        Mandatory[TẦNG 1: BẮT BUỘC ĐỌC<br/>Mandatory Loading]
+        Optional[TẦNG 2: TỰ QUYẾT ĐỊNH<br/>Conditional Loading]
+        
+        Mandatory --- M1["- SKILL.md<br/>- knowledge/standards.md<br/>- loop/checklist.md"]
+        Optional --- O1["- knowledge/design-patterns.md<br/>- templates/*.mmd<br/>- data/schema.json"]
+        
+        Mandatory -->|Sau khi đọc xong| Optional
+    end
+
+    style Mandatory fill:#ffcdd2,stroke:#e53935
+    style Optional fill:#c5cae9,stroke:#3f51b5
+```
+
+
+
+================================================================================
+                  PHẦN 7: LUỒNG HOẠT ĐỘNG CỦA AI AGENT
+================================================================================
+
+## 7.1. Execution Flow
+
+```mermaid
+sequenceDiagram
+    participant U as USER
+    participant A as AI AGENT
+    participant K as Knowledge Zone
+    participant S as Scripts Zone
+    participant T as Templates Zone
+    participant L as Loop Zone
+
+    U->>A: Input "Vẽ sequence cho Login"
+    A->>A: STEP 1: Đọc SKILL.md (Persona & Steps)
+    A->>A: STEP 2: Phân tích Input (Use Case)
+    Note over A,U: [Interaction Point] Hỏi nếu thiếu thông tin
+    A->>K: STEP 3: Tham khảo standards.md, uml-rules.md
+    A->>S: STEP 4: Chạy analyzer.py (Bóc tách entities)
+    A->>T: STEP 5: Áp dụng seq.mmd làm khung
+    A->>A: STEP 6: Tạo Output (Mermaid code)
+    A->>L: STEP 7: Tự kiểm tra với checklist.md
+    alt Fail?
+        L-->>A: Quay lại Step tương ứng
+    else Pass?
+        A->>U: Trả kết quả cuối cùng
+    end
+```
+
+
+
+================================================================================
+                   PHẦN 8: KIẾN TRÚC TỔNG HỢP (v2.0)
+================================================================================
+
+```mermaid
+graph TD
+    Skill((SKILL.md<br/>CORE))
+    
+    subgraph Tier1 [TẦNG 1: BẮT BUỘC]
+        K1[knowledge/standards]
+        L1[loop/checklist]
+    end
+    
+    subgraph Tier2 [TẦNG 2: TỰ QUYẾT]
+        S1[scripts/]
+        T1[templates/]
+        D1[data/]
+        A1[assets/]
+        K2[knowledge/patterns]
+    end
+
+    Skill --> Tier1
+    Skill --> Tier2
+
+    style Skill fill:#f96,stroke:#333,stroke-width:4px
+    style Tier1 fill:#fff9c4,stroke:#fbc02d
+    style Tier2 fill:#e1f5fe,stroke:#01579b
+```
+
+
+
+================================================================================
+                            PHẦN 9: PHỤ LỤC
+================================================================================
+
+## 9.1. Nguyên tắc viết SKILL.md
+
+    [1] Imperative Form: Luôn bắt đầu bằng động từ mạnh
+        Ví dụ: "Analyze the input", "Generate the code"
+        KHÔNG dùng: "You should analyze"
+    
+    [2] Progressive Disclosure: Chỉ để những gì AI cần làm NGAY LẬP TỨC
+        trong SKILL.md. Tài liệu tham khảo dài để trong references/
+    
+    [3] Verified Steps: Mỗi giai đoạn (Phase) phải kết thúc bằng:
+        "Check the output against the checklist in loop/checklist.md"
+
+## 9.2. Điểm dừng tương tác (Interaction Points)
+
+    AI PHẢI dừng lại và hỏi người dùng khi:
+    [1] Thông tin đầu vào không đủ để xử lý
+    [2] Có nhiều cách hiểu khác nhau
+    [3] Cần xác nhận trước khi thực hiện hành động có rủi ro
+    [4] Confidence Score dưới 70%
+
+## 9.3. Cơ chế Rollback
+
+    Nếu ở Phase N phát hiện lỗi từ Phase M (M < N):
+    [1] Ghi nhận lỗi và nguyên nhân
+    [2] Thông báo người dùng về việc quay lại
+    [3] Quay lại Phase M và sửa lỗi
+    [4] Tiếp tục lại từ Phase M
+
+================================================================================
+                               KẾT THÚC TÀI LIỆU
+================================================================================
+Phiên bản: 2.0
+Ngày tạo: 2026-02-09
+Tác giả: Vũ Thương Hải (với sự hỗ trợ của AI Agent)
+================================================================================
+
+```
