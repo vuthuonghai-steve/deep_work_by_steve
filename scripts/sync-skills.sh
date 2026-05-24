@@ -16,6 +16,7 @@ WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
 REBUILD_DIR="$WORKSPACE_DIR/skills/rebuild"
 HERMES_DIR="$WORKSPACE_DIR/.hermes/skills"
 CLAUDE_DIR="$WORKSPACE_DIR/.claude"
+AGENTS_DIR="$WORKSPACE_DIR/.agents/skills"
 
 # Colors
 RED='\033[0;31m'
@@ -168,6 +169,7 @@ sync_skill() {
     local src="$REBUILD_DIR/$skill_name"
     local dest_hermes="$HERMES_DIR/$skill_name"
     local dest_claude="$CLAUDE_DIR/$skill_name"
+    local dest_agents="$AGENTS_DIR/$skill_name"
 
     echo ""
     echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -204,6 +206,25 @@ sync_skill() {
             log_info "Creating: $dest_hermes/"
             cp -r "$src" "$dest_hermes"
             log_success "Created .hermes/skills/$skill_name/"
+        fi
+    fi
+    # Copy to .agents/skills/
+    if [[ -d "$dest_agents" ]]; then
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "  ${YELLOW}[DRY-RUN]${NC} Would UPDATE: $dest_agents/"
+        else
+            log_info "Updating: $dest_agents/"
+            rm -rf "$dest_agents"
+            cp -r "$src" "$dest_agents"
+            log_success "Synced to .agents/skills/$skill_name/"
+        fi
+    else
+        if [[ "$DRY_RUN" == true ]]; then
+            echo -e "  ${YELLOW}[DRY-RUN]${NC} Would CREATE: $dest_agents/"
+        else
+            log_info "Creating: $dest_agents/"
+            cp -r "$src" "$dest_agents"
+            log_success "Created .agents/skills/$skill_name/"
         fi
     fi
 
