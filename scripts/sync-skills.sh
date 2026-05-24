@@ -290,7 +290,11 @@ SYNCED=0
 SKIPPED=0
 
 for skill in "${SKILLS_TO_SYNC[@]}"; do
-    sync_skill "$skill" && ((SYNCED++)) || ((SKIPPED++))
+    if sync_skill "$skill"; then
+        SYNCED=$((SYNCED + 1))
+    else
+        SKIPPED=$((SKIPPED + 1))
+    fi
 done
 
 # Remove orphans if requested

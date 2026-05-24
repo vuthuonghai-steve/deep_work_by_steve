@@ -27,18 +27,23 @@ Every skill package MUST follow this directory structure:
 ## 2. PIPELINE FLOW
 
 ```
-skill-architect          skill-planner           skill-builder
+skill-explorer           skill-architect          skill-planner           skill-builder
+     │                        │                        │                        │
+     ▼                        ▼                        ▼                        ▼
+exploration.md §6   →    design.md §3       →    todo.md tasks      →   <skills-root>/{name}/
+(Arch Recommendations)  (Zone Mapping)         (phase breakdown)          (skill package)
      │                        │                        │
      ▼                        ▼                        ▼
-design.md §3       →    todo.md tasks      →   <skills-root>/{name}/
-(Zone Mapping)         (phase breakdown)          (skill package)
-     │                        │
-     ▼                        ▼
-design.md §7       →    Pre-req table
-(PD Plan)               (resources audit)
+exploration.md §3   →    design.md §7       →    Pre-req table
+(7 Golden Standards)    (PD Plan)               (resources audit)
 ```
 
 ### Handoff Contracts
+
+**Explorer → Architect** (exploration.md sections):
+- §3 Seven Golden Standards Assessment → Architect designs Capability Map (§2) and Risks (§8)
+- §4 AI Instruction Standards & Rules → Architect guides loop checklists (§3.loop)
+- §6 Architectural Recommendations → Architect defines Zone Mapping (§3) and Progressive Disclosure Plan (§7)
 
 **Architect → Planner** (design.md sections):
 - §3 Zone Mapping → Planner creates task breakdown
@@ -93,7 +98,8 @@ Three-tier loading system:
 
 | Stage | Skill | Input | Output | Key Sections |
 |-------|-------|-------|--------|--------------|
-| **1** | skill-architect | User requirements | `design.md` | §1-§12 |
+| **0** | skill-explorer | User idea + raw resources | `exploration.md` | §1-§8 |
+| **1** | skill-architect | `exploration.md` + Requirements | `design.md` | §1-§10 |
 | **2** | skill-planner | `design.md` | `todo.md` | Pre-reqs, Phase Breakdown |
 | **3** | skill-builder | `design.md` + `todo.md` | Skill files | SKILL.md, knowledge/*, loop/* |
 

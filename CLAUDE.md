@@ -315,6 +315,7 @@ output_contract:
 
 ```yaml
 load_when_needed:
+  output_format_rules: ".claude/rules/output-format.md"
   backend_rules: ".claude/rules/backend.md"
   frontend_rules: ".claude/rules/frontend.md"
   testing_policy: "docs/agent/test-policy.yaml"

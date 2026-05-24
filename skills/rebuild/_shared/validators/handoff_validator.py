@@ -462,10 +462,78 @@ def validate_builder_complete(file_path, data):
 
 
 # ---------------------------------------------------------------------------
+# Stage: exploration-to-design
+# ---------------------------------------------------------------------------
+
+REQUIRED_EXPLORATION_PREFIXES = [
+    "1.", "2.", "3.", "4.", "5.",
+    "6.", "7.", "8.",
+]
+
+
+def validate_exploration_to_design(file_path, data):
+    """Validate exploration.md for handoff from Explorer to Architect."""
+    checks = []
+
+    # Schema checks
+    checks.extend(_check_schema(data, "exploration", "exploration"))
+
+    # Status must be ready_for_architect
+    status = data.get("status")
+    checks.append(make_check(
+        "status_ready_for_architect",
+        status == "ready_for_architect",
+        error=f"status must be 'ready_for_architect', got '{status}'" if status != "ready_for_architect" else None,
+        fix_hint="Set status: \"ready_for_architect\"",
+    ))
+
+    # All 8 required section headings present in body
+    headings = get_markdown_headings(file_path)
+    missing_sections = []
+    for prefix in REQUIRED_EXPLORATION_PREFIXES:
+        if not any(h.strip().startswith(prefix) for h in headings):
+            missing_sections.append(prefix)
+    checks.append(make_check(
+        "required_8_sections_present",
+        len(missing_sections) == 0,
+        error=f"Missing section headings starting with: {missing_sections}" if missing_sections else None,
+        fix_hint="Add ## 1. through ## 8. section headings in the Markdown body",
+    ))
+
+    # Handoff next_stage == architect
+    handoff = data.get("handoff", {})
+    next_stage = handoff.get("next_stage")
+    checks.append(make_check(
+        "handoff_next_stage_architect",
+        next_stage == "architect",
+        error=f"handoff.next_stage must be 'architect', got '{next_stage}'" if next_stage != "architect" else None,
+        fix_hint="Set handoff.next_stage: \"architect\"",
+    ))
+
+    # Trace tags: no unparseable tags
+    invalid_tags = find_invalid_trace_tags(file_path)
+    checks.append(make_check(
+        "trace_tags_valid",
+        len(invalid_tags) == 0,
+        error=f"Invalid trace tags found: {invalid_tags}" if invalid_tags else None,
+        fix_hint="Use only valid tag patterns: [TỪ DESIGN §N], [GỢI Ý BỔ SUNG], [CẦN LÀM RÕ], [TỪ AUDIT TÀI NGUYÊN]",
+    ))
+
+    passed = all(c["status"] == "pass" for c in checks)
+    return {
+        "stage": "exploration-to-design",
+        "artifact": Path(file_path).name,
+        "passed": passed,
+        "checks": checks,
+    }
+
+
+# ---------------------------------------------------------------------------
 # CLI and routing
 # ---------------------------------------------------------------------------
 
 STAGE_VALIDATORS = {
+    "exploration-to-design": validate_exploration_to_design,
     "design-to-planner": validate_design_to_planner,
     "planner-to-builder": validate_planner_to_builder,
     "builder-complete": validate_builder_complete,
