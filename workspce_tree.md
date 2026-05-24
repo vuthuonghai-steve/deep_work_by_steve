@@ -1,470 +1,331 @@
-# workspce_tree.md — Phân tích workspace & đề xuất cấu trúc quản lý tri thức/skill
+# Workspace Tree — deep_work_by_steve
 
-> **Ngày tạo:** 2026-05-09  
-> **Trạng thái:** Draft phân tích — cần Steve xác nhận trước khi refactor/move file  
-> **Tên file:** giữ đúng yêu cầu `workspce_tree.md` của user. Nếu muốn chuẩn hóa chính tả, có thể tạo/rename thêm `workspace_tree.md` sau.
-
----
-
-## 1. Mục tiêu mình hiểu từ yêu cầu
-
-Steve đang xây dựng một dự án cá nhân có mục đích:
-
-1. **Tích lũy tri thức cá nhân**: ghi lại kinh nghiệm, notes, project knowledge, tài nguyên, templates.
-2. **Chuyển hóa tri thức thành Agent Skill**: dùng knowledge đã tích lũy để rebuild skill cũ hoặc thiết kế skill mới.
-3. **Quản lý hệ sinh thái AI agent/prompt/skill**: có agent role prompts, raw skills, rebuilt skills, context thiết kế, tài liệu kiến trúc.
-4. **Tạo cấu trúc dễ duy trì**: tránh rối giữa raw input, knowledge đã curate, skill đang thiết kế, skill đã build, và prompt agent.
+> **Ngày cập nhật:** 2026-05-29
+> **Version:** 2.0 — viết lại theo chuẩn CLAUDE.md
+> **Mục đích:** Bản đồ tổng quan + routing guide cho AI agent khi làm việc trong workspace này
 
 ---
 
-## 2. Evidence từ repository hiện tại
+## Purpose
 
-### 2.1 Top-level tree hiện tại
+**Đây là gì:** Personal AI Skill Lab + Knowledge Base — không phải app/runtime codebase truyền thống.
 
-```text
-deep_work_by_steve/
-├── .omc/
-│   ├── sessions/
-│   ├── state/
-│   └── project-memory.json
-├── .skill-context/
-│   ├── session-learner/
-│   │   ├── design.md
-│   │   ├── todo.md
-│   │   └── resources/
-│   └── spec-generator-redesign/
-│       ├── design.md
-│       └── todo.md
-├── agents/
-│   ├── README.md
-│   ├── architect.md
-│   ├── executor.md
-│   ├── planner.md
-│   ├── verifier.md
-│   └── ... role prompt files
-├── docs/
-│   ├── raw/
-│   │   └── README.md
-│   └── rebuild-skill-suite-remediation-guide.md
-├── info_temp/
-│   ├── data.json
-│   ├── data.yaml
-│   ├── r.md
-│   ├── temp.json
-│   ├── temp.md
-│   └── temp.yaml
-├── knowledge/
-│   ├── README.md
-│   ├── experience/
-│   │   ├── README.md
-│   │   └── skill-suite-pipeline-workflow.md
-│   ├── notes/
-│   ├── programming/
-│   │   └── README.md
-│   ├── projects/
-│   ├── resources/
-│   └── templates/
-│       └── note_template.md
-├── skills/
-│   ├── raw/
-│   ├── rebuild/
-│   ├── skill-architect/
-│   └── ui-field-doc/
-└── architure.md
+**Mục tiêu:**
+1. Tích lũy tri thức cá nhân (kinh nghiệm, notes, project knowledge, resources, templates)
+2. Chuyển hóa knowledge thành Agent Skill (rebuild skill cũ hoặc thiết kế skill mới)
+3. Quản lý hệ sinh thái AI agent/prompt/skill đã được thiết kế hoặc import
+4. Tạo cấu trúc dễ duy trì theo lifecycle: raw → curated → designed → built → installed
+
+**Ai dùng:** Steve (Steve-claw#7410) + AI coding agents (Claude Code, Codex, Hermes)
+
+<instructions>
+Luôn ưu tiên thay đổi an toàn. Đây là workspace quản lý skill/knowledge — không phải production codebase. Các file trong `.hermes/skills/` là installed runtime, không sửa trực tiếp tại đây khi muốn thay đổi skill — hãy edit ở `skills/rebuild/` rồi sync.
+</instructions>
+
+---
+
+## Core Policy
+
+```yaml
+priority_order:
+  - user_task
+  - source_fidelity
+  - knowledge_integrity
+  - minimal_change
+
+constraints:
+  must:
+    - preserve existing skill contracts (SKILL.md format, folder structure)
+    - document any change to skill lifecycle status
+    - keep workspace self-documenting (README/index in every major zone)
+  must_not:
+    - edit installed runtime skills directly (use rebuild + sync workflow)
+    - delete skill context artifacts without archiving evidence
+    - move files without updating routing maps
+
+output_contract:
+  include:
+    - summary_of_changes
+    - zones_affected
+    - lifecycle_phase_changed
+    - routing_updated
 ```
 
-### 2.2 Các artifact quan trọng đã thấy
+---
 
-| Path | Evidence | Ý nghĩa |
+## Workspace Zones
+
+### Zone Taxonomy
+
+```yaml
+zones:
+  L0_root:
+    path: "./"
+    role: "Entry point — CLAUDE.md, workspce_tree.md, architure.md"
+    contains:
+      - CLAUDE.md              # LLM standard — format/structure guide
+      - workspce_tree.md      # This file — workspace map
+      - architure.md          # Skill framework architecture (3 Pillars, 7 Zones)
+      - hermes.md             # Hermes agent config/notes
+
+  L1_knowledge:
+    path: "./knowledge/"
+    role: "Curated source of truth — đã qua chọn lọc"
+    contains:
+      - ai-agents/            # AI agent research & patterns
+      - programming/          # Programming notes & patterns
+      - experience/           # Learnings từ thực tế (skill-suite-pipeline-workflow, etc.)
+      - projects/            # Project-specific knowledge
+      - notes/                # Quick notes
+      - resources/            # Curated external resources
+      - templates/            # Note templates
+      - map/                  # Knowledge maps / indices
+    load_policy: "on_demand"
+    note: "knowledge/ cần giữ sạch — chỉ content đã curate, không phải raw intake"
+
+  L2_skill_context:
+    path: "./.skill-context/"
+    role: "Design/planning state cho từng skill đang thiết kế"
+    contains_format:
+      - "{skill-name}/design.md"
+      - "{skill-name}/todo.md"
+      - "{skill-name}/build-log.md"
+      - "{skill-name}/resources/"
+    current_skills:
+      - hello-world-writer
+      - session-learner
+      - skill-suite-upgrade
+      - prompt-cleaner
+      - heavy-thinking-manual
+      - skill-architect-v21
+      - skill-planner-v21
+      - spec-generator-redesign
+      - build-crud-admin-page
+    load_policy: "on_demand"
+    note: "Đây là design state — không phải nơi đặt skill package hoàn chỉnh"
+
+  L3_skill_factory:
+    path: "./skills/rebuild/"
+    role: "Canonical skill factory — rebuild skill sau khi có design/todo"
+    contains:
+      - _shared/              # Shared schemas, templates, validators, fixtures
+      - skill-architect/      # OMC skill factory — Architect phase
+      - skill-planner/        # OMC skill factory — Planner phase
+      - skill-builder/        # OMC skill factory — Builder phase
+      - context-before-fix/   # Siinstore-api scoped fix workflow
+      - prompt-cleaner/       # Rebuild complete
+      - session-learner/      # Rebuild complete
+      - spec-generator/       # Rebuild complete
+      - skill-suite-upgrade/ # Upgrade workflow
+      - skill-sync/          # Sync workflow (rebuild → installed)
+      - vercel-agent-skills/ # Vercel agent skills suite
+      - tests/               # Unit/integration/e2e tests
+    load_policy: "on_demand"
+    note: "Output canonical — đây là nơi build skill sau design phase"
+
+  L4_skill_raw:
+    path: "./skills/raw/"
+    role: "Imported/legacy/reference skills — chưa qua rebuild"
+    contains: ~40 raw skills (flutter-*, react-*, ui-*, mermaid-*, etc.)
+    load_policy: "task_specific_only"
+    note: "Dùng để tham khảo hoặc import nguyên mẫu — không sửa trực tiếp"
+
+  L5_agent_prompts:
+    path: "./agents/"
+    role: "Agent role prompts — orchestrator/subagent role definitions"
+    contains: architect.md, planner.md, executor.md, verifier.md, critic.md, etc.
+    load_policy: "on_demand"
+    note: "Đây là role prompts, KHÁC với skill packages trong skills/"
+
+  L6_runtime:
+    path: "./.hermes/skills/"
+    role: "Installed/active skills — Hermes agent runtime"
+    contains:
+      - skill-architect/      # Active installed
+      - skill-planner/        # Active installed
+      - skill-builder/        # Active installed
+      - spec-generator-has-api/
+      - deep-session-learner/
+      - prompt-cleaner/
+      - hello-world-writer/
+      - skill-sync/
+      - _shared/
+      - achive/               # Archived (older versions)
+    load_policy: "task_specific"
+    note: "ĐÂY LÀ RUNTIME — edit ở skills/rebuild/ rồi sync, KHÔNG sửa trực tiếp"
+
+  L7_inbox:
+    path: "./info_temp/, ./docs/raw/"
+    role: "Raw intake — ý tưởng/session/draft chưa xử lý"
+    contains:
+      - info_temp/           # Scratch, temp files
+      - docs/raw/            # Raw ideas, brainstorm, research drafts
+    load_policy: "task_specific_only"
+    note: "Coi như inbox — định kỳ curate hoặc archive, không giữ permanent"
+
+  L8_runtime_state:
+    path: "./.omc/, ./.omx/, ./.task-context/"
+    role: "Runtime state — session data, plans, task context"
+    contains:
+      - .omc/sessions/      # Session history
+      - .omc/plans/         # Plan documents
+      - .omc/state/         # Mission state
+      - .omx/               # OMX runtime state
+      - .task-context/      # Task-specific context
+    load_policy: "task_specific"
+    note: "Đây là runtime artifacts — không phải source of truth cho knowledge"
+
+  L9_docs:
+    path: "./docs/"
+    role: "Documentation — remediation guides, architecture docs"
+    contains:
+      - docs/raw/           # Raw documentation drafts
+      - docs/sessions/      # Session summaries
+    note: "Thường là temporary hoặc reference — không phải curated knowledge"
+```
+
+---
+
+## Operating Model
+
+```yaml
+knowledge_lifecycle:
+  flow:
+    - Raw intake (docs/raw, info_temp, sessions)
+    - Curate (knowledge/)
+    - Design context (.skill-context/{name}/design.md)
+    - Plan (.skill-context/{name}/todo.md)
+    - Build (skills/rebuild/{name}/)
+    - Verify (build-log.md + validators)
+    - Install (.hermes/skills/ or target runtime)
+    - Feedback (knowledge/experience/)
+
+skill_lifecycle:
+  L0_raw:       "Imported/legacy skill, chưa kiểm chứng"
+  L1_designed:  "Có design.md"
+  L2_planned:   "Có todo.md trace về design"
+  L3_built:     "Có package theo 7 Zones structure"
+  L4_verified:  "Có build-log/validator evidence"
+  L5_installed: "Đã copy vào runtime .hermes/skills/"
+```
+
+---
+
+## Working Map
+
+```yaml
+load_when_needed:
+  skill_framework: "architure.md"
+  knowledge_base: "knowledge/README.md"
+  skill_context_convention: ".skill-context/registry/README.md"
+  rebuild_pipeline: "skills/rebuild/_shared/knowledge/framework.md"
+  agent_role_catalog: "agents/README.md"
+  current_skill_status: ".skill-context/registry/README.md"
+```
+
+---
+
+## Routing Quick Reference
+
+| Task | Zone | Path |
 |---|---|---|
-| `architure.md` | Có mô hình 3 Pillars, 7 Zones, workflow build skill | Tài liệu nền kiến trúc skill, nhưng tên file bị sai chính tả và nằm root nên dễ bị bỏ sót |
-| `knowledge/README.md` | Định nghĩa các vùng `programming`, `experience`, `projects`, `notes`, `resources`, `templates` | Đã có ý tưởng knowledge base nhưng còn mỏng, thiếu index/metadata/ingestion workflow |
-| `knowledge/experience/skill-suite-pipeline-workflow.md` | Ghi lại insight về pipeline Architect → Planner → Builder | Đây là ví dụ tốt về tri thức đã được curate |
-| `.skill-context/session-learner/design.md` | Skill `session-learner` có design hoàn chỉnh, status COMPLETE | Workspace đã dùng pattern thiết kế skill theo context |
-| `.skill-context/session-learner/todo.md` | Có task breakdown, trace tags, Definition of Done | Planner artifact đã tồn tại |
-| `.skill-context/spec-generator-redesign/design.md` | Redesign lớn cho `spec-generator` với ambiguity detection, schema validation, phase gates | Có năng lực thiết kế skill phức tạp |
-| `.skill-context/spec-generator-redesign/todo.md` | Todo ready for implementation | Có backlog triển khai skill nhưng chưa rõ trạng thái build cuối |
-| `skills/rebuild/README.md` | Định nghĩa pipeline `skill-architect → skill-planner → skill-builder` | Đây đang là ứng viên “canonical skill factory” |
-| `skills/rebuild/_shared/knowledge/framework.md` | Single source of truth cho 7 Zones, handoff, trace tags, quality gates | Đây là contract nền mạnh nhất hiện có |
-| `docs/rebuild-skill-suite-remediation-guide.md` | Ghi rõ mục tiêu portable, dynamic, không hardcode path | Đây là tài liệu remediation quan trọng |
-| `skills/raw/skills.yaml` | Registry skill cũ với path `.claude/skills/...` | Hữu ích làm inventory, nhưng còn hardcode theo Claude path |
-| `agents/README.md` | Mô tả multi-layer orchestrator agent và constraints subagent | Agent prompt layer đang tồn tại song song với skill layer |
-| `info_temp/` | Có file tạm `temp.*`, `data.*`, `r.md` | Đây là vùng scratch chưa có rule dọn dẹp/ingest |
-| `.omc/project-memory.json` | Memory nhận diện `agents`, `docs`, `info_temp`, `knowledge`, `skills` | Có memory cũ nhưng chưa phản ánh đầy đủ mục tiêu hiện tại |
+| Tạo skill mới | .skill-context + skills/rebuild | `.skill-context/{name}/` → `skills/rebuild/{name}/` |
+| Sửa skill đang chạy | skills/rebuild/ rồi sync | `skills/rebuild/{name}/` → sync qua `skill-sync/` |
+| Đọc hiểu skill hiện tại | .hermes/skills/ | `.hermes/skills/{name}/` |
+| Thêm knowledge mới | knowledge/ | `knowledge/{category}/` |
+| Raw ideas/scratch | info_temp/, docs/raw/ | inbox — chưa curate |
+| Xem agent role | agents/ | `agents/*.md` |
+| Lưu session/sự cố | .omc/sessions/ | runtime artifacts |
+| Đọc architecture | architure.md | root hoặc docs/ nếu đã chuẩn hóa |
 
 ---
 
-## 3. Ranked synthesis
+## Key Files
 
-| Rank | Nhận định | Confidence | Basis |
-|---:|---|---|---|
-| 1 | Dự án này thực chất là **Personal AI Skill Lab + Knowledge Base**, không phải app/runtime codebase truyền thống | High | `knowledge/`, `skills/`, `.skill-context/`, `agents/`, `architure.md`, `skills/rebuild/README.md` |
-| 2 | `skills/rebuild/` đang là **canonical factory** tốt nhất cho bộ meta-skill Architect → Planner → Builder | High | Có `_shared/knowledge/framework.md`, schemas, validators, fixtures, `skill-architect`, `skill-planner`, `skill-builder` |
-| 3 | `.skill-context/` đang là **workspace state cho skill design/planning**, nên nên giữ contract này thay vì đổi tên tùy ý | High | Shared framework định nghĩa `.skill-context/{skill-name}/design.md`, `todo.md`, `build-log.md` |
-| 4 | `knowledge/` cần trở thành **curated source of truth**, còn `docs/raw/` + `info_temp/` nên là inbox/scratch | Medium | `knowledge/README.md` đã định nghĩa categories; `docs/raw/README.md` định nghĩa raw intake; `info_temp/` chưa rõ ownership |
-| 5 | `agents/` và `skills/` cần registry/handoff rõ hơn để tránh lẫn giữa “role prompt” và “skill package” | Medium | `agents/README.md` mô tả orchestrator/role prompts; `skills/raw/skills.yaml` mô tả skill registry |
+```yaml
+critical_files:
+  root_constitution:
+    - CLAUDE.md              # LLM format standard
+    - workspce_tree.md       # Workspace map (this file)
+    - architure.md          # 3 Pillars, 7 Zones skill framework
 
----
+  skill_factory_contracts:
+    - skills/rebuild/_shared/knowledge/framework.md
+    - skills/rebuild/_shared/schemas/
+    - skills/rebuild/_shared/validators/
 
-## 4. Pain points kiến trúc hiện tại
+  active_skill_contexts:
+    - .skill-context/skill-suite-upgrade/
+    - .skill-context/skill-architect-v21/
+    - .skill-context/skill-planner-v21/
+    - .skill-context/prompt-cleaner/
+    - .skill-context/session-learner/
 
-### P1 — Chưa có “source of truth” cho từng loại tri thức
-
-Hiện repo có nhiều vùng chứa tri thức:
-
-- `knowledge/` — curated knowledge.
-- `docs/raw/` — raw ideas/designs.
-- `info_temp/` — scratch nhưng chưa có rule.
-- `.skill-context/` — design/todo cho skill.
-- `skills/raw/` — imported/raw skills.
-- `skills/rebuild/` — rebuilt/canonical skills.
-- `agents/` — agent prompts.
-
-**Inference:** Vấn đề chính không phải thiếu nội dung, mà là thiếu taxonomy + lifecycle để biết “file này đang ở phase nào?”.
-
-### P2 — Raw / draft / canonical / built output đang bị gần nhau quá
-
-`skills/raw/` và `skills/rebuild/` đang cùng nằm dưới `skills/`, nhưng chưa có README top-level giải thích:
-
-- raw là nguồn tham khảo?
-- rebuild là bản canonical?
-- output skill hoàn chỉnh nên đặt ở đâu?
-- khi nào skill được coi là “installed/usable”?
-
-### P3 — `.skill-context/` có design/todo nhưng thiếu build evidence đều đặn
-
-Theo framework, context chuẩn nên có:
-
-```text
-.skill-context/{skill-name}/
-├── design.md
-├── todo.md
-├── build-log.md
-├── resources/
-├── data/
-└── loop/
-```
-
-Hiện `session-learner` và `spec-generator-redesign` có `design.md` + `todo.md`, nhưng chưa thấy `build-log.md` ở root context. Điều này làm khó biết skill đã build xong, build ở đâu, và đã verify thế nào.
-
-### P4 — Naming và index chưa đủ mạnh
-
-- `architure.md` có vẻ là architecture document nhưng sai chính tả.
-- `workspce_tree.md` cũng đang giữ theo request, nhưng nên cân nhắc alias đúng chính tả.
-- `knowledge/README.md` còn dòng `$(date +%Y-%m-%d)` chưa render thật.
-- Nhiều thư mục chưa có index mô tả “nên bỏ gì vào đây / không bỏ gì vào đây”.
-
-### P5 — Agent prompt layer chưa nối rõ với skill layer
-
-`agents/` chứa nhiều role như architect, executor, verifier, planner, critic. `skills/` chứa skill packages. Đây là 2 loại tài sản khác nhau:
-
-- **Agent prompt**: vai trò/hành vi của subagent.
-- **Skill package**: workflow + knowledge + scripts + templates để agent thực thi một năng lực cụ thể.
-
-Nếu không tách rõ, dễ rơi vào tình trạng “prompt nào là tool, skill nào là workflow, cái nào là source thật?”.
-
----
-
-## 5. Đề xuất Target Architecture v1
-
-### 5.1 Nguyên tắc thiết kế
-
-1. **Không vội move file hàng loạt.** Trước tiên tạo index/contract để repo tự giải thích được.
-2. **Giữ `.skill-context/` ở root.** Đây là runtime/project contract cho pipeline skill.
-3. **Giữ `skills/raw` và `skills/rebuild`.** Nhưng định nghĩa rõ:
-   - `skills/raw/` = nguồn nhập/tham khảo, có thể lộn xộn.
-   - `skills/rebuild/` = skill factory/canonical rebuild workspace.
-4. **Biến `knowledge/` thành curated source.** Chỉ lưu tri thức đã qua chọn lọc và có khả năng tái sử dụng.
-5. **Đưa `info_temp/` về vai trò inbox/scratch có thời hạn.** Không để thành “kho thứ hai”.
-6. **Mọi skill mới đi qua lifecycle:** idea → knowledge/resources → design.md → todo.md → build-log.md → skill package → feedback loop.
-
-### 5.2 Operating model: Knowledge → Skill
-
-```mermaid
-flowchart LR
-    A[Raw input<br/>docs/raw + info_temp + sessions] --> B[Curate<br/>knowledge/]
-    B --> C[Skill Context<br/>.skill-context/name/design.md]
-    C --> D[Plan<br/>.skill-context/name/todo.md]
-    D --> E[Build<br/>skills/rebuild/name/]
-    E --> F[Verify<br/>build-log + validators]
-    F --> G[Use / Install<br/>Codex/Claude skills]
-    G --> H[Feedback<br/>knowledge/experience]
-    H --> B
-```
-
-### 5.3 Proposed responsibility map
-
-| Zone | Current path | Vai trò nên giữ | Quy tắc quản lý |
-|---|---|---|---|
-| Workspace index | `README.md` hoặc `workspce_tree.md` | Bản đồ tổng quan | Mọi top-level folder phải có purpose rõ |
-| Raw inbox | `docs/raw/`, `info_temp/` | Nơi nhận ý tưởng/session/draft chưa xử lý | Có ngày tạo, có deadline curate/archive |
-| Curated knowledge | `knowledge/` | Source of truth tri thức cá nhân | Mỗi note nên có category, source, related links |
-| Skill design state | `.skill-context/{skill-name}/` | Nơi lưu design/todo/build-log của từng skill | Không dùng làm nơi chứa skill package cuối |
-| Raw skill imports | `skills/raw/` | Nguồn tham khảo/legacy/raw import | Không sửa trực tiếp nếu muốn preserve nguồn |
-| Canonical rebuild | `skills/rebuild/` | Factory/canonical portable skill suite | Nơi build/verify skill sau khi có design/todo |
-| Agent prompts | `agents/` | Role prompts cho AI agents | Cần registry phân biệt role prompt vs skill |
-| Architecture docs | `docs/architecture/` hoặc `architure.md` | Quyết định kiến trúc dài hạn | Nên chuẩn hóa tên và link từ root |
-| Decision records | `docs/decisions/` | Vì sao chọn cấu trúc/quy tắc | Mỗi thay đổi lớn có ADR ngắn |
-
----
-
-## 6. Proposed workspace tree v1 — ít xáo trộn
-
-Đây là cấu trúc đề xuất theo hướng **không phá contract hiện có**:
-
-```text
-deep_work_by_steve/
-├── README.md                         # index ngắn: dự án này là gì, dùng thế nào
-├── workspce_tree.md                  # file phân tích hiện tại
-├── architure.md                      # hiện có; nên rename/alias về docs/architecture sau
-│
-├── docs/
-│   ├── raw/                          # raw ideas, brainstorm, research drafts
-│   ├── architecture/                 # đề xuất tạo: architecture docs canonical
-│   ├── decisions/                    # đề xuất tạo: ADR/lore decision records
-│   └── rebuild-skill-suite-remediation-guide.md
-│
-├── knowledge/
-│   ├── README.md
-│   ├── index.md                      # đề xuất tạo: catalog tri thức
-│   ├── programming/
-│   ├── experience/
-│   ├── projects/
-│   ├── notes/
-│   ├── resources/
-│   └── templates/
-│
-├── .skill-context/
-│   ├── README.md                     # đề xuất tạo: contract cho design/todo/build-log
-│   ├── session-learner/
-│   │   ├── design.md
-│   │   ├── todo.md
-│   │   ├── build-log.md              # nên có nếu đã build
-│   │   └── resources/
-│   └── spec-generator-redesign/
-│       ├── design.md
-│       ├── todo.md
-│       └── build-log.md              # nên có nếu đã build
-│
-├── skills/
-│   ├── README.md                     # đề xuất tạo: raw vs rebuild vs install policy
-│   ├── raw/                          # imported/legacy/reference skills
-│   ├── rebuild/                      # canonical portable skill factory
-│   │   ├── _shared/
-│   │   ├── skill-architect/
-│   │   ├── skill-planner/
-│   │   ├── skill-builder/
-│   │   ├── session-learner/
-│   │   └── spec-generator/
-│   ├── skill-architect/              # cần xác định: active? duplicate? legacy?
-│   └── ui-field-doc/                 # cần xác định: active? incomplete?
-│
-├── agents/
-│   ├── README.md
-│   ├── registry.md                   # đề xuất tạo: agent role catalog
-│   └── *.md
-│
-├── info_temp/
-│   └── ...                           # nên xem như scratch; curate hoặc archive định kỳ
-│
-└── .omc/
-    └── ...                           # local memory/state; cần quyết định có version không
+  registry:
+    - .skill-context/registry/README.md  # Skill status tracker
 ```
 
 ---
 
-## 7. Lifecycle đề xuất cho tri thức cá nhân
+## Interaction Protocol
 
-### 7.1 Capture
-
-Nguồn đầu vào:
-
-- Chat/session quan trọng.
-- Ghi chú nhanh.
-- Kinh nghiệm debug/build.
-- Prompt/skill tìm được từ bên ngoài.
-- Design/pattern rút ra từ dự án thật.
-
-Nơi đặt:
-
-- `docs/raw/` cho ý tưởng/draft có chủ đề.
-- `info_temp/` cho scratch cực ngắn hạn.
-- `.omc/sessions/` hoặc runtime session source nếu có tool extract.
-
-### 7.2 Curate
-
-Khi một raw input có giá trị tái dùng:
-
-- Chuyển thành note trong `knowledge/{category}/`.
-- Gắn metadata tối thiểu:
-  - `source`
-  - `date`
-  - `tags`
-  - `related`
-  - `used_by_skill`
-
-### 7.3 Convert to skill context
-
-Khi tri thức đủ để tạo skill:
-
-```text
-.skill-context/{skill-name}/
-├── design.md      # Architect
-├── todo.md        # Planner
-├── build-log.md   # Builder evidence
-└── resources/     # curated inputs from knowledge/docs/raw
-```
-
-### 7.4 Build skill package
-
-Output nên nằm ở:
-
-```text
-skills/rebuild/{skill-name}/
-```
-
-hoặc một target install rõ ràng như:
-
-```text
-~/.codex/skills/{skill-name}/
-~/.claude/skills/{skill-name}/
-```
-
-Nhưng source repo nên lưu canonical package trong `skills/rebuild/`.
-
-### 7.5 Feedback loop
-
-Sau khi dùng skill:
-
-- Lỗi/thiếu sót ghi vào `.skill-context/{skill-name}/build-log.md` hoặc `loop/`.
-- Insight chung ghi vào `knowledge/experience/`.
-- Nếu ảnh hưởng kiến trúc chung, ghi vào `docs/decisions/`.
-
----
-
-## 8. Kiến trúc quản lý skill đề xuất
-
-### 8.1 Skill maturity levels
-
-| Level | Ý nghĩa | Nơi lưu |
-|---|---|---|
-| L0 Raw | Skill/prompt copy từ nơi khác, chưa kiểm chứng | `skills/raw/{name}/` |
-| L1 Designed | Đã có `design.md` | `.skill-context/{name}/design.md` |
-| L2 Planned | Đã có `todo.md` trace về design | `.skill-context/{name}/todo.md` |
-| L3 Built | Đã có package theo 7 Zones | `skills/rebuild/{name}/` |
-| L4 Verified | Có build-log/validator evidence | `.skill-context/{name}/build-log.md` + package |
-| L5 Installed/Active | Đã copy/install vào runtime AI agent | `~/.codex/skills` hoặc target được chọn |
-
-### 8.2 Contract cho mỗi skill package
-
-Theo framework hiện có, một skill hoàn chỉnh nên có:
-
-```text
-{skill-name}/
-├── SKILL.md
-├── knowledge/
-├── scripts/
-├── templates/
-├── data/
-├── loop/
-└── assets/
-```
-
-Không phải skill nào cũng cần đủ tất cả folder, nhưng `SKILL.md`, `knowledge/` hoặc `loop/` thường cần để tránh skill chỉ là prompt mỏng.
-
-### 8.3 Registry tối thiểu nên có
-
-Nên có một file registry dạng markdown hoặc YAML:
-
-```text
-skills/registry.md
-```
-
-Fields đề xuất:
-
-| Field | Mục đích |
-|---|---|
-| `name` | tên skill kebab-case |
-| `status` | raw / designed / planned / built / verified / installed |
-| `source` | raw import, self-designed, rebuilt |
-| `context` | link `.skill-context/{name}` |
-| `package` | link `skills/rebuild/{name}` |
-| `runtime_target` | Codex/Claude/other |
-| `last_verified` | ngày verify gần nhất |
-| `known_gaps` | các gap lớn |
-
----
-
-## 9. Roadmap khuyến nghị
-
-### Phase 1 — Stabilize map, không move file
-
-Mục tiêu: làm repo tự giải thích được.
-
-- [ ] Tạo root `README.md`.
-- [ ] Tạo `skills/README.md` giải thích `raw` vs `rebuild`.
-- [ ] Tạo `.skill-context/README.md` giải thích design/todo/build-log contract.
-- [ ] Tạo `knowledge/index.md`.
-- [ ] Tạo `agents/registry.yaml`.
-- [ ] Đánh dấu `info_temp/` là scratch/inbox, không coi là source of truth.
-
-### Phase 2 — Chuẩn hóa canonical docs
-
-- [ ] Chuyển hoặc alias `architure.md` → `docs/architecture/skill-framework.md`.
-- [ ] Tạo `docs/architecture/workspace-operating-model.md`.
-- [ ] Tạo `docs/decisions/` cho quyết định lớn.
-- [ ] Cập nhật `knowledge/README.md` để bỏ placeholder date.
-
-### Phase 3 — Chuẩn hóa skill pipeline
-
-- [ ] Với mỗi `.skill-context/{name}`, đảm bảo có `design.md`, `todo.md`, `build-log.md`.
-- [ ] Tạo `skills/registry.yaml` với các field: name, status, source, context, package, runtime_target, last_verified, known_gaps.
-- [ ] Đánh trạng thái cho `session-learner`, `spec-generator`, `skill-architect`, `ui-field-doc`.
-- [ ] Chạy hoặc thêm validators cho handoff: design → todo → built package.
-
-### Phase 4 — Tạo ingestion workflow
-
-- [ ] Dùng/hoàn thiện `session-learner` để trích xuất knowledge từ session.
-- [ ] Quy định khi nào raw note được promote vào `knowledge/`.
-- [ ] Quy định khi nào knowledge đủ điều kiện thành `.skill-context/{name}`.
-
-### Phase 5 — Dọn nợ kỹ thuật
-
-- [ ] Xử lý duplicate/incomplete dirs: `skills/skill-architect`, `skills/ui-field-doc`.
-- [ ] Loại `__pycache__`, zip/reference không cần version nếu có.
-- [ ] Loại hardcoded path `.claude/skills` khỏi canonical runtime docs nếu mục tiêu là portable.
-- [ ] Archive raw skills không còn dùng.
-
----
-
-## 10. Unknowns cần Steve xác nhận
-
-1. Runtime chính Steve muốn ưu tiên là **Codex skills**, **Claude skills**, hay cả hai?
-2. `skills/rebuild/` có phải canonical output chính không, hay chỉ là khu rebuild tạm?
-3. `skills/skill-architect/` và `skills/ui-field-doc/` ở root là active package hay bản dang dở?
-4. Steve muốn knowledge base theo kiểu:
-   - đơn giản markdown folder,
-   - wiki có index/backlinks,
-   - hay database/JSON metadata để agent query?
-5. Có nên giữ nguyên `info_temp/` hay đổi thành inbox/archive có quy tắc dọn?
-
----
-
-## 11. Kết luận ngắn
-
-**Evidence:** Repo hiện đã có nền rất tốt cho một “AI Skill Lab”: có knowledge base, raw skills, rebuilt skill suite, skill context artifacts, agent role prompts và architecture docs.
-
-**Inference:** Điểm nghẽn chính hiện tại là **quản trị lifecycle**, không phải thiếu skill. Cần định nghĩa rõ mỗi folder thuộc phase nào: raw capture, curated knowledge, design context, build package, verification evidence, installed runtime.
-
-**Recommendation:** Không nên refactor mạnh ngay. Bước đúng nhất là tạo index/README/registry trước, sau đó mới quyết định move/rename/archive. Target architecture nên giữ `.skill-context/` và `skills/rebuild/` làm 2 trục chính:
-
-```text
-knowledge/  →  .skill-context/  →  skills/rebuild/  →  installed runtime  →  feedback back to knowledge/
+```yaml
+agent_protocol:
+  before_editing_skill:
+    - Xác định skill đang ở zone nào (rebuild vs runtime vs raw)
+    - Nếu là runtime (.hermes/skills/): edit ở rebuild rồi sync
+    - Nếu là raw import: copy vào rebuild trước khi sửa
+  before_creating_skill:
+    - Tạo design.md trong .skill-context/{name}/
+    - Tạo todo.md với task breakdown
+    - Build vào skills/rebuild/{name}/
+    - Sync vào .hermes/skills/ khi verified
+  during_editing:
+    - Preserve SKILL.md contract (frontmatter, sections)
+    - Document build evidence trong build-log.md
+    - Update registry khi status thay đổi
+  before_final_response:
+    - Verify routing map updated nếu có thay đổi structure
+    - State what changed trong summary
 ```
 
 ---
 
-## 12. Câu hỏi xác nhận cho bước tiếp theo
+## Confidence Assessment
 
-Nếu Steve đồng ý với hướng này, bước tiếp theo nên là **Phase 1 — Stabilize map, không move file**: tạo các README/index/registry tối thiểu để workspace có contract rõ trước khi đụng tới refactor thư mục.
+```yaml
+confidence: "95%"
 
+basis:
+  - Đã verify toàn bộ top-level directories
+  - Đã verify skills/rebuild structure (canonical factory)
+  - Đã verify .hermes/skills structure (installed runtime)
+  - Đã verify .skill-context active contexts
+  - Đã verify knowledge/ structure
+
+uncertainties:
+  - some raw skills in skills/raw/ may be duplicates or outdated
+  - architure.md bị typo (nên rename later)
+  - info_temp/ content chưa verified chi tiết
+  - .omx/ state chưa explore đầy đủ
+
+notes:
+  - repos/ directory trống (placeholder?)
+  - scripts/ chỉ có sync-skills.sh
+```
+
+---
+
+## Open Questions
+
+```yaml
+open:
+  - Steve cần confirm: runtime chính là Codex skills, Claude skills, hay cả hai?
+  - architure.md nên rename → docs/architecture/skill-framework.md?
+  - info_temp/ nên có rule cụ thể hơn (TTL, auto-cleanup)?
+  - .omx/ directory purpose chưa rõ — cần Steve clarify
+```
+
+---
+
+**Document status:** NO CODE CHANGES — Chỉ cập nhật workspace map
