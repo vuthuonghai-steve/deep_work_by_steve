@@ -1,28 +1,31 @@
-# Quality Gate: Exploration Quality Checklist
+# Sổ Kiểm Định Chất Lượng Khảo Sát (Exploration Checklist)
 
-> **Vai trò**: Tự kiểm định chất lượng tệp tin đầu ra `exploration.md` trước khi tiến hành bàn giao Stage 0.
-
----
-
-## 1. Kiểm tra 7 Tiêu chuẩn Vàng
-
-- [ ] **Khả năng tái sử dụng (Reusability)**: Đã đề xuất tách biệt tri thức nghiệp vụ tĩnh và chỉ dẫn hành động động chưa?
-- [ ] **Khả năng kết hợp (Composability)**: Đã quy định rõ thứ tự ưu tiên hoặc meta-prompting khi ghép chuỗi chưa?
-- [ ] **Khả năng bảo trì (Maintainability)**: SKILL.md đề xuất có tuân thủ cấu trúc 4 lớp và Goldilocks zone không?
-- [ ] **Bảo mật (Security)**:
-  - [ ] Đã có giải pháp bọc XML delimiters để cách ly dữ liệu thô chống Prompt Injection?
-  - [ ] Đã chỉ định chạy trong Docker Sandbox biệt lập nếu skill đích có đi kèm thực thi mã?
-- [ ] **Hiệu suất Token**: Đã lên phương án Progressive Disclosure nạp dynamic Tier 1/2/3 chưa?
-- [ ] **Tính di động**: Đường dẫn file đề xuất có ở dạng tương đối không? Có bị trói buộc ngầm vào mô hình nào không?
-- [ ] **Độ phục hồi**: Đã thiết lập cơ chế ghi log thực thi và fallback HITL rõ ràng khi lỗi chưa?
-- [ ] **Đánh giá quy mô (Scale & Complexity)**: Đã chạy bảng tính điểm SCS nghiệp vụ chưa? Đã đưa ra kết luận phân rã Micro-skills rõ ràng khi SCS > 3.0 chưa?
-- [ ] **Thiết lập luồng (Orchestration)**: Đã vẽ sơ đồ Mermaid điều phối luồng phối hợp giữa các Micro-skills chưa?
+> **Mã số**: STG0-LOOP-CHECKLIST
+> **Vai trò**: Chốt chặn chất lượng cuối cùng để Explorer Agent tự đánh giá trước khi kết thúc Stage 0.
 
 ---
 
-## 2. Kiểm tra Cấu trúc & Định dạng Tệp
+## 📋 TIÊU CHÍ NGHIỆM THU ĐỊNH LƯỢNG
 
-- [ ] Frontmatter đầy đủ các trường yêu cầu và khớp chuẩn `exploration.schema.yaml`.
-- [ ] Tồn tại đầy đủ **8 chương mục tiêu đề bắt buộc** từ §1 đến §8.
-- [ ] Mọi đề xuất tri thức domain đều có nguồn tham chiếu thực tế tại thư mục `resources/`.
-- [ ] Tài liệu được biên soạn 100% bằng Tiếng Việt chuẩn mực kỹ thuật.
+Explorer Agent bắt buộc phải tích dấu `[x]` vào toàn bộ các tiêu chí dưới đây để tự nghiệm thu đạt cổng chất lượng:
+
+### 1. Ranh giới Sổ cái JSON có cấu trúc
+- [ ] Đã chạy script `scripts/init_context.py` để khởi tạo thư mục bối cảnh thành công.
+- [ ] Tệp `exploration.json` đã được tạo đầy đủ các trường và không có bất kỳ placeholder rỗng nào.
+- [ ] Tệp `criteria.json` đã được tạo đầy đủ ít nhất 5 tiêu chí AC và 2 test cases định lượng cụ thể.
+- [ ] Cả hai tệp JSON đều đã **vượt qua 100% xác thực schema** tại `_shared/schemas/` thông qua schema validator.
+
+### 2. Thu thập tri thức và tài nguyên thực tế (Rich status)
+- [ ] Đã quét codebase và thu thập tối thiểu 2 mã nguồn mẫu, helper functions hoặc API schema có liên quan và lưu vào `.skill-context/{skill-name}/resources/`.
+- [ ] Đã quét và chắt lọc các best practices bên ngoài từ Web (nếu cần thiết) và lưu lại dưới dạng tài liệu tri thức thô bọc trong XML boundaries.
+- [ ] Không có file tài nguyên nào dạng Markdown phẳng rỗng, tất cả phải được phân chủ đề rõ ràng.
+
+### 3. Đánh giá quy mô & Phân rã Micro-skills
+- [ ] Đã thực hiện thang đo điểm phức tạp **SCS (Skill Complexity Score)** đầy đủ.
+- [ ] Nếu điểm SCS > 3.0 hoặc có điểm 5 (ngưỡng đỏ), đã kích hoạt Smart Context Splitter (`--split`) để phân rã bối cảnh.
+- [ ] Sơ đồ Mermaid của luồng điều phối micro-skills được vẽ đầy đủ và lưu vào bối cảnh con.
+
+### 4. Ranh giới Bảo mật & An toàn
+- [ ] Đã kiểm tra và bọc toàn bộ đầu vào từ bên ngoài vào trong các thẻ XML `<external_input>` an toàn.
+- [ ] Đã thiết lập các khuyến nghị bảo mật và sandbox isolation cụ thể đối với các scripts thực thi của skill đích.
+- [ ] Đã dịch toàn bộ tóm tắt kỹ thuật và giải trình nghiệp vụ sang **Tiếng Việt** chất lượng cao cho người dùng.
