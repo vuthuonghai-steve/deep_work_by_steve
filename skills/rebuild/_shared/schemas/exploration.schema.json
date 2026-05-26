@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Exploration Schema",
+  "description": "Schema xác thực cho tệp khảo sát nghiệp vụ exploration.json thuộc Stage 0 (Explorer)",
+  "type": "OBJECT",
+  "required": ["$schema", "metadata", "problem_statement", "technical_risks", "security_risks", "dependencies"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "STRING",
+      "format": "uri"
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": ["skill_name", "version", "created_at", "lifecycle_status"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "STRING",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "STRING",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "created_at": {
+          "type": "STRING",
+          "format": "date-time"
+        },
+        "lifecycle_status": {
+          "type": "STRING",
+          "enum": ["raw", "designed", "planned", "built", "verified", "installed", "pending_rollback"]
+        }
+      }
+    },
+    "problem_statement": {
+      "type": "OBJECT",
+      "required": ["summary", "context", "target_audience"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "STRING",
+          "minLength": 10
+        },
+        "context": {
+          "type": "STRING",
+          "minLength": 20
+        },
+        "target_audience": {
+          "type": "STRING",
+          "enum": ["AI agent only", "Human only", "Hybrid (Human & AI)"]
+        }
+      }
+    },
+    "technical_risks": {
+      "type": "ARRAY",
+      "minItems": 3,
+      "items": {
+        "type": "OBJECT",
+        "required": ["risk_name", "severity", "description", "mitigation_strategy"],
+        "additionalProperties": false,
+        "properties": {
+          "risk_name": {
+            "type": "STRING",
+            "minLength": 5
+          },
+          "severity": {
+            "type": "STRING",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "mitigation_strategy": {
+            "type": "STRING",
+            "minLength": 15
+          }
+        }
+      }
+    },
+    "security_risks": {
+      "type": "ARRAY",
+      "minItems": 1,
+      "items": {
+        "type": "OBJECT",
+        "required": ["threat_type", "attack_vector", "potential_impact", "defense_mechanism"],
+        "additionalProperties": false,
+        "properties": {
+          "threat_type": {
+            "type": "STRING",
+            "enum": ["Prompt Injection", "Data Leakage", "Insecure Tool Call", "Arbitrary Code Execution", "Other"]
+          },
+          "attack_vector": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "potential_impact": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "defense_mechanism": {
+            "type": "STRING",
+            "minLength": 15
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "required": ["name", "type", "version_constraint"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "STRING"
+          },
+          "type": {
+            "type": "STRING",
+            "enum": ["skill", "python_library", "system_tool", "other"]
+          },
+          "version_constraint": {
+            "type": "STRING"
+          }
+        }
+      }
+    }
+  }
+}

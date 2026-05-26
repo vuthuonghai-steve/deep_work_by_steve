@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779641990361,
-  "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
+  "lastScanned": 1779817471671,
+  "projectRoot": "/home/stveve/Documents/workspace/deep_work_by_steve",
   "techStack": {
     "languages": [],
     "frameworks": [],
@@ -28,7 +28,10 @@
       "docs",
       "scripts"
     ],
-    "gitBranches": null
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
   },
   "customNotes": [],
   "directoryMap": {
@@ -36,7 +39,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1779641990358,
+      "lastAccessed": 1779817471665,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -45,18 +48,29 @@
         "code-simplifier.md"
       ]
     },
+    "data": {
+      "path": "data",
+      "purpose": "Data files",
+      "fileCount": 3,
+      "lastAccessed": 1779817471669,
+      "keyFiles": [
+        "distilled_draft.yaml",
+        "raw_source.xml",
+        "validated_artifacts.yaml"
+      ]
+    },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1779641990360,
+      "lastAccessed": 1779817471670,
       "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1779641990360,
+      "lastAccessed": 1779817471670,
       "keyFiles": [
         "audit.md",
         "checklist.md",
@@ -69,25 +83,18 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1779817471670,
       "keyFiles": [
         "README.md",
         "index.md",
         "llm-prompt-formatting.md"
       ]
     },
-    "repos": {
-      "path": "repos",
-      "purpose": null,
-      "fileCount": 0,
-      "lastAccessed": 1779641990361,
-      "keyFiles": []
-    },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 1,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1779817471670,
       "keyFiles": [
         "sync-skills.sh"
       ]
@@ -95,8 +102,17 @@
     "skills": {
       "path": "skills",
       "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1779817471670,
+      "keyFiles": [
+        "AGENTS.md"
+      ]
+    },
+    "~": {
+      "path": "~",
+      "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1779817471670,
       "keyFiles": []
     }
   },

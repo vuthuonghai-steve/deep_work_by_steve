@@ -1,6 +1,6 @@
-# BẢN ĐỒ CÔNG VIỆC CHI TIẾT (TASK.MD): MASTER SKILL SUITE VER_1.0.0
+# CỘT MỐC NGHIỆM THU KIẾN TRÚC: MASTER SKILL SUITE (VER_2.0.0)
 
-Tài liệu này phân tách và quản lý chi tiết các công việc cần triển khai dựa trên thiết kế kiến trúc chuẩn mực của [architecture.md](file:///home/steve/Work-space/deep_work_by_steve/skills/Update-suite/current-suite/Ver_0/architecture.md) (Ver_3.0).
+Tài liệu này quản lý chi tiết các cột mốc lớn để thực hiện nghiệm thu cấu trúc thiết kế Clean & Solid của Ver_2.0.0 dựa trên tệp [architecture.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/current-suite/Ver_0/architecture.md).
 
 ---
 
@@ -11,100 +11,68 @@ Tài liệu này phân tách và quản lý chi tiết các công việc cần t
 
 ---
 
-## 📋 CHI TIẾT CÁC GIAI ĐOẠN VÀ NHIỆM VỤ THỰC THI
+## 📋 CÁC CỘT MỐC LỚN VÀ TIÊU CHÍ NGHIỆM THU ĐỊNH LƯỢNG
 
-### PHASE 0: HỒ SƠ KHẢO SÁT & SCOPING ĐẦU VÀO
-- [x] Chạy khảo sát nghiệp vụ Ver_0 bằng công cụ `context-before-fix`.
-- [x] Xuất bản báo cáo Scoping chuẩn tại [scope.2026-05-26.md](file:///home/steve/Work-space/deep_work_by_steve/docs/context-to-work/restructure-master-suite/scope.2026-05-26.md).
-- [x] Di chuyển và đồng bộ hóa tuyệt đối bản thiết kế kiến trúc [architecture.md](file:///home/steve/Work-space/deep_work_by_steve/skills/Update-suite/current-suite/Ver_0/architecture.md) (đã sửa sơ đồ Mermaid đa hướng nhất quán).
-
----
-
-### PHASE 1: THIẾT LẬP PHÂN VÙNG DÙNG CHUNG (SHARED FRAMEWORK)
-Mục tiêu: Đảm bảo nguyên lý DRY, loại bỏ trùng lặp file kiến thức `architect.md` cũ.
-- [ ] Xây dựng tài liệu hướng dẫn khung vòng đời 6 giai đoạn chung tại `updated-suite/_shared/knowledge/framework.md`.
-- [ ] Thiết lập schemas xác thực dữ liệu đầu ra:
-  - [ ] `_shared/schemas/exploration.schema.yaml`
-  - [ ] `_shared/schemas/criteria.schema.yaml`
-  - [ ] `_shared/schemas/design.schema.yaml`
-  - [ ] `_shared/schemas/todo.schema.yaml`
-  - [ ] `_shared/schemas/verification.schema.yaml`
+### MỐC 0: DUYỆT THIẾT KẾ KIẾN TRÚC TỐI ƯU (HITL GATE 0) [/]
+- [x] Phân tích điểm thắt và đề xuất giải pháp kiến trúc Ver_2.0.0
+- [x] Cập nhật bản vẽ kiến trúc gốc [architecture.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/current-suite/Ver_0/architecture.md) theo hướng Clean, Solid, Modular, Dynamic và có Post-Build Lifecycle
+- [ ] Nhận phản hồi phê duyệt thiết kế từ Steve tại Chat UI [/]
 
 ---
 
-### PHASE 2: CẢI TỔ VÀ XÂY DỰNG 6 STAGES CHUYÊN BIỆT
-
-#### 1. STAGE 0: skill-explorer (Cải tiến)
-*Trọng tâm: Nghiên cứu domain và sinh bộ tiêu chí định lượng `criteria.md`.*
-- [ ] Triển khai `skill-explorer/SKILL.md` (L0 Anchor dưới 400 tokens).
-- [ ] Trích xuất logic phân tích rủi ro sang `skill-explorer/policy/guardrails.md`.
-- [ ] Viết script `skill-explorer/scripts/generate_criteria.py` tự động sinh tệp `criteria.md` chứa tối thiểu 5 tiêu chí định lượng và 2 test cases.
-- [ ] Xây dựng validator `skill-explorer/scripts/validate_explorer.py` để chạy chốt chặn chất lượng:
-  - [ ] **❌ BAD**: Không có rủi ro kỹ thuật, thiếu test case mẫu.
-  - [ ] **✅ GOOD**: Vượt qua Frontmatter Schema, có đủ 5 tiêu chí.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Có sẵn dữ liệu mock input/output chất lượng cao.
-
-#### 2. STAGE 1: skill-architect (Cải tiến)
-*Trọng tâm: Chuyển hóa criteria thành bản vẽ kiến trúc 7 Zones chuyên sâu.*
-- [ ] Triển khai `skill-architect/SKILL.md` (L0 Anchor dưới 500 tokens).
-- [ ] Cập nhật chỉ dẫn nạp dữ liệu: Rút quyền phân rã Micro-skills từ Explorer sang Architect.
-- [ ] Xây dựng validator `skill-architect/scripts/validate_architect.py` để chạy chốt chặn chất lượng:
-  - [ ] **❌ BAD**: Dùng tên file giả định, thiếu sơ đồ, thiếu Interaction Points.
-  - [ ] **✅ GOOD**: 100% file mapping vật lý chính xác, có sequence flow.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Có sẵn cơ chế Rollback bối cảnh và bảng mitigation map.
-
-#### 3. STAGE 3: skill-planner (Stage 2 - Cải tiến)
-*Trọng tâm: Phân rã design thành checklist todo có trace tags đầy đủ.*
-- [ ] Triển khai `skill-planner/SKILL.md` (Rút gọn từ 3000 tokens cũ về dưới 500 tokens).
-- [ ] Tách logic dài dòng sang `skill-planner/policy/workflow.yaml` và `skill-planner/knowledge/standards.yaml`.
-- [ ] Cập nhật script `skill-planner/scripts/validate-todo.py` để quét trace tags:
-  - [ ] **❌ BAD**: Task mơ hồ, sai định dạng trace tag, sắp xếp phi logic.
-  - [ ] **✅ GOOD**: 100% trace tags hợp lệ, có Phase 0 cho tài nguyên bị mỏng.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Có blocker matrix chi tiết, ước lượng Est. Hours tự động.
-
-#### 4. STAGE 4: skill-builder (Stage 3 - Cải tiến)
-*Trọng tâm: Thực thi todo checklist viết code chất lượng cao.*
-- [ ] Triển khai `skill-builder/SKILL.md` (Rút gọn từ 2500 tokens cũ về dưới 500 tokens).
-- [ ] Tách logic hướng dẫn Anthropic và CLAUDE.md sang `skill-builder/policy/build-guidelines.yaml`.
-- [ ] Cấm Builder sửa đè ngược lên `design.md`.
-- [ ] Cập nhật validator `skill-builder/scripts/validate_skill.py`:
-  - [ ] **❌ BAD**: Chứa code giả/placeholder, SKILL.md mới > 700 tokens.
-  - [ ] **✅ GOOD**: Code chạy thật, SKILL.md mới có frontmatter chuẩn và < 700 tokens.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Kỹ năng module hóa cực tinh gọn, có sẵn unit tests đi kèm.
-
-#### 5. STAGE 5: skill-tester (Stage 4 - MỚI)
-*Trọng tâm: Độc lập kiểm thử Sandbox và đối chiếu với criteria.md.*
-- [ ] Khởi tạo thư mục `skill-tester/` và file `skill-tester/SKILL.md`.
-- [ ] Viết script `skill-tester/scripts/run_sandbox_tests.py` để tự động hóa:
-  - [ ] Tạo container Docker Sandbox gVisor cô lập an toàn.
-  - [ ] Thực thi các test cases lấy từ `criteria.md` của Stage 0.
-  - [ ] Chấm điểm Placeholder Density (Density > 5 ➔ WARNING, 10 ➔ FAIL).
-- [ ] Tự động sinh báo cáo nghiệm thu `.skill-context/{skill-name}/verification.md`:
-  - [ ] **❌ BAD**: Tự nghiệm thu bằng mắt không chạy sandbox, placeholder > 5.
-  - [ ] **✅ GOOD**: Vượt qua 100% test cases trong Sandbox, placeholder = 0.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Tích hợp kiểm thử bảo mật chống Prompt Injection, tự động rollback khi phát hiện lỗi.
-
-#### 6. STAGE 6: skill-indexer (Stage 5 - MỚI)
-*Trọng tâm: Đóng gói, viết hướng dẫn và cập nhật llms.txt.*
-- [ ] Khởi tạo thư mục `skill-indexer/` và file `skill-indexer/SKILL.md`.
-- [ ] Viết script `skill-indexer/scripts/sync_catalog.py` để:
-  - [ ] Tự động sinh Quick Start Guide (`README.md` tại thư mục kỹ năng).
-  - [ ] Đọc và đồng bộ hóa kỹ năng mới vào chỉ mục `llms.txt`.
-- [ ] Cài đặt cổng kiểm soát:
-  - [ ] **❌ BAD**: Không viết tài liệu hoặc tài liệu sơ sài, quên cập nhật llms.txt.
-  - [ ] **✅ GOOD**: README đầy đủ, có Good/Bad exemplars, đăng ký llms.txt thành công.
-  - [ ] **💎 SPECIFIC ACCEPTANCE**: Tài liệu có Mermaid flowchart sinh động, tự động gửi thông báo deployment.
+### MỐC 1: HIỆN THỰC HÓA RANH GIỚI DỮ LIỆU (STRUCTURED CONTRACTS) [ ]
+Mục tiêu: Đảm bảo tính phi trạng thái (Statelessness) và khả năng parse tự động chính xác 100% của AI thông qua JSON có cấu trúc.
+- [ ] Xây dựng bộ Schemas JSON (`.schema.json`) chuẩn hóa cho các tệp trung gian của Sổ cái Bối cảnh tại `_shared/schemas/`:
+  - [ ] `exploration.schema.json` (Tích hợp phân tích rủi ro Prompt Injection định lượng)
+  - [ ] `criteria.schema.json` (Định hình rõ cấu trúc test cases định lượng mẫu)
+  - [ ] `blueprint.json` (Thiết lập cấu trúc 7 Zones vật lý và Mitigation Map)
+  - [ ] `dag_plan.json` (Ma trận phụ thuộc công việc DAG và trace tags)
+  - [ ] `verification.json` (Định dạng kết quả Sandbox và điểm số toán học)
+  - [ ] `diagnostic.json` (Cấu trúc chẩn đoán lỗi rollback chi tiết)
+- [ ] Xác minh 100% việc truyền nhận dữ liệu giữa các Stage đi qua Sổ cái JSON thành công, không dùng Markdown phẳng làm trung gian.
 
 ---
 
-### PHASE 3: KIỂM THỬ KHÉP KÍN SUITE MỚI (VERIFICATION DRY-RUN)
-- [ ] Kích hoạt bộ suite Ver_1.0.0 chạy thử nghiệm tạo lập một micro-skill thực tế (Ví dụ: `path-distiller`).
-- [ ] Chạy độc lập từng stage trên các session LLM chat biệt lập để kiểm chứng khả năng truyền nhận bối cảnh qua Sổ cái `.skill-context/`.
-- [ ] Nghiệm thu toàn bộ test cases đạt trạng thái **PASS** trong Sandbox.
+### MỐC 2: THIẾT LẬP KIẾN TRÚC MULTI-AGENT & CÔ LẬP SUBAGENTS [ ]
+Mục tiêu: Spawn subagent cô lập để thực thi sandbox an toàn, tránh tràn log và chống Prompt Injection.
+- [ ] Xây dựng **Giao thức Đóng gói Ngữ cảnh (Context Packaging)** tinh giản cho Subagents:
+  - [ ] Triệt tiêu thông tin thừa, chỉ nạp L0 Anchor + Structured JSON cần thiết.
+- [ ] Triển khai `skill-tester/scripts/spawn_tester.py` tại Stage 4:
+  - [ ] Tự động spawn một `Tester Subagent` cô lập.
+  - [ ] Truyền gói ngữ cảnh tối giản qua `invoke_subagent`.
+- [ ] Xác minh Tester Subagent chạy Sandbox độc lập, không làm tràn log rác về session chính và trả kết quả chắt lọc về thành công.
 
 ---
 
-### PHASE 4: ĐÓNG GÓI & ĐỒNG BỘ PRODUCTION DEPLOYMENT
-- [ ] Ghi nhận toàn bộ quyết định thiết kế (ADRs) và nhật ký nâng cấp vào `lifecycle-docs/`.
-- [ ] Kích hoạt `sync_skills.py` để đẩy toàn bộ code mới từ `updated-suite/` vào hệ thống chạy chính thức.
-- [ ] Đồng bộ hóa chỉ mục toàn dự án `llms.txt` để AI có thể tự khám phá bộ suite mới.
+### MỐC 3: HOÀN THIỆN VÒNG LẶP PHỤC HỒI KHÉP KÍN (CASE RECOVERY @ 85%) [ ]
+Mục tiêu: Đạt tỷ lệ tự động sửa lỗi thành công (SCR) >= 80% dựa trên chỉ số tự tin tính toán thực tế.
+- [ ] Cài đặt thuật toán phát hiện Semantic Placeholders thực chất (chặn đứng mock logic rỗng, hàm return mock cứng).
+- [ ] Cài đặt công thức tính toán **Fact-Based Confidence Score** tại Stage 4:
+  - [ ] Chỉ số tự tin = $0.4 \times (\text{Pass Rate}) + 0.3 \times (1 - \text{Semantic Placeholders}) + 0.3 \times (\text{Static Analysis})$.
+- [ ] Cài đặt cơ chế sinh tệp `diagnostic.json` khi chỉ số tự tin < 85%.
+- [ ] Xác minh vòng lặp tự sửa lỗi (Closed-Loop Diagnostic) tự động re-route về Stage 1 hoặc Stage 2 thành công, sửa lỗi thành công trong tối đa 3 vòng lặp mà không cần Steve can thiệp.
+
+---
+
+### MỐC 4: QUẢN LÝ VÒNG ĐỜI VÀ GIAO THỨC ĐỒNG BỘ RUNTIME AN TOÀN [ ]
+Mục tiêu: Đăng ký vòng đời tự động và cài đặt runtime nguyên tử (Atomic Swap) để tránh làm crash agent đang chạy.
+- [ ] Triển khai Giao thức Đăng ký Vòng đời Tự động tại Stage 5 (Indexer):
+  - [ ] Tự động đăng ký Metadata (Version, Confidence Score, Capability Map) vào `.skill-context/registry/README.md` và `llms.txt`.
+- [ ] Triển khai **Giao thức Hoán đổi Nguyên tử (Atomic Staging Swap)** tại `skill-sync`:
+  - [ ] Tạo thư mục tạm thời `.hermes/skills/.staging/{skill-name}/`.
+  - [ ] Chạy dry-run test tại staging.
+  - [ ] Thực hiện hoán đổi nguyên tử (atomic swap/mv) thư mục staging thành production runtime an toàn tuyệt đối.
+
+---
+
+### MỐC 5: XÁC MINH KIẾN TRÚC TOÀN PHẦN (DRY-RUN) & TỰ HỌC [ ]
+Mục tiêu: Kiểm chứng hệ thống tự học từ các sự cố sandbox sang chuẩn standards.md.
+- [ ] Cài đặt **Module Tự động Trích xuất Tri thức (Knowledge Distiller)** tại Stage 5:
+  - [ ] Trích xuất tự động bài học kinh nghiệm từ sandbox thành cấu trúc chuẩn standards.md (Constraints dạng YAML, Explanation dạng Markdown, Examples dạng XML tags) ghi vào `knowledge/experience/`.
+- [ ] Thực hiện dry-run toàn phần xây dựng micro-skill `path-distiller` từ đầu vào Gate 0.
+- [ ] Nghiệm thu toàn bộ 5 chỉ số thành công của bản thiết kế:
+  - [ ] **ZPI:** Mật độ placeholder = 0% thực chất.
+  - [ ] **SCR:** Tỷ lệ tự sửa lỗi thành công >= 80%.
+  - [ ] **SAA:** Tỷ lệ độc lập của Tester Subagent = 100%.
+  - [ ] **ECC:** Tester sinh thành công 2 Edge Cases độc lập.
+  - [ ] **KRL:** Số lượng tool calls nạp skill của AI giảm xuống dưới 3 cuộc gọi.
