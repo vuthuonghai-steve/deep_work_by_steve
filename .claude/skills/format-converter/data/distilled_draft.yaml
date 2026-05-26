@@ -1,0 +1,10 @@
+# format-converter intermediate distilled draft
+distilled_knowledge:
+  metadata:
+    source_file: ""
+    processed_at: ""
+  markdown_context: ""
+  yaml_rules:
+    must: []
+    must_not: []
+  xml_examples: ""

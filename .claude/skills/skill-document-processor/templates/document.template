@@ -1,0 +1,38 @@
+---
+name: {{skill-name}}
+description: '{{description}}'
+category: {{category}}
+version: "1.0.0"
+author: "Steve Void Team"
+---
+
+# {{Title}}
+
+<context>
+{{Brief description of the document purpose}}
+</context>
+
+---
+
+## Overview
+
+{{Overview content}}
+
+---
+
+## Key Sections
+
+{{Main content sections}}
+
+---
+
+<examples>
+{{Code examples, test cases, or evidence}}
+</examples>
+
+---
+
+## Related
+
+- [[related document 1]]
+- [[related document 2]]

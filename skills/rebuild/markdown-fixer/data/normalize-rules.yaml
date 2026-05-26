@@ -1,0 +1,44 @@
+# Markdown Fixer Normalization Rules
+# Configuration for Markdown structure normalization
+
+heading:
+  style: atx
+  syntax: "# "
+  max_level: 6
+  require_space_after: true
+
+list:
+  style: hyphen
+  indent_spaces: 2
+  nested_indent: 2
+  allow_loose: true
+
+code_block:
+  fence: triple_backtick
+  preferred_language_hint: true
+  convert_indented: true
+
+table:
+  style: gfm
+  require_header: true
+  alignment_markers:
+    left: ":---"
+    center: ":---:"
+    right: "---:"
+    default: "---"
+  pipe_prefix: true
+
+blockquote:
+  style: "> "
+  nested_style: "> "
+
+emphasis:
+  preferred_marker: "*"
+  strong_marker: "**"
+
+horizontal_rule:
+  style: "---"
+
+line_endings:
+  style: unix
+  max_blank_lines: 2
