@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DAG Plan Schema",
+  "description": "Schema xác thực cho tệp kế hoạch công việc dag_plan.json thuộc Stage 2 (Planner)",
+  "type": "OBJECT",
+  "required": ["$schema", "metadata", "tasks"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "STRING",
+      "format": "uri"
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": ["skill_name", "version", "planner_timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "STRING",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "STRING",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "planner_timestamp": {
+          "type": "STRING",
+          "format": "date-time"
+        }
+      }
+    },
+    "tasks": {
+      "type": "ARRAY",
+      "minItems": 3,
+      "items": {
+        "type": "OBJECT",
+        "required": ["task_id", "name", "description", "dependencies", "target_file", "trace_tag", "estimated_hours"],
+        "additionalProperties": false,
+        "properties": {
+          "task_id": {
+            "type": "STRING",
+            "pattern": "^TSK-[0-9]+$"
+          },
+          "name": {
+            "type": "STRING",
+            "minLength": 5
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "dependencies": {
+            "type": "ARRAY",
+            "items": {
+              "type": "STRING",
+              "pattern": "^TSK-[0-9]+$"
+            }
+          },
+          "target_file": {
+            "type": "STRING"
+          },
+          "trace_tag": {
+            "type": "STRING",
+            "pattern": "^\\[TỪ (DESIGN|AUDIT TÀI NGUYÊN) §.+\\]$"
+          },
+          "estimated_hours": {
+            "type": "NUMBER",
+            "minimum": 0.1
+          }
+        }
+      }
+    }
+  }
+}

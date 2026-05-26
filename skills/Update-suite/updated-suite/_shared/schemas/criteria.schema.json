@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Criteria Schema",
+  "description": "Schema xác thực cho tệp tiêu chí chất lượng criteria.json thuộc Stage 0 (Explorer)",
+  "type": "OBJECT",
+  "required": ["$schema", "metadata", "acceptance_criteria", "test_cases"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "STRING",
+      "format": "uri"
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": ["skill_name", "version", "updated_at"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "STRING",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "STRING",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "updated_at": {
+          "type": "STRING",
+          "format": "date-time"
+        }
+      }
+    },
+    "acceptance_criteria": {
+      "type": "ARRAY",
+      "minItems": 5,
+      "items": {
+        "type": "OBJECT",
+        "required": ["criterion_id", "description", "metric", "validation_method"],
+        "additionalProperties": false,
+        "properties": {
+          "criterion_id": {
+            "type": "STRING",
+            "pattern": "^AC-[0-9]+$"
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 10
+          },
+          "metric": {
+            "type": "STRING",
+            "minLength": 5
+          },
+          "validation_method": {
+            "type": "STRING",
+            "enum": ["sandbox_test", "unit_test", "static_analysis", "prompt_injection_defense_test", "manual_verification"]
+          }
+        }
+      }
+    },
+    "test_cases": {
+      "type": "ARRAY",
+      "minItems": 2,
+      "items": {
+        "type": "OBJECT",
+        "required": ["test_case_id", "name", "description", "mock_input", "expected_output"],
+        "additionalProperties": false,
+        "properties": {
+          "test_case_id": {
+            "type": "STRING",
+            "pattern": "^TC-[0-9]+$"
+          },
+          "name": {
+            "type": "STRING",
+            "minLength": 5
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "mock_input": {
+            "type": "OBJECT",
+            "description": "Mock input structure for the test case"
+          },
+          "expected_output": {
+            "type": "OBJECT",
+            "description": "Expected output structure for validation"
+          }
+        }
+      }
+    }
+  }
+}

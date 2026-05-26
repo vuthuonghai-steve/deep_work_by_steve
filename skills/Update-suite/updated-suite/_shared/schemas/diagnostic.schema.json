@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Diagnostic Schema",
+  "description": "Schema xác thực cho tệp báo cáo chẩn đoán rollback diagnostic.json thuộc Stage 4 (Tester) khi tự tin < 85%",
+  "type": "OBJECT",
+  "required": ["$schema", "metadata", "failure_summary", "detailed_diagnostics"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "STRING",
+      "format": "uri"
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": ["skill_name", "version", "diagnostic_timestamp", "origin_stage", "target_stage"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "STRING",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "STRING",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "diagnostic_timestamp": {
+          "type": "STRING",
+          "format": "date-time"
+        },
+        "origin_stage": {
+          "type": "STRING",
+          "enum": ["stage_3_builder", "stage_4_tester"]
+        },
+        "target_stage": {
+          "type": "STRING",
+          "enum": ["stage_0_explorer", "stage_1_architect", "stage_2_planner", "stage_3_builder"]
+        }
+      }
+    },
+    "failure_summary": {
+      "type": "OBJECT",
+      "required": ["confidence_score", "primary_cause"],
+      "additionalProperties": false,
+      "properties": {
+        "confidence_score": {
+          "type": "NUMBER",
+          "minimum": 0.0,
+          "maximum": 100.0
+        },
+        "primary_cause": {
+          "type": "STRING",
+          "enum": ["Logic Error", "Compilation Error", "Semantic Placeholders Exceeded", "Security Defense Failed", "Other"]
+        }
+      }
+    },
+    "detailed_diagnostics": {
+      "type": "ARRAY",
+      "minItems": 1,
+      "items": {
+        "type": "OBJECT",
+        "required": ["failed_test_case_id", "error_category", "target_file", "suggested_mitigation"],
+        "additionalProperties": false,
+        "properties": {
+          "failed_test_case_id": {
+            "type": "STRING"
+          },
+          "error_category": {
+            "type": "STRING",
+            "enum": ["LogicError", "CompilationError", "SemanticPlaceholderError", "SecurityViolation"]
+          },
+          "target_file": {
+            "type": "STRING"
+          },
+          "line_number": {
+            "type": ["INTEGER", "null"],
+            "minimum": 1
+          },
+          "error_log": {
+            "type": "STRING"
+          },
+          "suggested_mitigation": {
+            "type": "STRING",
+            "minLength": 15
+          }
+        }
+      }
+    }
+  }
+}

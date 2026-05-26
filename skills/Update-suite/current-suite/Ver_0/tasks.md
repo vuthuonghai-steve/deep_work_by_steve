@@ -13,23 +13,23 @@ Tài liệu này quản lý chi tiết các cột mốc lớn để thực hiệ
 
 ## 📋 CÁC CỘT MỐC LỚN VÀ TIÊU CHÍ NGHIỆM THU ĐỊNH LƯỢNG
 
-### MỐC 0: DUYỆT THIẾT KẾ KIẾN TRÚC TỐI ƯU (HITL GATE 0) [/]
+### MỐC 0: DUYỆT THIẾT KẾ KIẾN TRÚC TỐI ƯU (HITL GATE 0) [x]
 - [x] Phân tích điểm thắt và đề xuất giải pháp kiến trúc Ver_2.0.0
 - [x] Cập nhật bản vẽ kiến trúc gốc [architecture.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/current-suite/Ver_0/architecture.md) theo hướng Clean, Solid, Modular, Dynamic và có Post-Build Lifecycle
-- [ ] Nhận phản hồi phê duyệt thiết kế từ Steve tại Chat UI [/]
+- [x] Nhận phản hồi phê duyệt thiết kế từ Steve tại Chat UI
 
 ---
 
-### MỐC 1: HIỆN THỰC HÓA RANH GIỚI DỮ LIỆU (STRUCTURED CONTRACTS) [ ]
+### MỐC 1: HIỆN THỰC HÓA RANH GIỚI DỮ LIỆU (STRUCTURED CONTRACTS) [/]
 Mục tiêu: Đảm bảo tính phi trạng thái (Statelessness) và khả năng parse tự động chính xác 100% của AI thông qua JSON có cấu trúc.
-- [ ] Xây dựng bộ Schemas JSON (`.schema.json`) chuẩn hóa cho các tệp trung gian của Sổ cái Bối cảnh tại `_shared/schemas/`:
-  - [ ] `exploration.schema.json` (Tích hợp phân tích rủi ro Prompt Injection định lượng)
-  - [ ] `criteria.schema.json` (Định hình rõ cấu trúc test cases định lượng mẫu)
-  - [ ] `blueprint.json` (Thiết lập cấu trúc 7 Zones vật lý và Mitigation Map)
-  - [ ] `dag_plan.json` (Ma trận phụ thuộc công việc DAG và trace tags)
-  - [ ] `verification.json` (Định dạng kết quả Sandbox và điểm số toán học)
-  - [ ] `diagnostic.json` (Cấu trúc chẩn đoán lỗi rollback chi tiết)
-- [ ] Xác minh 100% việc truyền nhận dữ liệu giữa các Stage đi qua Sổ cái JSON thành công, không dùng Markdown phẳng làm trung gian.
+- [x] Xây dựng bộ Schemas JSON (`.schema.json`) chuẩn hóa cho các tệp trung gian của Sổ cái Bối cảnh tại `_shared/schemas/`:
+  - [x] `exploration.schema.json` (Tích hợp phân tích rủi ro Prompt Injection định lượng)
+  - [x] `criteria.schema.json` (Định hình rõ cấu trúc test cases định lượng mẫu)
+  - [x] `blueprint.json` (Thiết lập cấu trúc 7 Zones vật lý và Mitigation Map)
+  - [x] `dag_plan.json` (Ma trận phụ thuộc công việc DAG và trace tags)
+  - [x] `verification.json` (Định dạng kết quả Sandbox và điểm số toán học)
+  - [x] `diagnostic.json` (Cấu trúc chẩn đoán lỗi rollback chi tiết)
+- [/] Xác minh 100% việc truyền nhận dữ liệu giữa các Stage đi qua Sổ cái JSON thành công, không dùng Markdown phẳng làm trung gian.
 
 ---
 

@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Blueprint Schema",
+  "description": "Schema xác thực cho tệp bản vẽ thiết kế blueprint.json thuộc Stage 1 (Architect)",
+  "type": "OBJECT",
+  "required": ["$schema", "metadata", "static_structure", "dynamic_behavior", "interaction_points", "mitigation_map"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "STRING",
+      "format": "uri"
+    },
+    "metadata": {
+      "type": "OBJECT",
+      "required": ["skill_name", "version", "architect_timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "skill_name": {
+          "type": "STRING",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "STRING",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "architect_timestamp": {
+          "type": "STRING",
+          "format": "date-time"
+        }
+      }
+    },
+    "static_structure": {
+      "type": "OBJECT",
+      "required": ["folder_structure"],
+      "additionalProperties": false,
+      "properties": {
+        "folder_structure": {
+          "type": "ARRAY",
+          "minItems": 3,
+          "items": {
+            "type": "OBJECT",
+            "required": ["file_path", "zone", "role_description"],
+            "additionalProperties": false,
+            "properties": {
+              "file_path": {
+                "type": "STRING"
+              },
+              "zone": {
+                "type": "STRING",
+                "enum": ["core", "knowledge", "scripts", "templates", "data", "loop", "assets", "_shared"]
+              },
+              "role_description": {
+                "type": "STRING",
+                "minLength": 10
+              }
+            }
+          }
+        }
+      }
+    },
+    "dynamic_behavior": {
+      "type": "ARRAY",
+      "minItems": 1,
+      "items": {
+        "type": "OBJECT",
+        "required": ["flow_name", "description", "sequence_steps"],
+        "additionalProperties": false,
+        "properties": {
+          "flow_name": {
+            "type": "STRING",
+            "minLength": 5
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 15
+          },
+          "sequence_steps": {
+            "type": "ARRAY",
+            "minItems": 2,
+            "items": {
+              "type": "OBJECT",
+              "required": ["step_number", "actor", "action", "expected_result"],
+              "additionalProperties": false,
+              "properties": {
+                "step_number": {
+                  "type": "INTEGER",
+                  "minimum": 1
+                },
+                "actor": {
+                  "type": "STRING"
+                },
+                "action": {
+                  "type": "STRING",
+                  "minLength": 5
+                },
+                "expected_result": {
+                  "type": "STRING",
+                  "minLength": 5
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "interaction_points": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "required": ["point_id", "stage", "description", "require_user_approval"],
+        "additionalProperties": false,
+        "properties": {
+          "point_id": {
+            "type": "STRING",
+            "pattern": "^IP-[0-9]+$"
+          },
+          "stage": {
+            "type": "STRING"
+          },
+          "description": {
+            "type": "STRING",
+            "minLength": 10
+          },
+          "require_user_approval": {
+            "type": "BOOLEAN"
+          }
+        }
+      }
+    },
+    "mitigation_map": {
+      "type": "ARRAY",
+      "items": {
+        "type": "OBJECT",
+        "required": ["threat_id", "implemented_in_zone", "implementation_strategy"],
+        "additionalProperties": false,
+        "properties": {
+          "threat_id": {
+            "type": "STRING"
+          },
+          "implemented_in_zone": {
+            "type": "STRING",
+            "enum": ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"]
+          },
+          "implementation_strategy": {
+            "type": "STRING",
+            "minLength": 15
+          }
+        }
+      }
+    }
+  }
+}
