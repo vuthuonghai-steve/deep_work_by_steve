@@ -1,0 +1,24 @@
+# Master Skill Suite — Hệ Chỉ Mục Kỹ Năng (llms.txt)
+
+> **Mã số**: MSS-INDEX
+> **Phiên bản**: Ver_2.0.0
+> **Mục tiêu**: Điều hướng nhanh cho AI và con người tra cứu các kỹ năng sản xuất thuộc Master Skill Suite.
+
+---
+
+## 🗂️ Danh Mục Kỹ Năng Đã Xác Thực (Verified Skills)
+
+### 1. Stage 0: Explorer (`skill-explorer`)
+*   **Mô tả**: Khai thác tài nguyên, kiến thức, tiêu chuẩn và rủi ro trước khi thiết kế kịch bản, lập kế hoạch hoặc lập trình kỹ năng mới. Vận hành hoàn toàn bằng Sổ cái JSON có cấu trúc.
+*   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-explorer/SKILL.md)
+*   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/exploration.json` & `criteria.json`
+
+### 2. Stage 1: Architect (`skill-architect`)
+*   **Mô tả**: Kiến trúc sư trưởng thiết kế cấu trúc tĩnh 7 Zones và sequence logic hoạt động động của kỹ năng, thiết lập ma trận mitigation bảo mật.
+*   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-architect/SKILL.md)
+*   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/blueprint.json`
+
+---
+
+## 🔒 Quy Tắc Vận Hành
+Mọi kỹ năng mới hoặc nâng cấp trong suite bắt buộc phải đi qua 6-stage pipeline và vượt qua validation schema tương ứng trước khi được cập nhật đăng ký vào chỉ mục `llms.txt` này.

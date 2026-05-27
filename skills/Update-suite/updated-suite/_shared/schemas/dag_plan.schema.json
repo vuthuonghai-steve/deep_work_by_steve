@@ -64,7 +64,7 @@
             "pattern": "^\\[TỪ (DESIGN|AUDIT TÀI NGUYÊN) §.+\\]$"
           },
           "estimated_hours": {
-            "type": "NUMBER",
+            "type": "number",
             "minimum": 0.1
           }
         }

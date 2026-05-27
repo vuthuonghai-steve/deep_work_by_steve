@@ -1,0 +1,90 @@
+{
+  "$schema": "file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/_shared/schemas/blueprint.json",
+  "metadata": {
+    "skill_name": "{{SKILL_NAME}}",
+    "version": "1.0.0",
+    "architect_timestamp": "{{ISO_8601_TIMESTAMP}}"
+  },
+  "static_structure": {
+    "folder_structure": [
+      {
+        "file_path": "SKILL.md",
+        "zone": "core",
+        "role_description": "File L0 Anchor tối cao chứa boot sequence, routing map và persona của kỹ năng."
+      },
+      {
+        "file_path": "policy/guardrails.md",
+        "zone": "core",
+        "role_description": "Tập hợp các ràng buộc an toàn cứng và các luật hành vi bắt buộc cho AI khi vận hành."
+      },
+      {
+        "file_path": "policy/workflow.md",
+        "zone": "core",
+        "role_description": "Mô tả chi tiết quy trình làm việc nhiều Phase với các cổng phê duyệt bắt buộc."
+      },
+      {
+        "file_path": "knowledge/{{DOMAIN_KNOWLEDGE_FILE}}.md",
+        "zone": "knowledge",
+        "role_description": "Tài liệu tri thức nền tảng cung cấp các khái niệm, best practices và ví dụ Good/Bad."
+      },
+      {
+        "file_path": "loop/checklist.md",
+        "zone": "loop",
+        "role_description": "Chốt chặn chất lượng tĩnh gồm bộ câu hỏi tự kiểm định trước khi xuất bản kết quả."
+      }
+    ]
+  },
+  "dynamic_behavior": [
+    {
+      "flow_name": "{{MAIN_FLOW_NAME}}",
+      "description": "Luồng vận hành chính của kỹ năng từ đầu vào đến đầu ra.",
+      "sequence_steps": [
+        {
+          "step_number": 1,
+          "actor": "User",
+          "action": "Kích hoạt kỹ năng bằng cách gửi yêu cầu kèm ngữ cảnh nghiệp vụ.",
+          "expected_result": "Agent nhận được yêu cầu và bắt đầu boot sequence."
+        },
+        {
+          "step_number": 2,
+          "actor": "Agent",
+          "action": "Nạp các tệp chính sách và tri thức từ Routing Map theo Progressive Disclosure.",
+          "expected_result": "Agent có đủ ngữ cảnh để thực thi Phase 1."
+        },
+        {
+          "step_number": 3,
+          "actor": "Agent",
+          "action": "Thực hiện phân tích và xử lý nghiệp vụ theo quy trình định nghĩa trong workflow.md.",
+          "expected_result": "Kết quả trung gian được tổng hợp, sẵn sàng cho bước kiểm định."
+        },
+        {
+          "step_number": 4,
+          "actor": "Agent",
+          "action": "Chạy checklist tự kiểm định và xuất bản kết quả cuối cùng.",
+          "expected_result": "Output artifact hợp lệ được ghi vào đúng đường dẫn và báo cáo cho User."
+        }
+      ]
+    }
+  ],
+  "interaction_points": [
+    {
+      "point_id": "IP-01",
+      "stage": "{{STAGE_NAME}}",
+      "description": "Dừng lại báo cáo phân tích sơ bộ và chờ xác nhận từ Steve trước khi thực thi Phase tiếp theo.",
+      "require_user_approval": true
+    },
+    {
+      "point_id": "IP-02",
+      "stage": "{{STAGE_NAME}}",
+      "description": "Dừng lại báo cáo kết quả cuối cùng và chờ nghiệm thu từ Steve trước khi bàn giao hạ nguồn.",
+      "require_user_approval": true
+    }
+  ],
+  "mitigation_map": [
+    {
+      "threat_id": "{{THREAT_TYPE_FROM_EXPLORATION_JSON}}",
+      "implemented_in_zone": "core",
+      "implementation_strategy": "Mô tả cụ thể chiến lược kỹ thuật Builder phải lập trình để khắc phục mối đe dọa này tại Zone được chỉ định."
+    }
+  ]
+}

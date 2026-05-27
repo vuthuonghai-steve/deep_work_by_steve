@@ -1,0 +1,70 @@
+{
+  "$schema": "../_shared/schemas/criteria.schema.json",
+  "metadata": {
+    "skill_name": "skill-architect",
+    "version": "2.0.0",
+    "updated_at": "2026-05-27T02:15:10Z"
+  },
+  "acceptance_criteria": [
+    {
+      "criterion_id": "AC-01",
+      "description": "Tệp blueprint.json sinh ra từ Architect bắt buộc phải vượt qua validation schema đối chiếu blueprint.schema.json thành công 100% không có lỗi.",
+      "metric": "Tỉ lệ validation thành công = 100%",
+      "validation_method": "sandbox_test"
+    },
+    {
+      "criterion_id": "AC-02",
+      "description": "Toàn bộ các tệp đề xuất trong static_structure.folder_structure phải được ánh xạ khớp hoàn hảo 100% vào enum 7 Zones chuẩn (core, knowledge, scripts, templates, data, loop, assets).",
+      "metric": "Mật độ tệp nằm ngoài 7 Zones = 0%",
+      "validation_method": "sandbox_test"
+    },
+    {
+      "criterion_id": "AC-03",
+      "description": "Ma trận khắc phục mitigation_map phải có ít nhất 1 phương án đối phó ứng với mỗi rủi ro bảo mật (security threat) được định nghĩa ở exploration.json đầu vào.",
+      "metric": "Tỉ lệ rủi ro bảo mật được giảm thiểu = 100%",
+      "validation_method": "static_analysis"
+    },
+    {
+      "criterion_id": "AC-04",
+      "description": "Tệp blueprint.json sinh ra phải cực kỳ tinh gọn, không chứa thông tin thừa thãi, có kích thước file tối đa dưới 10KB để bảo vệ token budget.",
+      "metric": "File size <= 10KB",
+      "validation_method": "static_analysis"
+    },
+    {
+      "criterion_id": "AC-05",
+      "description": "100% các dòng sequence logic trong dynamic_behavior phải chứa đầy đủ step_number, actor, action và expected_result, không chấp nhận mô tả trống hoặc placeholder.",
+      "metric": "Tỉ lệ hoàn thiện trường sequence steps = 100%",
+      "validation_method": "static_analysis"
+    }
+  ],
+  "test_cases": [
+    {
+      "test_case_id": "TC-01",
+      "name": "Khảo sát kỹ năng html-cleaner",
+      "description": "Khảo sát kỹ năng dọn dẹp HTML thô. Architect phải thiết kế static_structure gồm 3 tệp thuộc core, knowledge, loop, và sinh blueprint.json vượt qua validation schema.",
+      "mock_input": {
+        "upstream_exploration": "exploration.json của html-cleaner",
+        "upstream_criteria": "criteria.json của html-cleaner"
+      },
+      "expected_output": {
+        "schema_pass": true,
+        "zones_mapped": ["core", "knowledge", "loop"],
+        "mitigations_count": 1
+      }
+    },
+    {
+      "test_case_id": "TC-02",
+      "name": "Khảo sát kỹ năng có rủi ro Prompt Injection cao",
+      "description": "Khảo sát một kỹ năng có rủi ro bảo mật cao liên quan đến prompt injection. Architect phải sinh ra blueprint.json chứa mitigation_map liên kết trực tiếp threat với Zone an toàn thích hợp.",
+      "mock_input": {
+        "upstream_exploration": "exploration.json có chứa security_risks",
+        "upstream_criteria": "criteria.json chuẩn"
+      },
+      "expected_output": {
+        "schema_pass": true,
+        "mitigation_map_valid": true,
+        "defense_mechanisms": ["xml_boundaries", "sandbox"]
+      }
+    }
+  ]
+}
