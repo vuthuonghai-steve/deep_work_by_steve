@@ -3,146 +3,127 @@
 > **Document Class**: L0 Architectural Audit & Refactoring Specification
 > **Target Suite**: ver-0 Skill Suite (`skill-explorer`, `skill-architect`, `skill-planner`, `skill-builder`, `skill-suite-upgrade`)
 > **Standards Reference**: Claude Code Native Agent/Skill Specifications & `xml_tags_standards.yaml`
+> **Audit Phase**: Phase 2 (Post-Integration of `_shared/` Workspace Component)
 > **Author**: Senior LLM Agent Architect & Suite Auditor
 
 ---
 
 ## 1. Executive Summary
 
-An exhaustive, code-level and architectural audit of the **ver-0 Skill Suite** has revealed critical integration gaps, schema incompatibilities, and logical breaks. While the suite aims to implement a highly structured pipeline (Stage 0 to Stage 4) using the **CASE System** (Confidence-Aware Skill Execution) framework, the actual implementation exhibits severe asymmetry, broken paths, massive duplication, and a failure to utilize **Claude Code native subagent capabilities** (such as lifecycle hooks, native tool containment, and isolated git worktrees).
+An exhaustive, code-level and architectural audit of the **ver-0 Skill Suite** has been performed against Claude Code native specifications, the CASE System (Confidence-Aware Skill Execution) framework, and the `xml_tags_standards.yaml` constitution. 
 
-### Key Audit Findings:
-1. **Broken Shared References (Catastrophic)**: All skills in ver-0 attempt to boot by reading `../_shared/knowledge/framework.md` and validating outputs with `../_shared/validators/schema_validator.py`. However, **no `_shared` directory exists** in the ver-0 workspace, leading to immediate "file not found" execution failures.
-2. **Schema & YAML Frontmatter Violations**: The skills pack complex logic (e.g., progressive disclosure schemas, capability maps, and constraints) directly inside the YAML frontmatter. This violates official Claude Code skill/agent specifications, which restrict frontmatter to designated metadata keys (`name`, `description`, `when_to_use`, etc.).
-3. **XML Tag Fragmentation & Mismatches**: Across all skills, standard XML boundaries (like `<instructions>` and `<context>`) are used as inline annotations rather than clean top-level L0 boundaries. The `skill-suite-upgrade` skill completely lacks any XML boundaries, violating the `xml_tags_standards.yaml` constitution.
-4. **Severe CASE System Asymmetry**: The CASE mechanisms (PREVENT → DETECT → RECOVER) are severely fractured. `check_status.py` and gate validator scripts exist *only* in `skill-suite-upgrade`, yet are referenced by other skills (like `skill-planner`) which cannot find or execute them. Automated rollback and staleness recovery exist only as high-level design prose in `case-system.md` and are entirely unimplemented in code.
-5. **Massive DRY Violations**: Widespread copy-pasting of core files (`case-system.md` in 2 folders, `architect.md` in 3 folders, `format-standards.md` in 3 folders, and `init_context.py` in 2 folders) causes severe context bloating and maintenance friction.
+### Status Update (May 30, 2026): Introduction of the `_shared/` Workspace
+The recent introduction of the `_shared/` directory inside `ver-0/` represents a massive leap forward in the suite's robustness and structural integrity. 
+
+* **What is Now Resolved**: The catastrophic "file not found" pathing errors have been completely resolved. All relative path references (`../_shared/...`) pointing to pipeline rules, markdown knowledge bases, schemas, and validators now resolve perfectly. The introduction of unified python validators (`schema_validator.py`, `handoff_validator.py`, `trace_validator.py`) officially codifies the machine-checkable quality gates of the CASE System.
+* **What Gaps Still Remain**: Despite the working paths and new validators, critical architectural gaps remain:
+  1. **YAML Frontmatter Stuffing**: Heavy workflow schemas (`pipeline`, `progressive_disclosure`, etc.) and behavioral constraints remain packed inside YAML frontmatters, violating native Claude Code specifications and preventing active runtime enforcement.
+  2. **XML Tag Violations**: Tag fragmentation in `skill-planner` and `skill-builder`, and the complete absence of XML boundaries in `skill-suite-upgrade`, still exist.
+  3. **CASE System Asymmetry**: The core status reader (`check_status.py`) remains siloed within `skill-suite-upgrade`, preventing other skills from executing state-aware boots.
+  4. **Unimplemented Recovery (RECOVER)**: Automatic rollback controls and staleness checkers are entirely unimplemented in actual scripts.
+  5. **Lack of Native Claude Code Agent Integration**: The suite fails to leverage native subagent configurations, concurrent backgrounding, or lifecycle hooks (`PreToolUse`, `PostToolUse`) to automate validator execution.
 
 ---
 
-## 2. Schema and YAML Frontmatter Incompatibilities
+## 2. Shared Workspace & References Resolution
 
-The official standards (`configuration_and_variables.md` for skills and `configuration.md` for subagents) restrict the YAML frontmatter to specific runtime-resolved properties. Stuffer fields or complex object definitions are ignored or break the parser.
+With the addition of the `_shared` directory, all relative paths (`../_shared/`) mapped in the 5 skills' `SKILL.md` files are now working and correctly resolved.
 
-### Auditing ver-0 Frontmatter Fields against Official Specifications:
+* **`skill-explorer/SKILL.md`**: The boot directive `Read ../_shared/knowledge/framework.md` (line 32) and the final validation rule `python3 ../_shared/validators/schema_validator.py --schema ../_shared/schemas/exploration.schema.yaml ...` (line 126) now successfully resolve to real workspace assets.
+* **`skill-architect/SKILL.md`**: The Stage 1 overview directive `Read ../_shared/knowledge/framework.md` (line 32) resolves correctly.
+* **`skill-planner/SKILL.md` & `skill-builder/SKILL.md`**: Both successfully load their Tier 1 baseline progressive disclosures from `../_shared/knowledge/framework.md`.
 
-| Skill | Non-Standard / Legacy Fields Identified | Impact & Risks |
-| :--- | :--- | :--- |
-| **`skill-explorer`** | `category: meta`<br>`tags: [...]`<br>`author: "Steve Void Team"` | Custom fields are ignored by the native parser. Lack of `disable-model-invocation: true` permits unintended automatic background triggers. |
-| **`skill-architect`** | `category: meta`<br>`tags: [...]`<br>`author: "Steve Void Team"` | Same as above. Contains no native permission or tool locks, allowing the LLM to run arbitrary host commands during design. |
-| **`skill-planner`** | `category: meta`<br>`case_system: true`<br>`pipeline: { ... }`<br>`progressive_disclosure: { ... }`<br>`priority_order: [...]`<br>`constraints: { ... }`<br>`output_contract: { ... }` | **Critical Incompatibility**: Stuffs heavy behavioral constraints and schemas into the frontmatter. Claude's native parser ignores these fields; the agent never registers the constraints unless it actively views the raw file as a text block, rendering the safety hooks useless. |
-| **`skill-builder`** | `category: meta`<br>`pipeline: { ... }`<br>`progressive_disclosure: { ... }`<br>`priority_order: [...]`<br>`constraints: { ... }`<br>`output_contract: { ... }` | Same as above. Prevents native preloading or validation. |
-| **`skill-suite-upgrade`**| `author: "Steve Void Team"`<br>`pipeline: { ... }`<br>`progressive_disclosure: { ... }` | Bypasses standard skill configuration. Binds no native hooks, relying on the LLM to execute manual shell scripts. |
+---
 
-### Corrective Realignment (Unified Schema):
-Under Claude Code native agent specifications, structural workflows (like `pipeline` and `progressive_disclosure`) and core rules (like `constraints` and `output_contract`) must reside inside the **Markdown body** wrapped in standardized **XML boundaries**—never inside the frontmatter. The frontmatter must strictly serve as a light metadata envelope:
+## 3. Analysis of Newly Added Validators & Schemas
+
+A comprehensive code-level review of the newly introduced python validators shows that they are highly functional, modular, and cover the absolute majority of CASE's check rules.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                       _shared/ Unified Validators                           │
+├──────────────────────────────┬──────────────────────────────┬───────────────┤
+│       schema_validator       │       handoff_validator      │  trace_valid  │
+├──────────────────────────────┼──────────────────────────────┼───────────────┤
+│ Parses and validates YAML    │ Asserts exact gate check     │ Scans files   │
+│ frontmatter against standard │ conditions (Gates 1-5) and   │ for trace tag │
+│ draft-07 JSON schemas.       │ unique task dependencies.    │ typos.        │
+└──────────────────────────────┴──────────────────────────────┴───────────────┘
+```
+
+### 3.1 `schema_validator.py` (Functional Review)
+* **Design & Usability**: This validator parses YAML frontmatters from Markdown files and validates them against standard JSON Schemas (Draft-07). It includes an excellent automated dependency-management feature that gracefully auto-installs `pyyaml` and `jsonschema` via `pip` if missing on the host.
+* **CASE Alignment**: Extremely strong. It ensures that incoming frontmatter configurations meet the baseline schema specifications before letting an agent proceed.
+* **Limitation**: It only validates YAML frontmatter. If an agent violates structural XML rules in the Markdown body, `schema_validator.py` does not detect it.
+
+### 3.2 `handoff_validator.py` (Functional Review)
+This is the core engine of the CASE gate-check framework. It codifies the gate criteria across four distinct pipeline stages:
+1. **`exploration-to-design`**: Asserts that `exploration.md` status is `ready_for_architect`, checks that all 8 required section headings are present in the Markdown body, verifies that the next stage is `architect`, and runs trace tag validation.
+2. **`design-to-planner`**: Verifies status `ready_for_planner`, schema version, 7 zones present, relative paths only, progressive disclosure tier1 base fields, 10 required section headings, next_stage `planner`, and trace tags.
+3. **`planner-to-builder`**: Asserts status `ready_for_builder`, unique task IDs, correct `depends_on` targets, no unresolved blockers (`resolved: false`), Phase 0 all done/skipped, prerequisites ready, next_stage `builder`.
+4. **`builder-complete`**: Asserts `build-log.md` for completion, checks that no `STOP_AND_REPORT` entries exist, ensures quality metrics (validator_pass == true, placeholder_ratio < 0.10), and verifies that failed actions had `STOP_AND_REPORT` decisions.
+
+* **Code Hygiene**: Highly functional. The dependency checking, path parsing, and regex matches are exceptionally robust, outputting a standardized YAML result showing the status (pass/fail) of each individual sub-check along with actionable `fix_hint` notes.
+
+### 3.3 `trace_validator.py` (Functional Review)
+* **Role**: Validates reverse and forward trace tag patterns in Markdown files against the four allowed patterns (`[TỪ DESIGN §N]`, `[GỢI Ý BỔ SUNG]`, `[CẦN LÀM RÕ]`, `[TỪ AUDIT TÀI NGUYÊN]`).
+* **Typo Correction Engine**: Excellent. It includes a Vietnamized typo dictionary (`KNOWN_TYPOS`) to catch developer typos like `[CẦU LÀM RÕ]` (recommending `'CẦN'`), `[TỪ AUDIT TÀI NGUYÊN]` (missing 'N'), `[GỢI Ý BỔ XUNG]` ('SUNG'), or `[TỪ DESION]` ('DESIGN').
+* **CASE Alignment**: Fully automates the anti-hallucination tracking rules defined in `framework.md §7`, preventing scope drift during code generation.
+
+### 3.4 Schemas Coverage
+The `_shared/schemas/` directory houses four JSON-Schema files (`exploration.schema.yaml`, `design.schema.yaml`, `todo.schema.yaml`, `build-log.schema.yaml`). These schemas are structurally sound and map all required metadata fields, status values, and object schemas.
+
+---
+
+## 4. Remaining Gaps & Architectural Incompatibilities
+
+While the pathing and validation scripts are now fully functional, the structural and runtime design of the ver-0 SKILL.md files still exhibits critical gaps.
+
+### 4.1 YAML Frontmatter Configuration Stuffing (Unresolved)
+Despite the schemas being defined under `_shared/schemas/`, the actual `SKILL.md` files for `skill-planner` and `skill-builder` still contain highly non-standard frontmatter fields:
 
 ```yaml
----
-name: skill-planner
-description: "Phân rã bản thiết kế design.md thành todo.md và chuẩn bị tài nguyên."
-when_to_use:
-  - "User explicitly asks to: 'lập kế hoạch skill' or 'tạo todo.md'"
-  - "Working on files matching: '.skill-context/*/design.md'"
-disable-model-invocation: true
-user-invocable: true
-effort: high
----
+# Present in ver-0 skill-planner/SKILL.md Frontmatter:
+pipeline:
+  stage_order: 2
+  input_contract: ...
+progressive_disclosure:
+  tier1: ...
+constraints:
+  must: ...
+output_contract: ...
 ```
 
----
+* **The Problem**: Claude Code native skill systems only parse metadata fields (like `name`, `description`, `when_to_use`, `arguments`). Packed structural configurations like `pipeline`, `progressive_disclosure`, or complex YAML `constraints` are ignored by the native parser.
+* **The Risk**: Because the behavioral rules are hidden in ignored frontmatter keys, the LLM will completely bypass these constraints unless it actively views the raw file as a text block, rendering the safety gates useless.
 
-## 3. XML Tags Standardization Audit
+### 4.2 XML Tag Mismatches and Fragmentation (Unresolved)
+* **Tag Fragmentation**: `skill-planner/SKILL.md` and `skill-builder/SKILL.md` scatter multiple separate `<instructions>` and `<context>` blocks throughout the body as simple inline section headers. XML semantic tags must act as stable, top-level L0 boundaries.
+* **Missing XML Boundaries**: `skill-suite-upgrade/SKILL.md` contains **no XML tags**. It uses Markdown blockquotes (`> 🚨 MỆNH LỆNH BẮT BUỘC`), which carry zero structural authority for an LLM parser compared to standard XML semantic boundaries.
 
-The `xml_tags_standards.yaml` sets absolute formatting boundaries to isolate instructions, context, rules, and examples. The ver-0 implementation systematically violates these boundaries.
-
-### Analysis of XML Tag Violations in ver-0:
-
-1. **Monolithic instruction Pollution (in `skill-explorer` & `skill-architect`)**:
-   - The `<instructions>` tag wraps mixed content (Markdown headers, numbered boot sequence steps, and nested ````yaml ```` code blocks).
-   - *Standard violation*: The preferred format for `<instructions>` is structured YAML containing `must`, `must_not`, and `constraints`. Markdown prose belongs in `<context>` or the standard body.
-2. **Scatter and Fragmentation (in `skill-planner` & `skill-builder`)**:
-   - The files use multiple separate `<instructions>` and `<context>` blocks scattered down the body as inline section captions (e.g., `skill-planner/SKILL.md` has 3 distinct `<instructions>` and 3 `<context>` tags).
-   - *Standard violation*: XML tags are meant to serve as stable L0 anchor boundaries. Scattering them dilutes their authority and forces the LLM to process fragmented prompts.
-3. **Complete Absence of XML Boundaries (in `skill-suite-upgrade`)**:
-   - `skill-suite-upgrade/SKILL.md` contains **no XML tags**. It uses Markdown blockquotes (`> 🚨 MỆNH LỆNH BẮT BUỘC`) to attempt rule enforcement.
-   - *Standard violation*: Blockquotes carry zero structural weight for an LLM parser compared to designated XML boundaries. This completely bypasses the token containment rules.
-4. **Spacing and Tag Proximity Issues**:
-   - Tags are placed directly next to headers (e.g., `<instructions>## BOOT SEQUENCE`) without appropriate newlines, causing rendering issues in Claude's prompt assembly engine.
-5. **Non-Standard Semantic Tags**:
-   - `skill-explorer` specifies using `<external_input>...</external_input>` (line 45). The official standard tag is `<input>`.
-
----
-
-## 4. CASE System Integration Gaps
-
-The CASE (Confidence-Aware Skill Execution) System framework is conceptually strong but programmatically broken in ver-0 due to extreme asymmetry and a lack of unified shared utilities.
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 ver-0 Fractured CASE System                            │
-├────────────────────────────┬─────────────────────────────┬─────────────────────────────┤
-│          PREVENT           │           DETECT            │           RECOVER           │
-├────────────────────────────┼─────────────────────────────┼─────────────────────────────┤
-│ ❌ check_status.py missing │ ❌ validate_gate.py is in   │ ❌ Rollback scripts only    │
-│    from planner/builder.   │    suite-upgrade only.      │    pseudocode in case-sys.  │
-│ ❌ _shared/framework.md    │ ❌ validate_zone_mapping.py │ ❌ Checkpoint staleness is  │
-│    references are broken.  │    is siloed.               │    never acted upon.        │
-└────────────────────────────┴─────────────────────────────┴─────────────────────────────┘
-```
-
-### Breakdown of CASE System Gaps:
-
-#### A. PREVENT (State-Aware Boot & Progressive Disclosure)
-* **Missing Boot Scripts**: `skill-planner/SKILL.md` (lines 31-33) instructs the agent to run `scripts/check_status.py` during boot. However, **`scripts/check_status.py` does not exist** inside `skill-planner/scripts/`! It is siloed inside `skill-suite-upgrade/scripts/`. Running this command will crash the agent session.
-* **Asymmetric Boot Implementations**: `skill-explorer` has no boot sequence check or state-awareness whatsoever. `skill-architect` and `skill-builder` lack state-aware verification scripts.
-* **Broken Shared Context Pathing**: `skill-explorer`, `skill-architect`, and `skill-builder` attempt to read `../_shared/knowledge/framework.md` to load pipeline rules. Because `_shared` is completely missing from the directory tree, the boot sequence immediately errors out.
-
-#### B. DETECT (Gate Validators & Reverse Trace)
-* **Siloed Validators**: `validate_gate.py` and `validate_zone_mapping.py` are exclusively present in `skill-suite-upgrade/scripts/`. The `skill-architect` and `skill-builder` files declare gates and check-conditions but cannot run any validation programmatically.
-* **No Code-Level Reverse Tracing**: Automated reverse trace checking (checking if §3 Zone Mapping files resolve to §1 Pain Points) exists only as conceptual Python pseudocode in the `case-system.md` documentation. No script executes it, allowing scope drift to bypass undetected.
-
-#### C. RECOVER (Rollback Procedures & Checkpoint Resumes)
-* **Completely Unimplemented Rollbacks**: There are **zero scripts** or commands that implement actual file rollback (`rollback.py` or equivalent). If a validation fails, the agent has no automated recovery mechanism, violating the core pillar of the CASE specification.
+### 4.3 CASE System Asymmetry & Unimplemented Recovery (Unresolved)
+* **Boot Asymmetry**: `skill-planner` instructs the agent to run `scripts/check_status.py` at boot, but **`check_status.py` is missing from the planner's directory**. It is siloed inside `skill-suite-upgrade/scripts/`. `skill-architect` and `skill-builder` also lack state-aware verification scripts.
+* **No Code-Level Recovery (RECOVER)**: There are **zero scripts** or commands that implement actual file rollback (`rollback.py` or equivalent). If a validation fails, the agent has no automated recovery mechanism, violating the core pillar of the CASE specification.
 * **Passive Staleness Checks**: `check_status.py` returns staleness alerts (warning/danger for checkpoints older than 7 or 30 days), but none of the skills have prompt loops or execution constraints configured to handle these outputs. The agent simply ignores staleness and proceeds.
 
-#### D. Severe DRY Violations (Code Bloat)
-Ver-0 duplicates files across skill directories to compensate for the missing shared framework:
-* `knowledge/case-system.md` is duplicated in `skill-planner/` and `skill-suite-upgrade/`.
-* `knowledge/architect.md` is duplicated in `skill-architect/`, `skill-builder/`, and `skill-planner/`.
-* `knowledge/format-standards.md` is duplicated in `skill-architect/`, `skill-builder/`, and `skill-planner/`.
-* `scripts/init_context.py` is duplicated in `skill-explorer/` and `skill-architect/`.
-
-*Impact*: Modifying a core architectural design rule requires editing 3 separate markdown files. This bloats the repository size, causes immediate rule divergence, and degrades context window efficiency.
+### 4.4 Lack of Native Subagent Integration & Hooks (Unresolved)
+Ver-0 treats skills as passive Markdown prompts rather than leveraging Claude Code's native **Subagent architecture**:
+* **No Lifecycle Hooks**: By converting skills to native subagents, we can bind `core_case.py --gate N` to `PreToolUse` hooks. The Claude Code runtime will then automatically intercept the `AskUserQuestion` tool and block user confirmation if validation fails, rather than relying on the LLM to self-audit.
+* **Lack of Tool containment**: Ver-0 fails to use native properties like `tools`, `disallowedTools`, or `allowed-tools` to enforce safety boundaries (e.g. read-only tool list for explorer).
+* **No Workspace Isolation**: The native `isolation: worktree` property is completely ignored. This property is crucial for `skill-builder` and `skill-suite-upgrade` as it forces them to execute in isolated git worktrees, protecting the main developer checkout from corrupted test runs or incomplete builds.
 
 ---
 
-## 5. Claude Code Native Subagent Integration Gaps
-
-The ver-0 suite treats skills as **passive Markdown prompts** rather than utilizing **Claude Code native Subagents** (detailed in `agents/configuration.md` and `agents/hooks_and_events.md`). This leaves severe capability gaps:
-
-1. **Lack of Lifecycle Hook Integration**:
-   - Claude Code native subagents support `hooks` (`PreToolUse`, `PostToolUse`, `Stop`) inside their YAML frontmatters.
-   - *The Gap*: Ver-0 relies entirely on the LLM to remember to run validator scripts like `validate_gate.py` before seeking user approval. By wrapping validators in native `PreToolUse` hooks, **the Claude Code runtime itself** will intercept the `AskUserQuestion` tool, execute the python validator, and block user interaction if validation fails (returning exit code 2 and stderr directly to Claude for self-healing).
-2. **Missing Tool containment Policies**:
-   - Ver-0 fails to use native properties like `tools`, `disallowedTools`, or `allowed-tools` to enforce safety boundaries. For example, `skill-explorer` should explicitly disallow file-writing tools to ensure it remains a strictly read-only stage.
-3. **No Workspace Isolation**:
-   - The native `isolation: worktree` frontmatter property is completely ignored. This property is crucial for `skill-builder` and `skill-suite-upgrade` as it forces them to execute in isolated git worktrees, protecting the main developer checkout from corrupted test runs or incomplete builds.
-4. **Ignored Concurrent Backgrounding**:
-   - The native `background: true` property is never declared. For parallelized exploration and mining (e.g. running research in the background while compiling design in the foreground), this is a wasted performance opportunity.
-
----
-
-## 6. Proposed Unified Architecture for ver-1
+## 5. Proposed Unified Architecture for ver-1
 
 To resolve the schema incompatibilities, broken paths, and CASE system fragmentation, we propose a **fully unified, CASE-compliant, and XML-standardized architecture** for `ver-1`.
 
 This architecture introduces:
-1. A centralized `_shared/` directory at the suite root to house all common schemas, common python validators, and global markdown knowledge.
+1. A centralized `_shared/` directory at the suite root (built on top of the newly added validators and schemas) to house all common schemas, common python validators, and global markdown knowledge.
 2. Conversion of the 5 skills into **Claude Code Native Subagents** utilizing lifecycle hooks for automatic gate validation.
 3. A strict L0/L1 progressive disclosure layout using XML semantic tags.
 
-### 6.1 ver-1 Directory Layout
+### 5.1 ver-1 Directory Layout
 
 ```text
 skills/rebuild/ver-1/
@@ -167,7 +148,7 @@ skills/rebuild/ver-1/
 └── agent-suite-upgrade.md             # Native Upgrade Subagent (Stage 4)
 ```
 
-### 6.2 Unified Pipeline & State Transitions (Mermaid Flow)
+### 5.2 Unified Pipeline & State Transitions
 
 ```mermaid
 flowchart TD
@@ -217,9 +198,9 @@ flowchart TD
     Rollback -->|Revert State| A_Collect
 ```
 
-### 6.3 Progressive Disclosure XML Tag Blueprint
+### 5.3 XML-Standardized Agent Blueprint
 
-Under the realigned `ver-1` standards, each agent file (e.g., `agent-planner.md`) implements a clean L0 structure utilizing standard XML tags:
+Under the realigned `ver-1` standards, each agent file (e.g., `agent-planner.md`) implements a clean, token-optimized layout:
 
 ```markdown
 ---
@@ -265,42 +246,9 @@ format: markdown_with_yaml_frontmatter
 
 ---
 
-## 7. Actionable Implementation Roadmap to ver-1
-
-To achieve full compliance and deploy a production-grade ver-1 Skill Suite, execute the following step-by-step roadmap:
-
-### Step 1: Consolidate Common Context and DRY Assets
-1. Create the unified `/home/steve/Work-space/deep_work_by_steve/skills/Update-suite/current-suite/ver-1/_shared/` directory.
-2. Relocate and consolidate the duplicated knowledge files:
-   - Create `_shared/knowledge/framework.md` (combining the best features of L0 frameworks).
-   - Create `_shared/knowledge/case-system.md` (unified CASE specifications).
-   - Create `_shared/knowledge/format-standards.md` (XML and token standards).
-3. Delete all duplicate knowledge files from the individual agent subdirectories.
-
-### Step 2: Implement Centralized Validation and Rollback Scripts
-1. Write a unified, production-grade validation python script at `_shared/validators/core_case.py` containing:
-   - Status parser (extracting the `status` block from YAML frontmatter).
-   - Gate validator (implementing machine-checkable assertions for Gates 1 to 5).
-   - Zone mapping validator (verifying structural schemas).
-   - Staleness checker (calculating epoch days and raising alerts).
-2. Write `_shared/validators/rollback_engine.py` which:
-   - Automatically archives the current `.skill-context/` state before modifying files.
-   - Implements programmatic rollback to any valid previous stage checkpoint upon verification failure or user command.
-
-### Step 3: Upgrade Skills to Claude Code Native Subagents
-1. Convert each `SKILL.md` file in the 5 directories into native agent files under `ver-1/`:
-   - Rename to `agent-explorer.md`, `agent-architect.md`, `agent-planner.md`, `agent-builder.md`, `agent-suite-upgrade.md`.
-2. Extract all constraints, output contracts, and boot checklists out of YAML frontmatters and place them strictly within `<constraints>` and `<output_contract>` Markdown body tags.
-3. Inject native Subagent hook mappings:
-   - Bind `core_case.py --gate N` to the `PreToolUse` hook intercepting `AskUserQuestion`.
-   - Bind specific tool restrictions (e.g. read-only tool list for explorer, worktree isolation for builder).
-
-### Step 4: Validate and Deploy the Unified Suite
-1. Setup a test-workspace in `skills/rebuild/ver-1/`.
-2. Execute the entire pipeline end-to-end to create a mockup micro-skill:
-   - Run Explorer → pass Stage 0.
-   - Run Architect → validate Gates 1-3.
-   - Run Planner → validate Gate 4 and trace todo.md.
-   - Run Builder → implement mock, execute build-log, and validate Gate 5.
-3. Run native testing suite inside a Docker/gVisor sandbox.
-4. Deploy the validated suite to active project runtimes (`.claude/agents/` and global user spaces `~/.claude/agents/`) using a consolidated sync script.
+## 6. Actionable Implementation Roadmap to ver-1
+1. **Consolidate shared tools**: Relocate and group all validation scripts (`schema_validator.py`, `handoff_validator.py`, `trace_validator.py`) into the global workspace `ver-1/_shared/validators/` directory.
+2. **Unify State-Aware Boot**: Write a single global status script `_shared/validators/core_case.py` (merging the status block reader with the existing gate checklist logic) to eliminate local duplications and allow all agents to perform state-aware boots.
+3. **Build the Rollback engine**: Write `_shared/validators/rollback_engine.py` to automate state checkpoint backups and programmatic rollbacks.
+4. **Agent Conversion**: Refactor the 5 skills into native Claude Code Subagents under `ver-1/`, stripping all non-standard keys from YAML frontmatters and formatting constraints strictly within standardized XML semantic tags.
+5. **Lifecycle Hooks Integration**: Wire native `PreToolUse` lifecycle hooks to intercept user queries, automating validator executions and preventing un-audited handoffs.
