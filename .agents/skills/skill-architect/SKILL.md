@@ -1,43 +1,13 @@
 ---
 name: skill-architect
-description: 'Senior Architect thiet ke kien truc Agent Skill moi. Kich hoat khi user noi: "thiet ke skill", "ve design.md", "khoi tao context skill", "ve so do mermaid", hoac lien quan den kien truc skill. Su dung de phan tich yeu cau (3 Pillars/7 Zones) va tao ban thiet ke design.md.'
-category: meta
-tags: [architecture, design, skill-development, mermaid, uml]
-version: "4.0.0"
-author: "Steve Void Team"
+description: "Senior Architect thiết kế kiến trúc Agent Skill mới dựa trên 3 Pillars & 7 Zones."
+disable-model-invocation: true
+user-invocable: true
 ---
 
 # === BOOT CONFIGURATION (L0 — Anchor Rules) ===
 
-```yaml
-token_budget:
-  SKILL_md: 600 tokens max  # the file you are reading
-  L1_limit: 1500             # policy/ files
-  L2_limit: 2500             # knowledge/ files
-  enforcement: hard
-
-priority_order:
-  - design_quality
-  - user_confirmation
-  - source_fidelity
-  - minimal_change
-```
-
----
-
 <instructions>
-## BOOT SEQUENCE — Execute in order
-
-1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
-3. Read `knowledge/format-standards.md` — **YAML/XML/Token rules**
-4. Check `.skill-context/{skill-name}/` exists?
-   - NO → Run `scripts/init_context.py {skill-name}`
-   - YES → Read existing `design.md`, continue from checkpoint
-5. Proceed to Phase 1
-
-### Core Constraints
-```yaml
 must:
   - trace_all_content_to_source
   - ask_when_confidence_below_70_percent
@@ -46,47 +16,47 @@ must:
   - use_yaml_blocks_for_constraints_policy
   - use_xml_tags_for_boundaries
   - use_trace_tags_for_all_content
-
 must_not:
   - write_implementation_code
   - skip_gates_without_user_confirmation
   - use_placeholder_filenames_in_zone_mapping
   - hallucinate_domain_knowledge_without_resources
   - exceed_token_budget_without_justification
-
-stop_conditions:
-  - Phase1_Gate: wait for user confirm §1
-  - Phase2_Gate: wait for user confirm §2+§3+§8
-  - Phase3_Gate: wait for user confirm full design
-  - Format_Gate: reject output violating format-standards.md
-```
 </instructions>
 
 <context>
-## ROUTING MAP — Load on demand
+### Boot Sequence
+1. Read `SKILL.md` (this file) — done
+2. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
+3. Read `knowledge/format-standards.md` — YAML/XML/Token rules
+4. Check `.skill-context/{skill-name}/` exists?
+   - NO → Run `scripts/init_context.py {skill-name}`
+   - YES → Check if `.skill-context/{skill-name}/exploration.md` exists. If YES, read it as the primary upstream ground-truth resource.
+5. Proceed to Phase 1
 
-### Tier 1 (Boot — always load)
-| File | Content |
-|------|---------|
-| `../_shared/knowledge/framework.md` | 7 Zones, Pipeline, Anti-hallucination |
-| `knowledge/format-standards.md` | YAML/XML/Token format rules |
+### Token Budget & Priorities
+- token_budget:
+    SKILL_md: 600 tokens max
+    L1_limit: 1500
+    L2_limit: 2500
+    enforcement: hard
+- priority_order: [design_quality, user_confirmation, source_fidelity, minimal_change]
 
-### Tier 2 (Load per phase)
-| File | Load when |
-|------|-----------|
-| `policy/workflow.md` | Phase 1-3 execution detail |
-| `policy/output-spec.md` | Writing §1-§10 contract |
-| `policy/guardrails.md` | Checking G1-G7 constraints |
-| `knowledge/architect.md` | 3 Pillars analysis |
-| `knowledge/visualization-guidelines.md` | Mermaid diagram standards |
-| `knowledge/design-exemplars.md` | **Section content spec + good/bad exemplars** — LOAD BEFORE WRITING ANY § |
-
-### Tier 3 (On-demand)
-| File | Load when |
-|------|-----------|
-| `templates/design.md.template` | Writing design.md output |
-| `loop/design-checklist.md` | Quality gate verification |
-| `references/examples/` | Reference implementations |
+### Routing Map (Progressive Disclosure)
+- **Tier 1 (Boot)**:
+  - `../_shared/knowledge/framework.md` (7 Zones, Pipeline, Anti-hallucination)
+  - `knowledge/format-standards.md` (YAML/XML/Token format rules)
+- **Tier 2 (Conditional)**:
+  - `policy/workflow.md` (Phase 1-3 execution detail)
+  - `policy/output-spec.md` (Writing §1-§10 contract)
+  - `policy/guardrails.md` (Checking G1-G7 constraints)
+  - `knowledge/architect.md` (3 Pillars analysis)
+  - `knowledge/visualization-guidelines.md` (Mermaid diagram standards)
+  - `knowledge/design-exemplars.md` (Section content spec + good/bad exemplars)
+- **Tier 3 (On-Demand)**:
+  - `templates/design.md.template` (Writing design.md output)
+  - `loop/design-checklist.md` (Quality gate verification)
+  - `references/examples/` (Reference implementations)
 </context>
 
 ---
