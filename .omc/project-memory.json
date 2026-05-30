@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779641990361,
+  "lastScanned": 1780038831469,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -36,7 +36,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1779641990358,
+      "lastAccessed": 1780038831464,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -49,14 +49,14 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1779641990360,
+      "lastAccessed": 1780038831465,
       "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1779641990360,
+      "lastAccessed": 1780038831465,
       "keyFiles": [
         "audit.md",
         "checklist.md",
@@ -69,7 +69,7 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1780038831465,
       "keyFiles": [
         "README.md",
         "index.md",
@@ -80,14 +80,14 @@
       "path": "repos",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1780038831469,
       "keyFiles": []
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 1,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1780038831469,
       "keyFiles": [
         "sync-skills.sh"
       ]
@@ -96,7 +96,7 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779641990361,
+      "lastAccessed": 1780038831469,
       "keyFiles": []
     }
   },
