@@ -1,7 +1,7 @@
 # Master Skill Suite — Hệ Chỉ Mục Kỹ Năng (llms.txt)
 
 > **Mã số**: MSS-INDEX
-> **Phiên bản**: Ver_2.0.0
+> **Phiên bản**: Ver_3.0.0 (OMSP & Physical Micro-skills)
 > **Mục tiêu**: Điều hướng nhanh cho AI và con người tra cứu các kỹ năng sản xuất thuộc Master Skill Suite.
 
 ---
@@ -9,7 +9,7 @@
 ## 🗂️ Danh Mục Kỹ Năng Đã Xác Thực (Verified Skills)
 
 ### 1. Stage 0: Explorer (`skill-explorer`)
-*   **Mô tả**: Khai thác tài nguyên, kiến thức, tiêu chuẩn và rủi ro trước khi thiết kế kịch bản, lập kế hoạch hoặc lập trình kỹ năng mới. Vận hành hoàn toàn bằng Sổ cái JSON có cấu trúc.
+*   **Mô tả**: Khai thác tài nguyên, kiến thức, tiêu chuẩn và rủi ro trước khi thiết kế kịch bản, lập kế hoạch hoặc lập trình kỹ năng mới. Vận hành bằng Sổ cái JSON.
 *   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-explorer/SKILL.md)
 *   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/exploration.json` & `criteria.json`
 
@@ -18,7 +18,17 @@
 *   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-architect/SKILL.md)
 *   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/blueprint.json`
 
+### 3. Stage 2: Planner (`skill-planner`)
+*   **Mô tả**: Nhận bản vẽ từ Stage 1, lập kế hoạch đệ quy và phân rã Micro-skills vật lý độc lập khi SCS >= 3.0, sinh ra Master & Sub todo.md.
+*   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-planner/SKILL.md)
+*   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/todo.md` (and sub todo.md if recursive)
+
+### 4. Stage 3: Builder (`skill-builder`)
+*   **Mô tả**: Kỹ sư triển khai Agent Skill, đọc multi-todo.md và thiết kế cài đặt vật lý độc lập các micro-skills song song với dynamic suite_config.yaml overlay.
+*   **Đường dẫn hạt nhân**: [SKILL.md](file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/skill-builder/SKILL.md)
+*   **Cấu trúc bối cảnh**: `.skill-context/{skill-name}/build-log.md`
+
 ---
 
 ## 🔒 Quy Tắc Vận Hành
-Mọi kỹ năng mới hoặc nâng cấp trong suite bắt buộc phải đi qua 6-stage pipeline và vượt qua validation schema tương ứng trước khi được cập nhật đăng ký vào chỉ mục `llms.txt` này.
+Mọi kỹ năng mới hoặc nâng cấp trong suite bắt buộc phải đi qua 8-stage pipeline và vượt qua validation schema tương ứng trước khi được cập nhật đăng ký vào chỉ mục `llms.txt` này.

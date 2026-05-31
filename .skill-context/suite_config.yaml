@@ -1,0 +1,17 @@
+version: "3.0.0"
+environment:
+  host_os: "linux"
+  runtime_dest: "/home/stveve/Documents/workspace/deep_work_by_steve/.agents/skills"
+  sandbox:
+    enable_docker: true
+    isolation_layer: "gvisor"
+    timeout_seconds: 120
+
+pipeline:
+  scs_threshold: 3.0          # Ngưỡng kích hoạt phân rã vật lý (SCS >= 3.0)
+  enable_quality_gates: true  # Ép buộc đi qua Stage 1.5 và 3.5
+  enforce_trace_tags: true    # Bắt buộc check trace tags chuẩn
+
+shared_validators:
+  schema_validator_path: "skills/rebuild/_shared/validators/schema_validator.py"
+  code_auditor_path: "skills/rebuild/_shared/validators/code_auditor.py"
