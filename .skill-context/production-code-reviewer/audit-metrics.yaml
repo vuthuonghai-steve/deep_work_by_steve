@@ -1,0 +1,13 @@
+file: .skill-context/production-code-reviewer/test_code/advanced_billing.py
+total_lines: 83
+violations_count: 1
+blocking_count: 0
+violations:
+- id: REV-CMP-01
+  name: Too Many Function Arguments
+  error: Hàm 'process_payment_transactions' nhận quá nhiều tham số (8 tham số), vượt
+    quá 5.
+  line: 35
+  severity: optional
+  fix_hint: Đóng gói các tham số liên quan vào một dataclass hoặc dictionary cấu trúc.
+exit_code: 0
