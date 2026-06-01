@@ -1,0 +1,173 @@
+# skill-schema.yaml — YAML Schema for design.md frontmatter
+
+---
+schema_version: "3.0.0"
+description: "Schema for design.md YAML frontmatter and Zone Mapping validation"
+
+# Frontmatter Schema
+frontmatter:
+  required_fields:
+    - skill_schema_version
+    - artifact_type
+    - skill_name
+    - generated_by
+    - generated_at
+    - stage
+    - status
+
+  status_schema:
+    phase:
+      type: integer
+      range: [0, 4]
+      description: "0=Draft, 1=Gate1, 2=Gate2, 3=Gate3, 4=Complete"
+    gates_passed:
+      type: array
+      items:
+        type: integer
+      description: "List of passed gates, e.g. [1, 2]"
+    last_actor:
+      type: string
+      enum: [architect, planner, builder]
+    confidence:
+      type: integer
+      range: [0, 100]
+    created:
+      type: string
+      format: iso8601
+    updated:
+      type: string
+      format: iso8601
+
+# Zone Mapping Schema
+zone_mapping:
+  required_zones:
+    - core
+
+  zones:
+    core:
+      required: true
+      files_required: true
+    knowledge:
+      required: true
+    scripts:
+      required: false
+    templates:
+      required: false
+    data:
+      required: false
+    loop:
+      required: true
+    assets:
+      required: false
+
+  file_spec:
+    path:
+      type: string
+      pattern: "^[a-zA-Z0-9/_.-]+$"
+    file_required:
+      type: boolean
+    content_type:
+      type: string
+      enum:
+        - persona-definition
+        - domain-knowledge
+        - automation
+        - quality-gate
+        - schema-definition
+        - case-framework
+        - state-protocol
+        - gate-validation
+        - status-checker
+        - contract-validation
+        - boot-verification
+        - gate-criteria
+        - resume-procedure
+
+# Progressive Disclosure Schema
+progressive_disclosure:
+  tiers:
+    - tier1
+    - tier2
+    - tier3
+
+  tier1_schema:
+    path:
+      type: string
+    base:
+      type: string
+      enum: [skill_dir]
+    required_for:
+      type: array
+      items:
+        type: string
+
+  tier2_schema:
+    path:
+      type: string
+    base:
+      type: string
+      enum: [skill_dir]
+    triggers:
+      type: array
+      items:
+        type: string
+    required_for:
+      type: array
+      items:
+        type: string
+
+# Section Requirements
+sections:
+  required:
+    - "1_problem_statement"
+    - "2_capability_map"
+    - "3_zone_mapping"
+    - "4_folder_structure"
+    - "5_execution_flow"
+    - "6_interaction_points"
+    - "7_progressive_disclosure"
+    - "8_risks"
+    - "9_open_questions"
+    - "10_metadata"
+
+  optional:
+    - "10.1_version_and_dependencies"
+    - "11_naming_conventions"
+    - "12_rollback_procedures"
+
+# Validation Rules
+validation_rules:
+  problem_statement:
+    min_words: 50
+    required_subjects:
+      - problem
+      - user
+      - reason
+
+  capability_map:
+    pillar1_min_items: 2
+    pillar2_has_branching: true
+    pillar3_min_risks: 3
+
+  zone_mapping:
+    no_empty_cells: true
+    files_exist_or_na: true
+
+  execution_flow:
+    min_diagrams: 3
+    diagram_types:
+      - mindmap
+      - sequenceDiagram
+      - flowchart
+
+# Handoff Contract
+handoff:
+  next_stage:
+    type: string
+    enum: [planner, builder]
+  ready_condition:
+    required:
+      - frontmatter_valid
+      - zone_mapping_complete
+      - required_sections_present
+      - no_blockers

@@ -1,0 +1,97 @@
+{
+  "$schema": "../_shared/schemas/dag_plan.schema.json",
+  "metadata": {
+    "skill_name": "skill-architect",
+    "version": "2.0.0",
+    "planner_timestamp": "2026-05-27T02:16:00Z"
+  },
+  "tasks": [
+    {
+      "task_id": "TSK-01",
+      "name": "Xây dựng L0 Anchor SKILL.md",
+      "description": "Tạo tệp SKILL.md điều hướng chính cho Architect, bao gồm boot sequence, metadata YAML và routing map.",
+      "dependencies": [],
+      "target_file": "SKILL.md",
+      "trace_tag": "[TỪ DESIGN §1]",
+      "estimated_hours": 1.0
+    },
+    {
+      "task_id": "TSK-02",
+      "name": "Viết chính sách vận hành workflow.md",
+      "description": "Xây dựng chính sách workflow.md mô tả chi tiết 3 Phase thực thi của Architect để chuyển đổi exploration.json sang blueprint.json.",
+      "dependencies": [
+        "TSK-01"
+      ],
+      "target_file": "policy/workflow.md",
+      "trace_tag": "[TỪ DESIGN §2]",
+      "estimated_hours": 1.5
+    },
+    {
+      "task_id": "TSK-03",
+      "name": "Viết chính sách an toàn guardrails.md",
+      "description": "Thiết lập các quy tắc an toàn guardrails.md nhằm phòng vệ Prompt Injection và chống lừa đảo hoàn thành (shortcut completion).",
+      "dependencies": [
+        "TSK-01"
+      ],
+      "target_file": "policy/guardrails.md",
+      "trace_tag": "[TỪ DESIGN §3]",
+      "estimated_hours": 1.0
+    },
+    {
+      "task_id": "TSK-04",
+      "name": "Viết đặc tả đầu ra output-spec.md",
+      "description": "Thiết lập cấu trúc chính xác và bắt buộc cho blueprint.json thông qua tệp output-spec.md.",
+      "dependencies": [
+        "TSK-02"
+      ],
+      "target_file": "policy/output-spec.md",
+      "trace_tag": "[TỪ DESIGN §4]",
+      "estimated_hours": 1.0
+    },
+    {
+      "task_id": "TSK-05",
+      "name": "Tạo tài liệu tri thức architect.md",
+      "description": "Xây dựng kiến thức chuyên sâu về 3 Pillars hệ thống (Core logic, Domain knowledge, Quality Loop) cho Architect.",
+      "dependencies": [
+        "TSK-01"
+      ],
+      "target_file": "knowledge/architect.md",
+      "trace_tag": "[TỪ DESIGN §5]",
+      "estimated_hours": 1.5
+    },
+    {
+      "task_id": "TSK-06",
+      "name": "Tạo tài liệu trực quan hóa visualization-guidelines.md",
+      "description": "Quy tắc thiết kế sequence flowcharts và ánh xạ 7 Zones tĩnh cho hệ thống.",
+      "dependencies": [
+        "TSK-05"
+      ],
+      "target_file": "knowledge/visualization-guidelines.md",
+      "trace_tag": "[TỪ DESIGN §6]",
+      "estimated_hours": 1.0
+    },
+    {
+      "task_id": "TSK-07",
+      "name": "Tạo tài liệu ví dụ mẫu design-exemplars.md",
+      "description": "Tập hợp các ví dụ Good/Bad thực tế của thiết kế blueprint chất lượng cao để AI tham khảo.",
+      "dependencies": [
+        "TSK-05"
+      ],
+      "target_file": "knowledge/design-exemplars.md",
+      "trace_tag": "[TỪ DESIGN §7]",
+      "estimated_hours": 1.5
+    },
+    {
+      "task_id": "TSK-08",
+      "name": "Thiết lập chốt chặn chất lượng design-checklist.md",
+      "description": "Thiết lập checklist kiểm soát chất lượng tĩnh cho toàn bộ bản vẽ thiết kế trước khi bàn giao hạ nguồn.",
+      "dependencies": [
+        "TSK-02",
+        "TSK-03"
+      ],
+      "target_file": "loop/design-checklist.md",
+      "trace_tag": "[TỪ DESIGN §8]",
+      "estimated_hours": 1.0
+    }
+  ]
+}

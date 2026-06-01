@@ -1,0 +1,72 @@
+{
+  "$schema": "../../schemas/blueprint.json",
+  "metadata": {
+    "skill_name": "example-skill",
+    "version": "1.0.0",
+    "architect_timestamp": "2026-05-03T10:00:00Z"
+  },
+  "static_structure": {
+    "folder_structure": [
+      {
+        "file_path": "SKILL.md",
+        "zone": "core",
+        "role_description": "Root orchestration anchor and persona definition"
+      },
+      {
+        "file_path": "policy/guidelines.yaml",
+        "zone": "knowledge",
+        "role_description": "Hard rules and compliance constraints for the skill"
+      },
+      {
+        "file_path": "knowledge/concepts.md",
+        "zone": "knowledge",
+        "role_description": "Domain-specific concepts and terminology explanations"
+      },
+      {
+        "file_path": "scripts/run-action.py",
+        "zone": "scripts",
+        "role_description": "Core automation script executing business logic"
+      },
+      {
+        "file_path": "loop/verification-checklist.md",
+        "zone": "loop",
+        "role_description": "Self-assessment checklists and quality verification rules"
+      }
+    ]
+  },
+  "dynamic_behavior": [
+    {
+      "flow_name": "Core Execution Flow",
+      "description": "The primary execution workflow from boot to final output generation",
+      "sequence_steps": [
+        {
+          "step_number": 1,
+          "actor": "AI Agent",
+          "action": "Reads SKILL.md and loads Tier 1 core policies from policy/guidelines.yaml",
+          "expected_result": "Anchor rules loaded with zero prose clutter"
+        },
+        {
+          "step_number": 2,
+          "actor": "AI Agent",
+          "action": "Executes scripts/run-action.py using input data parameters",
+          "expected_result": "Core business logic completed with clean execution logs"
+        }
+      ]
+    }
+  ],
+  "interaction_points": [
+    {
+      "point_id": "IP-001",
+      "stage": "stage_0_explorer",
+      "description": "Steve approves the initial problem scoping and criteria.md test suite",
+      "require_user_approval": true
+    }
+  ],
+  "mitigation_map": [
+    {
+      "threat_id": "THR-001",
+      "implemented_in_zone": "knowledge",
+      "implementation_strategy": "Define strict prompt validation regex guidelines in policy/guidelines.yaml to block injection attempts"
+    }
+  ]
+}

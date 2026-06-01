@@ -65,8 +65,10 @@ from jsonschema import Draft7Validator, FormatChecker, ValidationError
 # Helpers
 # ---------------------------------------------------------------------------
 
-def parse_frontmatter(filepath):
-    """Extract and parse YAML frontmatter from a Markdown file.
+import json
+
+def load_data_file(filepath):
+    """Load data from a JSON file, YAML file, or extract YAML frontmatter from Markdown.
 
     Returns (data, error_string). On success error_string is None.
     """
@@ -78,10 +80,27 @@ def parse_frontmatter(filepath):
     except OSError as e:
         return None, str(e)
 
-    # Match frontmatter between --- delimiters
+    # 1. Parse based on file extension
+    ext = os.path.splitext(filepath)[1].lower()
+    
+    if ext == ".json":
+        try:
+            data = json.loads(content)
+            return data, None
+        except json.JSONDecodeError as e:
+            return None, f"JSON parsing error: {e}"
+            
+    elif ext in (".yaml", ".yml"):
+        try:
+            data = yaml.safe_load(content)
+            return data, None
+        except yaml.YAMLError as e:
+            return None, f"YAML parsing error: {e}"
+
+    # 2. Default fallback: Extract frontmatter between --- delimiters from Markdown
     match = re.match(r"^---\s*\n(.*?)\n(?:---|\.\.\.)", content, re.DOTALL)
     if not match:
-        return None, "No YAML frontmatter found (must be between --- delimiters)"
+        return None, "No YAML frontmatter found (must be between --- delimiters or file must have .json/.yaml extension)"
 
     yaml_text = match.group(1)
     if not yaml_text.strip():
@@ -95,7 +114,7 @@ def parse_frontmatter(filepath):
     if data is None:
         return None, "Frontmatter is empty (null)"
     if not isinstance(data, dict):
-        return None, f"Frontmatter is not a mapping (got {type(data).__name__})"
+        return None, f"Data is not a mapping (got {type(data).__name__})"
 
     return data, None
 
@@ -223,20 +242,20 @@ def main(argv=None):
     artifact = os.path.basename(args.file)
     checks = []
 
-    # 1. Parse frontmatter
-    data, parse_err = parse_frontmatter(args.file)
+    # 1. Parse file content
+    data, parse_err = load_data_file(args.file)
     if parse_err:
         checks.append(build_check(
-            "YAML Frontmatter Parsing", "fail",
+            "Data File Parsing (JSON/YAML/MD)", "fail",
             parse_err, "error",
-            "Ensure the file has valid YAML frontmatter between --- delimiters",
+            "Ensure the file is valid JSON, YAML or Markdown with valid frontmatter between --- delimiters",
         ))
         result = make_result(artifact, checks)
         print(yaml.dump(result, default_flow_style=False, allow_unicode=True,
                         sort_keys=False))
         return 1
 
-    checks.append(build_check("YAML Frontmatter Parsing", "pass"))
+    checks.append(build_check("Data File Parsing (JSON/YAML/MD)", "pass"))
 
     # 2. Load schema
     schema, schema_err = load_schema(args.schema)

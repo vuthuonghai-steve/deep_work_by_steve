@@ -1,0 +1,215 @@
+{
+  "$schema": "file:///home/stveve/Documents/workspace/deep_work_by_steve/skills/Update-suite/updated-suite/_shared/schemas/blueprint.json",
+  "artifact_type": "design-quality-checklist",
+  "version": "2.0.0",
+  "target_artifact": "blueprint.json",
+  "description": "Machine-readable quality gate checklist cho Stage 1 Architect. Dùng để validate blueprint.json trước khi bàn giao cho Stage 2 Planner.",
+
+  "quality_gates": {
+    "schema_compliance": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "SC-01",
+          "description": "File blueprint.json được đặt chính xác tại .skill-context/{skill-name}/blueprint.json",
+          "field": "output_path",
+          "rule": "path_matches_pattern",
+          "pattern": ".skill-context/*/blueprint.json"
+        },
+        {
+          "id": "SC-02",
+          "description": "blueprint.json vượt qua 100% JSON Schema validation",
+          "field": "schema_validation",
+          "rule": "jsonschema_pass_rate = 100%"
+        },
+        {
+          "id": "SC-03",
+          "description": "Metadata có đủ skill_name (kebab-case), version (semver), architect_timestamp (ISO-8601)",
+          "field": "metadata",
+          "rule": "has_required_fields",
+          "required_fields": ["skill_name", "version", "architect_timestamp"]
+        }
+      ]
+    },
+
+    "static_structure_integrity": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "SS-01",
+          "description": "100% tệp vật lý đề xuất phân bổ vào đúng enum 7 Zones",
+          "field": "static_structure.folder_structure[].zone",
+          "rule": "enum_valid",
+          "valid_values": ["core", "knowledge", "scripts", "templates", "data", "loop", "assets", "_shared"]
+        },
+        {
+          "id": "SS-02",
+          "description": "Không tồn tại tên file placeholder (file1.py, temp.sh, xxx.md, todo.txt)",
+          "field": "static_structure.folder_structure[].file_path",
+          "rule": "no_placeholder_names",
+          "banned_patterns": ["file[0-9]+\\.", "temp_", "xxx\\.", "mock_", "todo\\.txt", "test_new"]
+        },
+        {
+          "id": "SS-03",
+          "description": "role_description của từng tệp đề xuất đạt tối thiểu 10 ký tự và mô tả thực chất",
+          "field": "static_structure.folder_structure[].role_description",
+          "rule": "min_length",
+          "min_chars": 10
+        },
+        {
+          "id": "SS-04",
+          "description": "Static structure có tối thiểu 3 tệp vật lý được quy hoạch",
+          "field": "static_structure.folder_structure",
+          "rule": "min_count",
+          "min_count": 3
+        },
+        {
+          "id": "SS-05",
+          "description": "Zone 'core' bắt buộc phải tồn tại và chứa SKILL.md",
+          "field": "static_structure.folder_structure",
+          "rule": "must_contain_core_skill_md"
+        }
+      ]
+    },
+
+    "dynamic_behavior_integrity": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "DB-01",
+          "description": "Mỗi flow trong dynamic_behavior có đủ flow_name, description, sequence_steps",
+          "field": "dynamic_behavior[].sequence_steps",
+          "rule": "has_required_fields",
+          "required_fields": ["flow_name", "description", "sequence_steps"]
+        },
+        {
+          "id": "DB-02",
+          "description": "Mỗi flow có tối thiểu 2 sequence steps",
+          "field": "dynamic_behavior[].sequence_steps",
+          "rule": "min_count",
+          "min_count": 2
+        },
+        {
+          "id": "DB-03",
+          "description": "Mỗi step có đủ step_number (int tăng dần), actor, action (>=5 chars), expected_result (>=5 chars)",
+          "field": "dynamic_behavior[].sequence_steps[]",
+          "rule": "step_fields_valid",
+          "rules": {
+            "step_number": "auto_increment_from_1",
+            "actor": "non_empty_string",
+            "action": "min_length_5",
+            "expected_result": "min_length_5"
+          }
+        }
+      ]
+    },
+
+    "interaction_points_gate": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "IP-01",
+          "description": "Có tối thiểu 2 interaction points (IP-01, IP-02)",
+          "field": "interaction_points",
+          "rule": "min_count",
+          "min_count": 2
+        },
+        {
+          "id": "IP-02",
+          "description": "point_id khớp pattern ^IP-[0-9]+$",
+          "field": "interaction_points[].point_id",
+          "rule": "pattern_match",
+          "pattern": "^IP-[0-9]+$"
+        },
+        {
+          "id": "IP-03",
+          "description": "description của mỗi IP có tối thiểu 10 ký tự",
+          "field": "interaction_points[].description",
+          "rule": "min_length",
+          "min_chars": 10
+        }
+      ]
+    },
+
+    "mitigation_map_gate": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "MM-01",
+          "description": "100% security_risks từ exploration.json phải có entry tương ứng trong mitigation_map",
+          "field": "mitigation_map",
+          "rule": "coverage_complete",
+          "source": "exploration.json#security_risks[].threat_type"
+        },
+        {
+          "id": "MM-02",
+          "description": "threat_id trong mitigation_map khớp với security_risks.threat_type trong exploration.json",
+          "field": "mitigation_map[].threat_id",
+          "rule": "cross_reference_valid",
+          "reference": "exploration.json#security_risks"
+        },
+        {
+          "id": "MM-03",
+          "description": "implementation_strategy đạt tối thiểu 15 ký tự và mô tả chiến thuật khả thi",
+          "field": "mitigation_map[].implementation_strategy",
+          "rule": "min_length",
+          "min_chars": 15
+        },
+        {
+          "id": "MM-04",
+          "description": "implemented_in_zone thuộc enum 7 Zones hợp lệ",
+          "field": "mitigation_map[].implemented_in_zone",
+          "rule": "enum_valid",
+          "valid_values": ["core", "knowledge", "scripts", "templates", "data", "loop", "assets"]
+        }
+      ]
+    },
+
+    "size_gate": {
+      "severity": "MUST",
+      "checks": [
+        {
+          "id": "SZ-01",
+          "description": "Tệp blueprint.json không vượt quá 10KB",
+          "field": "file_size_bytes",
+          "rule": "max_size",
+          "max_bytes": 10240
+        }
+      ]
+    },
+
+    "handoff_readiness": {
+      "severity": "SHOULD",
+      "checks": [
+        {
+          "id": "HR-01",
+          "description": "static_structure đủ thông tin để Planner phân rã thành tasks",
+          "field": "static_structure.folder_structure",
+          "rule": "sufficient_for_planner_decomposition"
+        },
+        {
+          "id": "HR-02",
+          "description": "Có statement kết thúc: 'STAGE 1 COMPLETE — Blueprint validated and ready for Planner'",
+          "rule": "completion_statement_present"
+        },
+        {
+          "id": "HR-03",
+          "description": "Vietnamese summary đã được cung cấp cho Steve",
+          "rule": "vietnamese_summary_delivered"
+        }
+      ]
+    }
+  },
+
+  "severity_definitions": {
+    "MUST": "Fail = KHÔNG được bàn giao blueprint.json. Phải sửa trước.",
+    "SHOULD": "Fail = Cảnh báo, vẫn có thể bàn giao nhưng cần ghi chú."
+  },
+
+  "output_format": {
+    "show_passed": true,
+    "show_failed": true,
+    "show_warnings": true,
+    "summary_format": "PASS: {n}/{total} | FAIL: {f} MUST-level | WARN: {w} SHOULD-level"
+  }
+}

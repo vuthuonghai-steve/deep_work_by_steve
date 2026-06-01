@@ -33,7 +33,7 @@ priority_order:
 3. Read `knowledge/format-standards.md` — **YAML/XML/Token rules**
 4. Check `.skill-context/{skill-name}/` exists?
    - NO → Run `scripts/init_context.py {skill-name}`
-   - YES → Read existing `design.md`, continue from checkpoint
+   - YES → Check if `.skill-context/{skill-name}/exploration.md` exists. If YES, read it as the primary upstream ground-truth resource.
 5. Proceed to Phase 1
 
 ### Core Constraints

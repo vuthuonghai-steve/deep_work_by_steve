@@ -1,0 +1,174 @@
+# Clarity Questions Templates
+
+> Standardized clarifying question sets for common ambiguity patterns
+
+---
+
+## Q1: Actor Definition
+
+Ask when no actor is specified or roles are unclear:
+
+```
+The following roles are undefined in your request:
+- Who can perform `<action>`?
+- Who has permission to `<resource>`?
+- What is the primary actor for `<use case>`?
+
+Please specify:
+1. Actor name (e.g., Admin, User, Guest)
+2. Actor role description
+3. Permissions per action (CRUD access level)
+```
+
+---
+
+## Q2: Data Fields
+
+Ask when entity fields are missing or incomplete:
+
+```
+The following data fields are not specified:
+- What fields should `<Entity>` have?
+- Are there required vs optional fields?
+- What are the data types (text, number, date, relationship)?
+- Are there any constraints (max length, unique, range)?
+
+Please provide:
+1. List of field names and types
+2. Which fields are required vs optional
+3. Any validation constraints
+```
+
+---
+
+## Q3: Authentication & Authorization
+
+Ask when auth is unclear:
+
+```
+Authentication requirements are not specified:
+- Who can access `<endpoint>`?
+- What auth method should be used (JWT, Firebase, session)?
+- Are there role-based permissions?
+- Should certain endpoints be admin-only?
+
+Please specify:
+1. Auth provider (JWT, Firebase, session, API key)
+2. Access levels per actor
+3. Public vs protected endpoints
+```
+
+---
+
+## Q4: Status & Workflow
+
+Ask when status transitions are unclear:
+
+```
+Status workflow not defined for `<entity>`:
+- What states can `<entity>` be in?
+- What triggers state changes?
+- Are there invalid state transitions?
+- Who can trigger each transition?
+
+Please provide:
+1. List of valid states
+2. State transition table (From → To → Trigger)
+3. Initial and final states
+```
+
+---
+
+## Q5: Edge Cases & Error Handling
+
+Ask when edge cases are not covered:
+
+```
+The following edge cases are not specified:
+- What happens when `<condition X>` occurs?
+- How should `<error scenario>` be handled?
+- What is the expected behavior for invalid input?
+- Are there concurrent update scenarios?
+
+Please specify:
+1. Scenario description
+2. Expected handling behavior
+3. Error response format
+```
+
+---
+
+## Q6: Entity Relationships
+
+Ask when relationships between entities are unclear:
+
+```
+Relationships between entities not specified:
+- How does `<Entity A>` relate to `<Entity B>`?
+- Is the relationship one-to-one, one-to-many, or many-to-many?
+- Are there foreign key constraints?
+- What cascading behavior is expected?
+
+Please provide:
+1. Relationship type (belongsTo, hasMany, manyToMany)
+2. Which field represents the relationship
+3. Any constraint or cascade rules
+```
+
+---
+
+## Q7: API Endpoints
+
+Ask when endpoints are not defined:
+
+```
+The following endpoints are not specified:
+- What API endpoints are needed for `<entity>`?
+- What HTTP methods (GET, POST, PUT, DELETE)?
+- What should each endpoint accept and return?
+- Are there pagination or filtering requirements?
+
+Please specify:
+1. Endpoint paths and methods
+2. Request/response schemas
+3. Query parameters or pagination
+```
+
+---
+
+## Q8: Feature Scope
+
+Ask when feature scope is ambiguous:
+
+```
+Feature scope is unclear:
+- What is the minimum viable scope for `<feature>`?
+- What can be deferred to a later phase?
+- Are there any hard dependencies between features?
+- What is the priority order?
+
+Please clarify:
+1. MVP scope (must-have features)
+2. Nice-to-have features
+3. Dependencies or blockers
+```
+
+---
+
+## Response Template
+
+When user provides answers, update the context:
+
+```yaml
+clarified_context:
+  timestamp: "<ISO-8601>"
+  ambiguities_resolved:
+    - id: "Q1"
+      question: "<original question>"
+      answer: "<user answer>"
+    - id: "Q2"
+      question: "<original question>"
+      answer: "<user answer>"
+  remaining_ambiguities: []
+  ready_for_phase_1: true|false
+```

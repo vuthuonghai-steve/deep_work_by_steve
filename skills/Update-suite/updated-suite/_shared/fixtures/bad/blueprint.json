@@ -1,0 +1,20 @@
+{
+  "$schema": "../../schemas/blueprint.json",
+  "metadata": {
+    "skill_name": "bad-skill",
+    "version": "1.0.0",
+    "architect_timestamp": "2026-05-03T10:00:00Z"
+  },
+  "static_structure": {
+    "folder_structure": [
+      {
+        "file_path": "/absolute/path/violating/rules.py",
+        "zone": "scripts",
+        "role_description": "Violating absolute path rule"
+      }
+    ]
+  },
+  "dynamic_behavior": [],
+  "interaction_points": [],
+  "mitigation_map": []
+}

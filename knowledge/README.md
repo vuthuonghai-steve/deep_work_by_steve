@@ -1,43 +1,80 @@
-# Knowledge Base
+# Knowledge Base — Trung tâm lưu trữ tài liệu đã chuyển đổi
 
-Thư mục tổng hợp kiến thức chuyên sâu về AI, agent systems, và các chủ đề liên quan.
+## 1. Mục đích
 
----
+Lưu trữ tài liệu kiến thức đã được chuyển đổi từ input (PDF, HTML, Text, Markdown) sang Markdown theo tiêu chuẩn CLAUDE.md.
 
-## AI Agents
+## 2. Cấu trúc
 
-### Heavy Thinking & Agentic Harnesses
+```
+knowledge/
+├── README.md                         # File này
+├── {input-name}/                    # Mỗi input là 1 thư mục cha
+│   ├── README.md                    # Mô tả nguồn
+│   ├── source/                      # Tài liệu gốc (PDF, MD, etc)
+│   └── processed/                   # Tài liệu đã xử lý (Markdown chuẩn)
+├── knowledge-processor/             # Hệ thống xử lý tài liệu
+│   ├── README.md
+│   ├── pdf-extractor/
+│   ├── html-cleaner/
+│   ├── text-normalizer/
+│   └── markdown-fixer/
+└── micro-skills/                   # Micro-skills đã tạo
+```
 
-- **[Heavy Thinking Tree](./ai-agents/heavy-thinking-tree.md)** — 5-layer Q&A tree: What/How/Why → đào sâu qua 5 tầng (root → parallel reasoning → entropy → RLVR → production). Đầy đủ diagrams và benchmark results.
-- **[Agentic Harnesses](./ai-agents/agent-harnesses.md)** — So sánh Claude Code, CodeX, Hermes, phân tích tại sao orchestration phức tạp không đồng nghĩa với performance cao hơn
+## 3. Quy tắc đặt tên
 
-- **[Agentic Memory](./ai-agents/agentic-memory.md)** — So sánh cách các harness xử lý memory: persistent memory (Hermes), skills-based (Claude Code), sub-agent (CodeX), và serialized cache (HeavySkill)
+| Loại | Quy tắc | Ví dụ |
+|------|---------|-------|
+| Thư mục cha | Tên repo/document | `siinstore-api`, `CLAUDE.md` |
+| Tài liệu gốc | Giữ nguyên tên + extension | `README.pdf`, `architecture.md` |
+| Tài liệu xử lý | Thêm suffix `.md` | `README.pdf.md`, `architecture.md` |
 
----
+## 4. Trạng thái tài liệu
 
-## Chủ đề khác
+| Trạng thái | Nơi lưu | Mô tả |
+|------------|----------|--------|
+| Gốc | `source/` | Tài liệu ban đầu, không sửa |
+| Đã xử lý | `processed/` | Đã chuyển đổi theo CLAUDE.md |
 
-(thêm theo nhu cầu)
+## 5. Thêm tài liệu mới
 
----
+```bash
+# Tạo thư mục cho input mới
+mkdir -p knowledge/{input-name}/{source,processed}
 
-## Cách đóng góp
+# Copy tài liệu gốc
+cp /path/to/original.pdf knowledge/{input-name}/source/
 
-Khi đọc được paper, bài post, hoặc nghiên cứu mới:
+# Xử lý bằng knowledge-processor
+python3 skills/rebuild/pdf-extractor/scripts/pdf-extractor.py \
+  knowledge/{input-name}/source/original.pdf \
+  -o knowledge/{input-name}/processed/original.pdf.md
+```
 
-1. Tạo file `.md` trong thư mục phù hợp
-2. Ghi nguồn ở đầu file (arXiv link, blog post, etc.)
-3. Tóm tắt bằng tiếng Việt + key points bằng tiếng Anh
-4. Thêm vào `README.md` này
+## 6. Knowledge Processor
 
----
+Hệ thống xử lý tài liệu với 4 micro-skills:
 
-## Định dạng file
+| Micro-skill | Chức năng |
+|-------------|-----------|
+| pdf-extractor | PDF → text (sandboxed) |
+| html-cleaner | HTML → semantic Markdown |
+| text-normalizer | Text → standard format |
+| markdown-fixer | Markdown → structure repair |
 
-Mỗi topic nên có:
+Xem chi tiết: `knowledge-processor/README.md`
 
-- **Nguồn** — link gốc, ngày
-- **Tóm tắt** — 2-3 dòng
-- **Key findings** — bullet points
-- **Takeaways** — điểm cần nhớ
-- **Tham khảo** — link liên quan
+## 7. Tiêu chuẩn
+
+Tất cả tài liệu trong `processed/` phải tuân theo CLAUDE.md:
+- YAML frontmatter
+- XML boundaries cho external content
+- 4 layers (L0-L3)
+- Token budget
+
+## 8. Liên quan
+
+- **Solution Flow:** `skills/solution-flow/knowledge-extraction/`
+- **Skill Builder:** `skills/solution-flow/skill-builder-suite/`
+- **Agent Guide:** `skills/rebuild/AGENT.md`

@@ -65,7 +65,7 @@ zones:
     contains:
       - CLAUDE.md              # LLM standard — format/structure guide
       - workspce_tree.md      # This file — workspace map
-      - architure.md          # Skill framework architecture (3 Pillars, 7 Zones)
+      - architecture.md       # Skill framework architecture (3 Pillars, 7 Zones)
       - hermes.md             # Hermes agent config/notes
 
   L1_knowledge:
@@ -215,7 +215,7 @@ skill_lifecycle:
 
 ```yaml
 load_when_needed:
-  skill_framework: "architure.md"
+  skill_framework: "architecture.md"
   knowledge_base: "knowledge/README.md"
   skill_context_convention: ".skill-context/registry/README.md"
   rebuild_pipeline: "skills/rebuild/_shared/knowledge/framework.md"
@@ -247,7 +247,7 @@ critical_files:
   root_constitution:
     - CLAUDE.md              # LLM format standard
     - workspce_tree.md       # Workspace map (this file)
-    - architure.md          # 3 Pillars, 7 Zones skill framework
+    - architecture.md       # 3 Pillars, 7 Zones skill framework
 
   skill_factory_contracts:
     - skills/rebuild/_shared/knowledge/framework.md
@@ -305,7 +305,7 @@ basis:
 
 uncertainties:
   - some raw skills in skills/raw/ may be duplicates or outdated
-  - architure.md bị typo (nên rename later)
+  - architecture.md đã được sửa đổi và đổi tên chính thức (hết typo)
   - info_temp/ content chưa verified chi tiết
   - .omx/ state chưa explore đầy đủ
 
@@ -321,7 +321,7 @@ notes:
 ```yaml
 open:
   - Steve cần confirm: runtime chính là Codex skills, Claude skills, hay cả hai?
-  - architure.md nên rename → docs/architecture/skill-framework.md?
+  - architecture.md đã được đồng bộ chuẩn v3.0.0 chính thức
   - info_temp/ nên có rule cụ thể hơn (TTL, auto-cleanup)?
   - .omx/ directory purpose chưa rõ — cần Steve clarify
 ```
