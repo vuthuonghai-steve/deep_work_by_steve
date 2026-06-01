@@ -26,13 +26,21 @@ must_not:
 
 <context>
 ### Boot Sequence
-1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
-3. Read `knowledge/format-standards.md` — YAML/XML/Token rules
+1. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current status.
+   - If checkpoint stale (> 7 days), warn user and refresh.
+2. Read `SKILL.md` (this file) — done
+3. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
 4. Check `.skill-context/{skill-name}/` exists?
    - NO → Run `scripts/init_context.py {skill-name}`
    - YES → Check if `.skill-context/{skill-name}/exploration.md` exists. If YES, read it as the primary upstream ground-truth resource.
 5. Proceed to Phase 1
+
+### Pipeline Specification
+- Stage Order: 1
+- Input Contract: `.skill-context/{skill-name}/exploration.md` (required)
+- Output Contract: `.skill-context/{skill-name}/design.md` (required)
+- Dependencies: skill-explorer (must pass Stage 0 gate) and skill-knowledge-miner (needs domain-handbook.md)
+- Successor Hints: production-quality-gatekeeper (needs design.md)
 
 ### Token Budget & Priorities
 - token_budget:

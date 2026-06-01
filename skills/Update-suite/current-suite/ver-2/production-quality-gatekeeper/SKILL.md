@@ -24,11 +24,11 @@ must_not:
 
 <context>
 ### Boot Sequence
-1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — Stage boundaries and conventions
-3. Read `../_shared/knowledge/case-system.md` — CASE System specifications
-4. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current status.
-   - If checkpoint stale (> 7 days), warn user.
+1. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current status.
+   - If checkpoint stale (> 7 days), warn user and refresh.
+2. Read `SKILL.md` (this file) — done
+3. Read `../_shared/knowledge/framework.md` — Stage boundaries and conventions
+4. Read `../_shared/knowledge/case-system.md` — CASE System specifications
 5. Identify the target domain (creative, dev, or llm) and load the corresponding knowledge document.
 6. Proceed to Phase 1: Quality Criteria Synthesis
 
