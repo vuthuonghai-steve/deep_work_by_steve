@@ -16,6 +16,8 @@ must:
   - resolve [CẦN LÀM RÕ] before proceeding
   - read `.skill-context/suite_config.yaml` at startup to determine the physical destination path (`runtime_dest`) dynamically
   - verify Stage 3.5 Quality Gate: Ensure `.skill-context/{skill-name}/review-report.md` exists before proceeding to Stage 4 (Verification)
+  - enforce the Cognitive Agentic Skill Paradigm: build the cognitive reasoning layers of the agent skill (L0-L1 in SKILL.md, L2 in knowledge/, L3 in loop/) as persona-driven instructions that empower the AI agent to reason and decide
+  - restrict Python scripts under `scripts/` strictly to system primitives (I/O, entropy, API wrapper, math) without embedding high-level cognitive or business analysis logic
   - if sub-skills todo.md plans exist in `.skill-context/{skill-name}/{sub-skill}/todo.md`, physically build and install them as separate packages under `runtime_dest/{sub-skill-name}`
   - automatically generate `scripts/orchestrate.py` in the main Meta-skill `runtime_dest/{meta-skill-name}` to orchestrate sub-skills using shared state files via SSP (State & Signal Protocol)
 must_not:
@@ -25,6 +27,7 @@ must_not:
   - continue after system error (Log-Notify-Stop)
   - leave placeholder density > 9
   - skip Stage 3.5 Quality Gate checks
+  - embed high-level cognitive reasoning, synthesis, or domain analysis logic inside Python scripts
 </instructions>
 
 <context>

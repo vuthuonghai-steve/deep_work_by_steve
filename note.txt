@@ -1,0 +1,9 @@
+note
+**chỉ với với : 
+prompt : {"giúp mình phân tích và xác định các vị trí sử dụng ,quản lý , UI , state của address của người dùng trong dự án . tạo thành một file tổng hợp báo cáo markdown có sử dụng cấu trúc yaml , json , schema .
+-- dự án : '/home/stveve/Documents/workspace/Siin/siinstore-web/src' 
+-- doc '/home/stveve/Documents/workspace/Siin/siinstore-web/docs' 
+**audit focus** 
+"}
+model : deepseek flash nhưng lại mang lại kết quả output báo cáo và xác định rất tốt với kế quả chi tiết và cụ thể . 
+

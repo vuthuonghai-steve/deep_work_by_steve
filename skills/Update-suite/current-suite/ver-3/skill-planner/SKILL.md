@@ -16,6 +16,8 @@ must:
   - achieve resource_completeness before marking ready_for_builder status
   - run the status check and read `.skill-context/suite_config.yaml` at startup
   - verify Stage 1.5 Quality Gate compliance: must find `.skill-context/{skill-name}/quality-matrix.yaml` before planning
+  - enforce the Cognitive Agentic Skill Paradigm: all planned tasks must focus on building the LLM's reasoning/cognitive layers (L0-L1 in SKILL.md, L2 in knowledge/, L3 in loop/) rather than procedural code
+  - plan Python scripts in `scripts/` ONLY for primitive tasks (I/O, SHA256/entropy, external APIs)
   - if SCS >= 3.0 or micro-skills are defined, implement Recursive Physical Micro-skills planning:
     - create a separate `todo.md` under `.skill-context/{skill-name}/{micro-skill-name}/todo.md` for each micro-skill
     - create a Master orchestrator `todo.md` at `.skill-context/{skill-name}/todo.md`
@@ -25,6 +27,7 @@ must_not:
   - skip resource audit for critical documents
   - add new zones or files outside design.md §3 Zone Mapping
   - skip Stage 1.5 Quality Gate validation
+  - plan heavy business or synthesis logic in procedural Python scripts
 </instructions>
 
 <context>
