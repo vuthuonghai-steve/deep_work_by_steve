@@ -26,13 +26,22 @@ must_not:
 
 <context>
 ### Boot Sequence
-1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — Stage 0 overview
-3. Read `knowledge/exploration-standards.md` — 7 Golden Standards criteria
-4. Check if `.skill-context/{skill-name}/` exists?
+1. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/exploration.md` to verify current status.
+   - If checkpoint stale (> 7 days), warn user and refresh.
+2. Read `SKILL.md` (this file) — done
+3. Read `../_shared/knowledge/framework.md` — Stage 0 overview
+4. Read `knowledge/exploration-standards.md` — 7 Golden Standards criteria
+5. Check if `.skill-context/{skill-name}/` exists?
    - NO → Run `scripts/init_context.py {skill-name}` to safely initialize
    - YES → Check if `.skill-context/{skill-name}/exploration.md` exists, resume if needed.
-5. Proceed to Phase 1: Input & Intent Analysis
+6. Proceed to Phase 1: Input & Intent Analysis
+
+### Pipeline Specification
+- Stage Order: 0
+- Input Contract: User/Agent Prompt or Task (required)
+- Output Contract: `.skill-context/{skill-name}/exploration.md` (required)
+- Dependencies: none (starting stage)
+- Successor Hints: skill-knowledge-miner (needs exploration.md)
 
 ### Token Budget & Priorities
 - token_budget:

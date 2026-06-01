@@ -24,12 +24,12 @@ must_not:
 
 <context>
 ### Boot Sequence
-1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
-3. Read `../_shared/knowledge/case-system.md` — CASE System Boot & Gate rules
-4. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
-5. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current phase and checkpoint.
+1. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current phase and checkpoint.
    - If checkpoint stale (> 7 days) or edited externally, alert user.
+2. Read `SKILL.md` (this file) — done
+3. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
+4. Read `../_shared/knowledge/case-system.md` — CASE System Boot & Gate rules
+5. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
 6. Proceed to Step READ (Phase 1)
 
 ### Pipeline Specification
