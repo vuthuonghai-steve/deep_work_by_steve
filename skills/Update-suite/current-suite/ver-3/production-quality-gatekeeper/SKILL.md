@@ -9,7 +9,7 @@ user-invocable: true
 
 <instructions>
 must:
-  - run the core_case.py status check at startup before taking any actions
+  - run the check_status.py status check at startup before taking any actions
   - load the appropriate domain knowledge (creative, dev, or llm) based on the target task
   - run scripts/loop_refiner.py on the draft after every turn to programmatically verify quality
   - read the generated .skill-context/production-quality-gatekeeper/feedback.yaml upon loop failure (exit 1)

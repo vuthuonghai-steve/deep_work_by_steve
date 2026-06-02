@@ -9,7 +9,7 @@ user-invocable: true
 
 <instructions>
 must:
-  - run the core_case.py status check at startup before taking any actions
+  - run the check_status.py status check at startup before taking any actions
   - load the google-standards.md guidelines under progressive disclosure Tier 2
   - execute scripts/code_auditor.py on the target file to capture static metrics
   - write constructive, respectful review comments explaining 'why' issues occur

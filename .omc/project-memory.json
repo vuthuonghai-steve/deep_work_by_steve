@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1779817471671,
-  "projectRoot": "/home/stveve/Documents/workspace/deep_work_by_steve",
+  "lastScanned": 1780362070387,
+  "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
     "frameworks": [],
@@ -28,10 +28,7 @@
       "docs",
       "scripts"
     ],
-    "gitBranches": {
-      "defaultBranch": "master",
-      "branchingStrategy": null
-    }
+    "gitBranches": null
   },
   "customNotes": [],
   "directoryMap": {
@@ -39,7 +36,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1779817471665,
+      "lastAccessed": 1780362070384,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -52,7 +49,7 @@
       "path": "data",
       "purpose": "Data files",
       "fileCount": 3,
-      "lastAccessed": 1779817471669,
+      "lastAccessed": 1780362070386,
       "keyFiles": [
         "distilled_draft.yaml",
         "raw_source.xml",
@@ -63,14 +60,14 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070386,
       "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070386,
       "keyFiles": [
         "audit.md",
         "checklist.md",
@@ -83,18 +80,25 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070387,
       "keyFiles": [
         "README.md",
         "index.md",
         "llm-prompt-formatting.md"
       ]
     },
+    "repos": {
+      "path": "repos",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1780362070387,
+      "keyFiles": []
+    },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 1,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070387,
       "keyFiles": [
         "sync-skills.sh"
       ]
@@ -103,7 +107,7 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070387,
       "keyFiles": [
         "AGENTS.md"
       ]
@@ -112,10 +116,83 @@
       "path": "~",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1779817471670,
+      "lastAccessed": 1780362070387,
       "keyFiles": []
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/scripts/validate_suite_integrity.py",
+      "accessCount": 12,
+      "lastAccessed": 1780367520044,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/trace_validator.py",
+      "accessCount": 7,
+      "lastAccessed": 1780367574172,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/scripts/test_suite_workflow.py",
+      "accessCount": 6,
+      "lastAccessed": 1780363867167,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/production-code-reviewer/SKILL.md",
+      "accessCount": 4,
+      "lastAccessed": 1780370693986,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/production-quality-gatekeeper/SKILL.md",
+      "accessCount": 4,
+      "lastAccessed": 1780370695229,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/fixtures/good/design.md",
+      "accessCount": 2,
+      "lastAccessed": 1780363629994,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/handoff_validator.py",
+      "accessCount": 2,
+      "lastAccessed": 1780363630202,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/schema_validator.py",
+      "accessCount": 1,
+      "lastAccessed": 1780363153077,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/fixtures/bad/design.md",
+      "accessCount": 1,
+      "lastAccessed": 1780363161580,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/fixtures/good/todo.md",
+      "accessCount": 1,
+      "lastAccessed": 1780363162041,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/placeholder-policy.md",
+      "accessCount": 1,
+      "lastAccessed": 1780382701024,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/updated-suite/scripts/test_suite_workflow.py",
+      "accessCount": 1,
+      "lastAccessed": 1780383036179,
+      "type": "file"
+    }
+  ],
   "userDirectives": []
 }

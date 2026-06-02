@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 validate_suite_integrity.py — Programmatic verification script to check path references and
-format specifications for the ver-2 Master Skill Suite.
+format specifications for the ver-3 Master Skill Suite.
 
 Usage:
     python3 validate_suite_integrity.py
@@ -22,6 +22,7 @@ SKILLS = [
     "skill-architect",
     "production-quality-gatekeeper",
     "skill-planner",
+    "skill-builder",
     "production-code-reviewer"
 ]
 
@@ -95,7 +96,7 @@ def analyze_skill_markdown(skill_name):
 
 def main():
     print("=====================================================================")
-    print("🔄 PROGRAMMATIC INTEGRITY CHECKER FOR MASTER SKILL SUITE ver-2")
+    print("🔄 PROGRAMMATIC INTEGRITY CHECKER FOR MASTER SKILL SUITE ver-3")
     print("=====================================================================")
     
     suite_errors = 0

@@ -139,9 +139,7 @@ Builder phải scan đúng 4 trace tags chuẩn:
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
 - `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
 
-Legacy tags (fail trên validator):
-- `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
-
+Legacy tags (fail trên validator — xem framework.md §7 để biết spec canonical):
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
 ## Phase 3: BUILD (Phase-Driven)
