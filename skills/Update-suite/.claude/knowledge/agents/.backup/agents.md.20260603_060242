@@ -264,7 +264,7 @@ auto	Auto mode: a background classifier reviews commands and protected-directory
 dontAsk	Auto-deny permission prompts (explicitly allowed tools still work)
 bypassPermissions	Skip permission prompts
 plan	Plan mode (read-only exploration)
-Use bypassPermissions with caution. It skips all permission prompts, allowing the subagent to execute operations without approval, including writes to .git, .config/git, .claude, .vscode, .idea, .husky, .cargo, .devcontainer, .yarn, and .mvn. Root and home directory removals such as rm -rf / still prompt as a circuit breaker. See permission modes for details.
+Use bypassPermissions with caution. It skips all permission prompts, allowing the subagent to execute operations without approval, including writes to .git, .claude, .vscode, .idea, and .husky. Root and home directory removals such as rm -rf / still prompt as a circuit breaker. See permission modes for details.
 If the parent uses bypassPermissions or acceptEdits, this takes precedence and cannot be overridden. If the parent uses auto mode, the subagent inherits auto mode and any permissionMode in its frontmatter is ignored: the classifier evaluates the subagent's tool calls with the same block and allow rules as the parent session.
 Preload skills into subagents
 Use the skills field to inject skill content into a subagent's context at startup. This gives the subagent domain knowledge without requiring it to discover and load skills during execution.
@@ -335,7 +335,7 @@ INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 
 # Block SQL write operations (case-insensitive)
-if echo "$COMMAND" | grep -iE '\\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE)\\b' > /dev/null; then
+if echo "$COMMAND" | grep -iE '\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE)\b' > /dev/null; then
   echo "Blocked: Only SELECT queries are allowed" >&2
   exit 2
 fi
@@ -718,7 +718,7 @@ if [ -z "$COMMAND" ]; then
 fi
 
 # Block write operations (case-insensitive)
-if echo "$COMMAND" | grep -iE '\\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE|MERGE)\\b' > /dev/null; then
+if echo "$COMMAND" | grep -iE '\b(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|REPLACE|MERGE)\b' > /dev/null; then
   echo "Blocked: Write operations not allowed. Use SELECT queries only." >&2
   exit 2
 fi
