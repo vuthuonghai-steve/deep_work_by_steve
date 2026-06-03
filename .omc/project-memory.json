@@ -128,6 +128,12 @@
       "type": "file"
     },
     {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/framework.md",
+      "accessCount": 12,
+      "lastAccessed": 1780457578439,
+      "type": "file"
+    },
+    {
       "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/trace_validator.py",
       "accessCount": 10,
       "lastAccessed": 1780448700100,
@@ -153,8 +159,14 @@
     },
     {
       "path": "knowledge/experience/so_sanh_voi_suite/dimension-5-human-in-the-loop-governance.md",
-      "accessCount": 7,
-      "lastAccessed": 1780450147313,
+      "accessCount": 8,
+      "lastAccessed": 1780456190291,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/case-system.md",
+      "accessCount": 8,
+      "lastAccessed": 1780457418649,
       "type": "file"
     },
     {
@@ -164,63 +176,51 @@
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/case-system.md",
-      "accessCount": 6,
-      "lastAccessed": 1780448700343,
-      "type": "file"
-    },
-    {
       "path": "skills/Update-suite/current-suite/ver-3/production-code-reviewer/SKILL.md",
       "accessCount": 6,
       "lastAccessed": 1780448713057,
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/framework.md",
-      "accessCount": 5,
-      "lastAccessed": 1780448706085,
-      "type": "file"
-    },
-    {
       "path": "knowledge/experience/so_sanh_voi_suite/dimension-1-kien-truc-va-layering.md",
-      "accessCount": 5,
-      "lastAccessed": 1780449930628,
+      "accessCount": 6,
+      "lastAccessed": 1780456188207,
       "type": "file"
     },
     {
       "path": "knowledge/experience/so_sanh_voi_suite/dimension-2-pipeline-workflow-pattern.md",
-      "accessCount": 5,
-      "lastAccessed": 1780450012874,
+      "accessCount": 6,
+      "lastAccessed": 1780456189250,
       "type": "file"
     },
     {
       "path": "knowledge/experience/so_sanh_voi_suite/dimension-4-rollback-error-recovery.md",
-      "accessCount": 5,
-      "lastAccessed": 1780450101311,
+      "accessCount": 6,
+      "lastAccessed": 1780456189726,
       "type": "file"
     },
     {
       "path": "knowledge/experience/so_sanh_voi_suite/dimension-7-skill-portability-reusability.md",
+      "accessCount": 6,
+      "lastAccessed": 1780456190956,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-3-quality-gates-validation.md",
       "accessCount": 5,
-      "lastAccessed": 1780450247806,
+      "lastAccessed": 1780456189183,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-6-security-testing.md",
+      "accessCount": 5,
+      "lastAccessed": 1780456190796,
       "type": "file"
     },
     {
       "path": "skills/Update-suite/current-suite/ver-3/skill-architect/SKILL.md",
       "accessCount": 4,
       "lastAccessed": 1780448706003,
-      "type": "file"
-    },
-    {
-      "path": "knowledge/experience/so_sanh_voi_suite/dimension-3-quality-gates-validation.md",
-      "accessCount": 4,
-      "lastAccessed": 1780450065090,
-      "type": "file"
-    },
-    {
-      "path": "knowledge/experience/so_sanh_voi_suite/dimension-6-security-testing.md",
-      "accessCount": 4,
-      "lastAccessed": 1780450197452,
       "type": "file"
     },
     {
@@ -242,15 +242,15 @@
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/fixtures/good/design.md",
-      "accessCount": 2,
-      "lastAccessed": 1780363629994,
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/schema_validator.py",
+      "accessCount": 3,
+      "lastAccessed": 1780457432135,
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/schema_validator.py",
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/fixtures/good/design.md",
       "accessCount": 2,
-      "lastAccessed": 1780448669452,
+      "lastAccessed": 1780363629994,
       "type": "file"
     },
     {
@@ -275,6 +275,12 @@
       "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/rollback_engine.py",
       "accessCount": 2,
       "lastAccessed": 1780448723694,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/skill-suite-comparison/experience-report-ver-1.md",
+      "accessCount": 2,
+      "lastAccessed": 1780457411151,
       "type": "file"
     },
     {

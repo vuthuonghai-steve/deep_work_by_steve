@@ -94,36 +94,76 @@ Three-tier loading system:
 
 ---
 
-## 5. PIPELINE STAGE DEFINITIONS (6-SKILL CLOSED-LOOP ARCHITECTURE)
+## 5. PIPELINE STAGE DEFINITIONS (HYBRID ARCHITECTURE)
 
-Hệ thống Suite `ver-2` thiết lập một quy trình khép kín, xoay vòng chặt chẽ bao gồm **6 kỹ năng phối hợp**:
+Hệ thống Suite **ver-3 hybrid** bao gồm **5 stages + Security + Human Gate**:
 
-| Stage | Skill | Input | Output | Key Sections / Chức năng |
-|-------|-------|-------|--------|--------------------------|
-| **0** | `skill-explorer` | Ý tưởng + Tài nguyên thô | `exploration.md` | Phân tích ý định cốt lõi, SCS score, 7 chuẩn vàng. |
-| **0.5** | `skill-knowledge-miner` | `exploration.md` + Tài liệu | `knowledge/domain-handbook.md` | Khai thác sâu tài liệu, triệt tiêu ảo tưởng, trích xuất sự thật. |
-| **1** | `skill-architect` | `exploration.md` + Handbook | `design.md` | Thiết kế Capability, Zone Mapping cụ thể, sơ đồ Mermaid. |
-| **2** | `skill-gatekeeper` | `design.md` + Quality config | `data/quality-matrix.yaml` | Thiết lập 100+ tiêu chí Cổng chất lượng, cài đặt loop_refiner. |
-| **3** | `skill-planner` | `design.md` + Quality matrix | `todo.md` | Phân rã todo.md chặt chẽ, truy vết [TỪ DESIGN §N] PEP 8. |
-| **4** | `skill-builder` | `todo.md` + Design | Mã nguồn + Tests + Pack | Triển khai mã, chạy 1-10 turn self-refine + review-report. |
+| Stage | Skill | Input | Output | Key Sections |
+|-------|-------|-------|--------|--------------|
+| **0** | `skill-explorer` | Ý tưởng + Tài nguyên thô | `exploration.md` | SCS score, 7 chuẩn vàng |
+| **0.5** | `skill-knowledge-miner` | `exploration.md` + Tài liệu | `knowledge/domain-handbook.md` | Khai thác tri thức, triệt tiêu ảo tưởng |
+| **1** | `skill-architect` | `exploration.md` + Handbook | `design.md` | Zone Mapping, Mermaid diagrams |
+| **2** | `skill-gatekeeper` + `skill-security-reviewer` | `design.md` + Quality config | `data/quality-matrix.yaml` + security report | 20-point gates + OWASP |
+| **3** | `skill-planner` | `design.md` + Quality matrix | `todo.md` | Phase breakdown, trace tags |
+| **4** | `skill-builder` | `todo.md` + Design | `.hermes/skills/{name}/` | Implementation + tests |
+| **X** | **Human Confirmation** | `design.md` + `todo.md` | Confirmed/Rejected | **MANDATORY GATE** |
 
-### Sơ đồ Vòng lặp phản hồi Khép kín (Feedback Closed-Loop Flow)
+### Security Review Trigger
+
+| Trigger | Action |
+|---------|--------|
+| Skill has auth/payment/upload | Auto-invoke `skill-security-reviewer` |
+| Documentation-only skill | Skip security review |
+| User explicitly requests | Invoke regardless |
+
+### Gate X: Mandatory Human Confirmation
+
+**Điều kiện vào**: Planner hoàn thành `todo.md`
+
+**Điều kiện qua**:
+```
+✓ User đã đọc design.md §1-10
+✓ User đã đọc todo.md phase breakdown
+✓ User hiểu scope (không thêm scope mới sau confirm)
+✓ User xác nhận: "proceed to build"
+```
+
+**Behavior nếu FAIL**:
+- Skill tạm dừng
+- User nhận notification với danh sách cần điều chỉnh
+- Planner sẵn sàng revise sau khi user feedback
+
+### Sơ đồ Pipeline Mới (Hybrid)
 
 ```mermaid
 graph TD
-    Explorer[Stage 0: Explorer - Đặt vấn đề] --> Miner[Stage 0.5: Knowledge Miner - Khai thác tri thức]
-    Miner --> Architect[Stage 1: Architect - Thiết kế giải pháp]
-    Architect --> Gatekeeper[Stage 2: Gatekeeper - Tiêu chí & Cổng chất lượng]
-    Gatekeeper --> Planner[Stage 3: Planner - Lập kế hoạch]
-    Planner --> Builder[Stage 4: Builder & Reviewer - Xây dựng & Kiểm thử]
+    E[Stage 0: Explorer] --> M[Stage 0.5: Miner]
+    M --> A[Stage 1: Architect]
+    A --> G[Stage 2: Gatekeeper]
+    G -->|Auth/Payment/Upload| S[Security Reviewer]
+    G -->|Skip| P[Stage 3: Planner]
+    S --> P
+    P --> X{Gate X: Human Confirm?}
+    X -->|Yes| B[Stage 4: Builder]
+    X -->|No| Revise[Planner Revises]
+    Revise --> X
+    B --> I[Indexer → .hermes/skills/]
     
-    Builder -- "1. Phản hồi lỗi tĩnh / Fail loop_refiner" --> Gatekeeper
-    Gatekeeper -- "2. Điều chỉnh danh sách nhiệm vụ" --> Planner
-    Builder -- "3. Phát hiện điểm nghẽn kiến trúc lớn" --> Architect
-    Architect -- "4. Đồng bộ hóa lại thiết kế" --> Explorer
+    B -->|1. Static errors| G
+    G -->|2. Adjust tasks| P
+    B -->|3. Architecture bottleneck| A
+    A -->|4. Sync design| E
 ```
 
-*Vòng lặp khép kín này bảo đảm tài nguyên và các vấn đề phát hiện ở giai đoạn sau (Builder/Reviewer) được đẩy ngược lại cho Gatekeeper, Planner và Architect để tự động thiết kế lại và điều chỉnh kế hoạch, triệt tiêu hoàn toàn sự qua loa và thiếu kỷ luật của tác nhân.*
+### Rule Hierarchy
+
+| Priority | Location | Description |
+|----------|----------|-------------|
+| **1** | `_shared/rules/*.mdc` | Suite-wide rules (highest) |
+| **2** | `{skill}/SKILL.md` | Skill-specific overrides |
+| **3** | `_shared/knowledge/*.md` | Domain knowledge (lowest) |
+
+**Reference**: `_shared/rules/suite-rules.mdc` for conflict resolution.
 
 ---
 
@@ -205,66 +245,28 @@ MAJOR.MINOR.PATCH
 
 ---
 
-## 10. 50-POINT MASTER QUALITY GATES SPECIFICATION (ĐẶC TẢ CỔNG CHẤT LƯỢNG CHỦ THỂ)
+## 10. 20-POINT QUALITY GATES (HYBRID ARCHITECTURE)
 
-Để bảo đảm mọi Kỹ năng (Skill) được tạo ra đạt chất lượng Production-grade tuyệt đối và triệt tiêu tính cẩu thả, hời hợt của AI Agent, bộ suite áp dụng **Hệ thống Cổng chất lượng 50 Tiêu chí nghiêm ngặt** chia đều cho 5 Phân lớp:
+**Tham khảo đầy đủ**: `_shared/rules/quality-gates.mdc`
 
-### A. Stage 0: Explorer (Khai phá Nghiệp vụ) — 10 Tiêu chí
-*   **[EXP-01] Business Intent**: Làm rõ nỗi đau nghiệp vụ cốt lõi, người dùng mục tiêu và hành vi kỳ vọng của Kỹ năng.
-*   **[EXP-02] Golden Standards Assessment**: Đánh giá Kỹ năng trên tất cả 7 Tiêu chuẩn Vàng (Reusability, Composability, Maintainability, Security, Context Economics, Portability, Reliability).
-*   **[EXP-03] SCS Score Calculation**: Đo lường định lượng SCS (Skill Complexity Score) dựa trên 4 biến số thực tế, có giải trình số liệu rõ ràng.
-*   **[EXP-04] Decomposed Pivot**: Nếu điểm SCS > 3.0, bắt buộc phải có phương án phân rã Kỹ năng thành các Micro-skills và vẽ sơ đồ phối hợp.
-*   **[EXP-05] Security Script Sandbox**: Quy định môi trường thực thi biệt lập (Docker/gVisor) cho các script đi kèm.
-*   **[EXP-06] Injection Defense**: Thiết lập luật ranh giới XML để cô lập đầu vào thô và chống Prompt Injection.
-*   **[EXP-07] Active Resource Mining**: Phải tra cứu mã nguồn thực tế vàbest practices bên ngoài để thu thập mã mẫu, không tự bịa ra tri thức.
-*   **[EXP-08] Grouped Resources**: Phân loại và lưu trữ tài nguyên thu thập được vào các thư mục con có cấu trúc dưới `.skill-context/{name}/resources/`.
-*   **[EXP-09] Exploration Schema Pass**: Chạy `schema_validator.py` trên `exploration.md` đạt 100% PASS đối chiếu với `exploration.schema.yaml`.
-*   **[EXP-10] Vietnamese Translation**: Dịch toàn bộ thuật ngữ chuyên môn và tóm tắt sang tiếng Việt chuẩn kỹ thuật.
+### Tóm tắt 20 Tiêu chí (4 per Stage)
 
-### B. Stage 1: Architect (Thiết kế Kiến trúc) — 10 Tiêu chí
-*   **[ARC-01] Problem Statement (§1)**: Mô tả rõ ràng ngữ cảnh, nỗi đau kỹ thuật, giải pháp cụ thể và phạm vi thiết kế.
-*   **[ARC-02] 3 Pillars Map (§2)**: Mô tả đầy đủ 3 Trụ cột (Knowledge, Process, Guardrails) của Kỹ năng.
-*   **[ARC-03] Specific Zone Mapping (§3)**: Bảng Zone Mapping phải định nghĩa tên file cụ thể, tuyệt đối cấm dùng placeholder như "...", "xxx", "tùy chọn".
-*   **[ARC-04] Folder Mindmap (§4)**: Sơ đồ Mermaid mindmap biểu diễn trực quan cấu trúc thư mục của Kỹ năng đúng cú pháp.
-*   **[ARC-05] Sequence Flow (§5)**: Sơ đồ Mermaid sequence biểu diễn chính xác luồng chạy nghiệp vụ, các bước kiểm tra và các điểm quyết định.
-*   **[ARC-06] Interaction Points (§6)**: Đặc tả các lệnh gọi, đối số truyền vào và kết quả đầu ra mong đợi.
-*   **[ARC-07] Progressive Disclosure (§7)**: Định nghĩa rõ ràng 3 Tiers load tài nguyên tĩnh (Tier 1: Mandatory, Tier 2: Conditional, Tier 3: On-Demand).
-*   **[ARC-08] Risk Matrix (§8)**: Chỉ ra ít nhất 3 rủi ro kỹ thuật nghiêm trọng kèm theo giải pháp giảm thiểu (Mitigation) cụ thể.
-*   **[ARC-09] Open Questions (§9)**: Liệt kê các điểm chưa rõ cần khảo sát thêm và kế hoạch giải quyết.
-*   **[ARC-10] Design Schema Pass**: Chạy `schema_validator.py` trên `design.md` đạt 100% PASS đối chiếu với `design.schema.yaml`.
+| Stage | Criteria | Mô tả |
+|-------|----------|--------|
+| **0: Explorer** | EXP-01 → EXP-04 | Business Intent, Golden Standards, SCS Score, Schema Pass |
+| **1: Architect** | ARC-01 → ARC-04 | Problem Statement, Zone Mapping, Mermaid, Schema Pass |
+| **2: Gatekeeper** | GAT-01 → GAT-04 + SEC-01 → SEC-04 | Quality Matrix, Security Review, No Ambiguities, Handoff |
+| **3: Planner** | PLN-01 → PLN-04 | Trace Tags, DAG, Resource Audit, Human Gate Ready |
+| **4: Builder** | BLD-01 → BLD-04 | Zone Contract, Token Budget, Placeholder, Human Confirmed |
 
-### C. Stage 2: Planner (Lập kế hoạch Triển khai) — 10 Tiêu chí
-*   **[PLN-01] Resource Readiness Audit**: Bảng đánh giá tính sẵn sàng của các tài nguyên gốc trước khi lập kế hoạch (Rich vs Thin).
-*   **[PLN-02] Context Integrity Check**: Cấm lập kế hoạch khi tài nguyên ở trạng thái "Thin" hoặc thiếu tài liệu critical mà không có task bổ sung tài nguyên.
-*   **[PLN-03] Phased Roadmap**: Phân rã kế hoạch thành ít nhất 3-5 Phase độc lập theo trình tự logic.
-*   **[PLN-04] Traceability Compliance**: Mọi task lập ra bắt buộc phải có Trace Tag trỏ ngược về mục thiết kế tương ứng (ví dụ: `[TỪ DESIGN §3]`).
-*   **[PLN-05] Extra Suggestion Label**: Các task do Agent đề xuất thêm không có trong thiết kế phải dán nhãn `[GỢI Ý BỔ SUNG]`.
-*   **[PLN-06] Blocker Flags**: Đánh dấu các rủi ro hoặc điểm nghẽn bằng thẻ `[CẦN LÀM RÕ]`.
-*   **[PLN-07] Step-by-Step DoD**: Mỗi Phase phải có tiêu chí Definition of Done (DoD) riêng biệt và đo lường được.
-*   **[PLN-08] Dependency Mapping**: Xác định rõ ràng sự phụ thuộc giữa các task, task nào chạy trước, task nào chạy sau.
-*   **[PLN-09] Clean Todo Structure**: Trình bày `todo.md` theo đúng cấu trúc Markdown chuẩn hóa.
-*   **[PLN-10] Todo Schema Pass**: Chạy `schema_validator.py` trên `todo.md` đạt 100% PASS đối chiếu với `todo.schema.yaml`.
+### Ambiguity BLOCKED Gate
 
-### D. Stage 3: Builder (Xây dựng & Đóng gói) — 10 Tiêu chí
-*   **[BLD-01] Zone Completeness**: Tất cả các tệp tin được định nghĩa trong §3 Zone Mapping của thiết kế phải được tạo ra đầy đủ.
-*   **[BLD-02] SKILL.md Frontmatter Rules**: YAML Frontmatter của `SKILL.md` chỉ chứa các metadata chuẩn của hệ thống, cấm nhồi nhét cấu hình tùy biến.
-*   **[BLD-03] XML Anchor Boundaries**: Toàn bộ chỉ thị hành vi, ngữ cảnh phải bọc trong các thẻ XML L0 thống nhất (`<instructions>`, `<context>`, `<output_contract>`).
-*   **[BLD-04] YAML Instructions Block**: Nội dung trong `<instructions>` phải định dạng dưới dạng YAML block với các phân cấp `must`, `must_not` rõ ràng.
-*   **[BLD-05] Path Substitution**: Luôn sử dụng biến môi trường `${CLAUDE_SKILL_DIR}` để gọi các script bổ trợ đi kèm, tuyệt đối cấm hardcode đường dẫn tuyệt đối cá nhân.
-*   **[BLD-06] Exception Boundary**: Mọi tác vụ I/O, gọi file/mạng trong scripts phải bọc try/except an toàn, cấm nuốt lỗi bằng `except: pass`.
-*   **[BLD-07] Context Managers**: Sử dụng cú pháp `with open(...)` khi làm việc với file trong scripts để chống rò rỉ tài nguyên.
-*   **[BLD-08] Docstring & Hygiene**: Mọi class và hàm public phải có docstring giải thích chi tiết, đặt tên đúng chuẩn PEP 8.
-*   **[BLD-09] Placeholder Density**: Mật độ placeholder (như "...", "todo", "xxx") trong toàn bộ gói Kỹ năng phải < 5 (độ phủ tuyệt đối).
-*   **[BLD-10] Unit Test Coverage**: Kỹ năng đi kèm mã nguồn tự động hóa bắt buộc phải có file unit test đi kèm phủ > 90% kịch bản thành công/thất bại.
+Nếu có OPEN `[CẦN LÀM RÕ]` tags → Pipeline BLOCKED cho đến khi resolved.
 
-### E. CASE System & Quality Integration — 10 Tiêu chí
-*   **[INT-01] State-Aware Boot**: Mỗi Kỹ năng bắt đầu chạy bắt buộc phải thực thi `check_status.py` để xác định chính xác checkpoint/phase hiện tại.
-*   **[INT-02] Checkpoint Staleness Guard**: Phát hiện và cảnh báo người dùng nếu checkpoint thiết kế đã bị bỏ quên quá 7 ngày hoặc sửa đổi ngoài luồng.
-*   **[INT-03] Automated Handoff Gate**: Chạy `handoff_validator.py` sau mỗi Stage để kiểm tra tự động bằng máy trước khi gửi câu hỏi tương tác cho người dùng.
-*   **[INT-04] Exit Code Compliance**: Tôn trọng tuyệt đối exit codes của validator (0=Pass, 1=Fail, 2=Emergency). Cấm tự ý vượt cổng khi exit 1.
-*   **[INT-05] Reverse Trace Integrity**: Sử dụng `trace_validator.py` để quét sạch các lỗi chính tả Trace Tag tiếng Việt (như `[CẦU LÀM RÕ]`, `[TỪ ĐESIGN]`).
-*   **[INT-06] Programmatic Rollback Engine**: Tích hợp `rollback_engine.py` để tự động sao lưu bối cảnh và revert về checkpoint an toàn khi Gate validation thất bại 3 lần liên tiếp.
-*   **[INT-07] Targeted Refinement Loops**: Vòng lặp sửa lỗi chỉ được phép sửa đổi có mục tiêu tại các dòng/hàm bị báo lỗi, cấm sửa đổi lan man làm phát sinh lỗi thoái lui (regression).
+**Resolution options**:
+- User cung cấp thêm context
+- Architect đưa ra fallback assumption (với warning)
+- PM Agent quyết định nếu là ambiguity về nghiệp vụ
 *   **[INT-08] Quality Gatekeeper Integration**: Sử dụng chính Kỹ năng `production-quality-gatekeeper` để quét và chấm điểm chéo các Kỹ năng mới tạo đạt tối thiểu 90% điểm số chất lượng.
 *   **[INT-09] Build Log Completeness**: File `build-log.md` ghi nhận đầy đủ, trung thực từng bước quyết định kỹ thuật và bằng chứng chạy test thành công.
 *   **[INT-10] Sync & Deployment Verification**: Xác minh sự hoạt động ổn định của Kỹ năng sau khi đồng bộ lên không gian làm việc chính thức.
