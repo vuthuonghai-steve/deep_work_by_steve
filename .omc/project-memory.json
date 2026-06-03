@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1780362070387,
+  "lastScanned": 1780449526195,
   "projectRoot": "/home/steve/Work-space/deep_work_by_steve",
   "techStack": {
     "languages": [],
@@ -36,7 +36,7 @@
       "path": "agents",
       "purpose": null,
       "fileCount": 26,
-      "lastAccessed": 1780362070384,
+      "lastAccessed": 1780449526193,
       "keyFiles": [
         "README.md",
         "analyst.md",
@@ -49,7 +49,7 @@
       "path": "data",
       "purpose": "Data files",
       "fileCount": 3,
-      "lastAccessed": 1780362070386,
+      "lastAccessed": 1780449526194,
       "keyFiles": [
         "distilled_draft.yaml",
         "raw_source.xml",
@@ -60,14 +60,14 @@
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1780362070386,
+      "lastAccessed": 1780449526194,
       "keyFiles": []
     },
     "info_temp": {
       "path": "info_temp",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1780362070386,
+      "lastAccessed": 1780449526194,
       "keyFiles": [
         "audit.md",
         "checklist.md",
@@ -80,7 +80,7 @@
       "path": "knowledge",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1780362070387,
+      "lastAccessed": 1780449526195,
       "keyFiles": [
         "README.md",
         "index.md",
@@ -91,14 +91,14 @@
       "path": "repos",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1780362070387,
+      "lastAccessed": 1780449526195,
       "keyFiles": []
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
       "fileCount": 1,
-      "lastAccessed": 1780362070387,
+      "lastAccessed": 1780449526195,
       "keyFiles": [
         "sync-skills.sh"
       ]
@@ -107,7 +107,7 @@
       "path": "skills",
       "purpose": null,
       "fileCount": 1,
-      "lastAccessed": 1780362070387,
+      "lastAccessed": 1780449526195,
       "keyFiles": [
         "AGENTS.md"
       ]
@@ -116,21 +116,45 @@
       "path": "~",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1780362070387,
+      "lastAccessed": 1780449526195,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "skills/Update-suite/current-suite/ver-3/scripts/validate_suite_integrity.py",
-      "accessCount": 12,
-      "lastAccessed": 1780367520044,
+      "accessCount": 13,
+      "lastAccessed": 1780448138344,
       "type": "file"
     },
     {
       "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/trace_validator.py",
+      "accessCount": 10,
+      "lastAccessed": 1780448700100,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/PIPELINE.md",
+      "accessCount": 9,
+      "lastAccessed": 1780448724464,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/workflow.md",
+      "accessCount": 9,
+      "lastAccessed": 1780448725246,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/production-quality-gatekeeper/SKILL.md",
+      "accessCount": 8,
+      "lastAccessed": 1780448732307,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-5-human-in-the-loop-governance.md",
       "accessCount": 7,
-      "lastAccessed": 1780367574172,
+      "lastAccessed": 1780450147313,
       "type": "file"
     },
     {
@@ -140,15 +164,81 @@
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/production-code-reviewer/SKILL.md",
-      "accessCount": 4,
-      "lastAccessed": 1780370693986,
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/case-system.md",
+      "accessCount": 6,
+      "lastAccessed": 1780448700343,
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/production-quality-gatekeeper/SKILL.md",
+      "path": "skills/Update-suite/current-suite/ver-3/production-code-reviewer/SKILL.md",
+      "accessCount": 6,
+      "lastAccessed": 1780448713057,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/knowledge/framework.md",
+      "accessCount": 5,
+      "lastAccessed": 1780448706085,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-1-kien-truc-va-layering.md",
+      "accessCount": 5,
+      "lastAccessed": 1780449930628,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-2-pipeline-workflow-pattern.md",
+      "accessCount": 5,
+      "lastAccessed": 1780450012874,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-4-rollback-error-recovery.md",
+      "accessCount": 5,
+      "lastAccessed": 1780450101311,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-7-skill-portability-reusability.md",
+      "accessCount": 5,
+      "lastAccessed": 1780450247806,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/skill-architect/SKILL.md",
       "accessCount": 4,
-      "lastAccessed": 1780370695229,
+      "lastAccessed": 1780448706003,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-3-quality-gates-validation.md",
+      "accessCount": 4,
+      "lastAccessed": 1780450065090,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/experience/so_sanh_voi_suite/dimension-6-security-testing.md",
+      "accessCount": 4,
+      "lastAccessed": 1780450197452,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/skill-explorer/SKILL.md",
+      "accessCount": 3,
+      "lastAccessed": 1780448669596,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/handoff_validator.py",
+      "accessCount": 3,
+      "lastAccessed": 1780448670920,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/agents/orchestrator-agent.md",
+      "accessCount": 3,
+      "lastAccessed": 1780448708549,
       "type": "file"
     },
     {
@@ -158,15 +248,33 @@
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/handoff_validator.py",
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/schema_validator.py",
       "accessCount": 2,
-      "lastAccessed": 1780363630202,
+      "lastAccessed": 1780448669452,
       "type": "file"
     },
     {
-      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/schema_validator.py",
-      "accessCount": 1,
-      "lastAccessed": 1780363153077,
+      "path": "skills/Update-suite/current-suite/ver-3/skill-knowledge-miner/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1780448670327,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/skill-planner/SKILL.md",
+      "accessCount": 2,
+      "lastAccessed": 1780448671031,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/rules/definition-of-done.mdc",
+      "accessCount": 2,
+      "lastAccessed": 1780448709583,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/rollback_engine.py",
+      "accessCount": 2,
+      "lastAccessed": 1780448723694,
       "type": "file"
     },
     {
@@ -191,6 +299,120 @@
       "path": "skills/Update-suite/updated-suite/scripts/test_suite_workflow.py",
       "accessCount": 1,
       "lastAccessed": 1780383036179,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/schemas/blueprint.json",
+      "accessCount": 1,
+      "lastAccessed": 1780448138411,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/rules/coding-standards.mdc",
+      "accessCount": 1,
+      "lastAccessed": 1780448671408,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursorrules",
+      "accessCount": 1,
+      "lastAccessed": 1780448672142,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/docs/user-admin/PIPELINE-STATE.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448672612,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/agents/ba-validator-agent.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448693027,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/docs/user-admin/ambiguities.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448693730,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/_shared/validators/check_status.py",
+      "accessCount": 1,
+      "lastAccessed": 1780448705297,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/agents/pm-agent.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448707489,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/skill-explorer/knowledge/security-standards.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448713142,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/skills/security-reviewer/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448715481,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/skills/test-writer/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448716156,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/production-quality-gatekeeper/scripts/loop_refiner.py",
+      "accessCount": 1,
+      "lastAccessed": 1780448717477,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/agents/test-agent.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448722612,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/agents/review-agent.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448723381,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/production-code-reviewer/knowledge/google-standards.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448724035,
+      "type": "file"
+    },
+    {
+      "path": "skills/Update-suite/current-suite/ver-3/skill-architect/policy/workflow.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448725018,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/skills/ba-analyzer/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448726858,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/skills/code-reviewer/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448727663,
+      "type": "file"
+    },
+    {
+      "path": "knowledge/ai-agents/repo/ITC-BASE/.cursor/skills/solid-architecture/SKILL.md",
+      "accessCount": 1,
+      "lastAccessed": 1780448728112,
       "type": "file"
     }
   ],
