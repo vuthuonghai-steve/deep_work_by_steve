@@ -77,7 +77,6 @@ deep_work_by_steve/          ← Root workspace
 ├── docs/                    ← Documentation, session summaries, raw drafts
 ├── knowledge/               ← Curated knowledge base
 ├── info_temp/               ← [L7] Raw inbox — ideas, drafts, scratch (không permanent)
-├── .omc/, .omx/             ← [L8] Runtime state — session, plans, mission state
 └── scripts/                 ← Utility scripts (sync-skills.sh, ...)
 ```
 
@@ -293,3 +292,40 @@ agent_protocol:
     - Verify routing map updated nếu có thay đổi structure
     - Report: summary_of_changes + zones_affected + lifecycle_phase_changed
 ```
+
+---
+
+## 11. Karpathy-Inspired Coding Guidelines
+
+Behavioral guidelines to reduce common LLM coding mistakes (caution over speed):
+
+### 1. Think Before Coding
+- **Don't assume. Don't hide confusion. Surface tradeoffs.**
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+- **Minimum code that solves the problem. Nothing speculative.**
+- No features/abstractions beyond what was asked. No speculative configurability.
+- If you write 200 lines and it could be 50, rewrite it.
+- Ask: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+### 3. Surgical Changes
+- **Touch only what you must. Clean up only your own mess.**
+- Don't "improve" adjacent code, comments, or formatting. Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- Remove imports/variables/functions that YOUR changes made unused. Don't touch pre-existing dead code unless asked.
+- Every changed line should trace directly to the user's request.
+
+### 4. Goal-Driven Execution
+- **Define success criteria. Loop until verified.**
+- Transform tasks into verifiable goals (e.g., write/run tests to reproduce bug first).
+- For multi-step tasks, state a brief plan with verification checks for each step:
+  ```
+  1. [Step] → verify: [check]
+  2. [Step] → verify: [check]
+  ```
+- Strong success criteria let you loop independently.
+
