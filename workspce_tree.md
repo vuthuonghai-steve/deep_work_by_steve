@@ -101,6 +101,9 @@ zones:
       - skill-planner-v21
       - spec-generator-redesign
       - build-crud-admin-page
+      - ba-elicitor
+      - ba-analyst
+      - ba-synthesizer
     load_policy: "on_demand"
     note: "Đây là design state — không phải nơi đặt skill package hoàn chỉnh"
 
