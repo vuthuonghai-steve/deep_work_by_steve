@@ -595,19 +595,73 @@ class SkillValidator:
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("="*50)
         
+        # Determine if this is a master orchestrator with physical sub-skills
+        sub_skills = []
+        for entry in os.scandir(self.skill_path):
+            if entry.is_dir() and not entry.name.startswith('.') and entry.name != '__pycache__':
+                if os.path.exists(os.path.join(entry.path, "SKILL.md")):
+                    sub_skills.append(entry)
+
+        # Run checks on this main skill
         self.check_structure()
         self.check_skill_md_constraints()
         self.check_pd_links()
         self.check_file_mapping()
         self.check_placeholder_density()
-        self.check_error_handling() # Fix Medium: Call checking error handling
+        self.check_error_handling() 
         self.check_context_resource_coverage()
         self.check_fidelity_heuristics()
         self.check_todo_cross_reference()
         self.check_trace_tags()
         self.check_format_compliance()
 
+        # If sub-skills exist, recursively validate them
+        if sub_skills:
+            self.log(f"Detected {len(sub_skills)} physical sub-skills inside orchestrator root. Recursively validating:")
+            for sub in sub_skills:
+                self.log(f"\n---> Sub-skill validation start: {sub.name}", "INFO")
+                # Look for matching design/todo inside sub-context if present
+                sub_design = None
+                sub_todo = None
+                if self.design_path:
+                    sub_design_dir = os.path.dirname(self.design_path)
+                    sub_design_candidate = os.path.join(sub_design_dir, sub.name, "design.md")
+                    if os.path.exists(sub_design_candidate):
+                        sub_design = sub_design_candidate
+                if self.todo_path:
+                    sub_todo_dir = os.path.dirname(self.todo_path)
+                    sub_todo_candidate = os.path.join(sub_todo_dir, sub.name, "todo.md")
+                    if os.path.exists(sub_todo_candidate):
+                        sub_todo = sub_todo_candidate
+
+                sub_validator = SkillValidator(
+                    sub.path,
+                    design_path=sub_design,
+                    log_mode=self.log_mode,
+                    strict_context=self.strict_context,
+                    todo_path=sub_todo
+                )
+                sub_validator.report_nested()
+                self.errors.extend([f"[{sub.name}] {err}" for err in sub_validator.errors])
+                self.warnings.extend([f"[{sub.name}] {warn}" for warn in sub_validator.warnings])
+                self.reports.extend(sub_validator.reports)
+                self.log(f"---> Sub-skill validation end: {sub.name}\n", "INFO")
+
         print("="*50)
+
+    def report_nested(self):
+        """Perform validation but do not print redundant headers or exit the system."""
+        self.check_structure()
+        self.check_skill_md_constraints()
+        self.check_pd_links()
+        self.check_file_mapping()
+        self.check_placeholder_density()
+        self.check_error_handling() 
+        self.check_context_resource_coverage()
+        self.check_fidelity_heuristics()
+        self.check_todo_cross_reference()
+        self.check_trace_tags()
+        self.check_format_compliance()
         final_status = "PASS" if not self.errors else "FAIL"
         if self.warnings and final_status == "PASS":
             final_status = "PASS (With Warnings)"

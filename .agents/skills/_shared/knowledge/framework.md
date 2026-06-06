@@ -1,155 +1,277 @@
-# MASTER FRAMEWORK — Shared Knowledge Base (Ver_2.0.0 - Clean & Solid)
+# MASTER FRAMEWORK — Shared Knowledge Base
 
-> **Purpose**: Single source of truth for the entire Master Skill Suite Ver_2.0.0
+> **Purpose**: Single source of truth for all 3 meta-skills
 > **Location**: `_shared/knowledge/framework.md` (portable, resolved relative to skills-root)
-> **Usage**: Read this FIRST when working with any stage of the Master Skill Suite (Explorer to Indexer)
+> **Path from SKILL.md**: `../_shared/knowledge/framework.md` (1 level up)
+> **Path from knowledge/*.md**: `../../_shared/knowledge/framework.md` (2 levels up)
+> **Usage**: Read this FIRST when working with skill-architect, skill-planner, or skill-builder
 
 ---
 
-## 🏛️ 1. NGUYÊN LÝ THIẾT KẾ HỆ THỐNG (SYSTEM PRINCIPLES)
+## 1. SEVEN ZONES STRUCTURE
 
-Bộ suite Ver_2.0.0 (Adaptive & Iron-clad) được xây dựng trên 4 nguyên lý Clean & Solid cốt lõi:
+Every skill package MUST follow this directory structure:
 
-1.  **Ranh giới Trách nhiệm Đơn nhất (Single Responsibility Bounded Context):** Mỗi Stage hoạt động như một hộp đen độc lập (Stateless Function). Nó nhận dữ liệu đầu vào chuẩn từ Sổ cái bối cảnh JSON và sản xuất ra đầu ra JSON chuẩn.
-2.  **Sổ cái Bối cảnh có Cấu trúc (Structured JSON State Ledger):** Toàn bộ dữ liệu trung gian trong `.skill-context/{skill-name}/` được định dạng dưới dạng **Structured JSON** đi kèm Schema `.schema.json` nghiêm ngặt để đảm bảo khả năng parse tự động của AI đạt độ chính xác 100%.
-3.  **Cô lập Môi trường & Đóng gói Ngữ cảnh (Context & Environment Isolation):** Tận dụng kiến trúc Subagents và Docker Sandbox để chạy các tác vụ nặng log hoặc có rủi ro bảo mật (như kiểm thử mã nguồn, nghiên cứu sâu) độc lập với session chính.
-4.  **Vòng lặp Phản hồi Tự sửa lỗi (Closed-Loop Diagnostic Feedback):** Lỗi phát hiện từ sandbox tự động được Tester chuyển hóa thành chỉ dẫn sửa đổi có cấu trúc `diagnostic.json` để tự sửa lỗi khép kín (Self-correcting loop) không cần sự can thiệp của người dùng.
+| Zone | Folder | Purpose | Required |
+|------|--------|---------|----------|
+| **Core** | `SKILL.md` | Orchestration, persona, workflow, guardrails | ✅ Always |
+| **Knowledge** | `knowledge/` | References, standards, guidelines | ✅ Usually |
+| **Scripts** | `scripts/` | Executable automation (Python, Bash) | As needed |
+| **Templates** | `templates/` | Output format templates | As needed |
+| **Data** | `data/` | Config, static data, schemas | As needed |
+| **Loop** | `loop/` | Checklists, logs, test cases | ✅ Usually |
+| **Assets** | `assets/` | Images, icons, static files | Rarely |
 
 ---
 
-## 🗺️ 2. KHUNG VÒNG ĐỜI 6 GIAI ĐOẠN (6-STAGE PIPELINE LIFE CYCLE)
-
-Hệ thống phân rã chuỗi cung ứng kỹ năng thành 6 giai đoạn chuyên môn hóa sâu:
+## 2. PIPELINE FLOW
 
 ```
-Stage 0: Explorer        ──► GATE 0 (Duyệt duy nhất bằng Chat UI)
-     │
-     ▼ (Tự động hóa toàn phần phía sau)
-Stage 1: Architect
-     │
-     ▼
-Stage 2: Planner
-     │
-     ▼
-Stage 3: Builder
-     │
-     ▼
-Stage 4: Tester (Spawn Subagent + Docker Sandbox)  ◄──► diagnostic.json (Rollback < 85%)
-     │
-     ▼ (Confidence >= 85%)
-Stage 5: Indexer (Packaging & Knowledge Distiller)
+skill-explorer           skill-architect          skill-planner           skill-builder
+     │                        │                        │                        │
+     ▼                        ▼                        ▼                        ▼
+exploration.md §6   →    design.md §3       →    todo.md tasks      →   <skills-root>/{name}/
+(Arch Recommendations)  (Zone Mapping)         (phase breakdown)          (skill package)
+     │                        │                        │
+     ▼                        ▼                        ▼
+exploration.md §3   →    design.md §7       →    Pre-req table
+(7 Golden Standards)    (PD Plan)               (resources audit)
 ```
 
-### Chi tiết các Stage & Giao thức Dữ liệu (State Ledger Contracts)
+### Handoff Contracts
 
-| Stage | Tên Skill | Trách nhiệm chính | Dữ liệu đầu vào (Input) | Dữ liệu sản xuất (Output) |
-| :--- | :--- | :--- | :--- | :--- |
-| **0** | `skill-explorer` | Khảo sát nghiệp vụ, phân tích rủi ro & sinh bộ tiêu chí chất lượng thực chất | User Request + Knowledge base | `exploration.json`<br>`criteria.json` |
-| **1** | `skill-architect` | Thiết kế cấu trúc tĩnh (7 Zones) và động (sequence flow). Lập Mitigation Map | `exploration.json`<br>`criteria.json` | `blueprint.json` |
-| **2** | `skill-planner` | Phân rã thiết kế thành kế hoạch công việc có cấu trúc đồ thị phi chu kỳ (DAG) | `blueprint.json`<br>`criteria.json` | `dag_plan.json` |
-| **3** | `skill-builder` | Thực thi code thực chất (SKILL.md + 3 file tri thức cốt lõi), cấm mock/placeholder | `dag_plan.json`<br>`blueprint.json`<br>`criteria.json` | Thư mục mã nguồn kỹ năng |
-| **4** | `skill-tester` | Spawn subagent, chạy sandbox, sinh edge cases, tính Confidence Score | `criteria.json`<br>Mã nguồn vừa build | `verification.json`<br>`diagnostic.json` (nếu hỏng) |
-| **5** | `skill-indexer` | Đóng gói kỹ năng, cập nhật llms.txt và trích xuất tri thức kinh nghiệm tự học | `verification.json`<br>Mã nguồn kỹ năng | README.md + llms.txt + `knowledge/experience/` |
+**Explorer → Architect** (exploration.md sections):
+- §3 Seven Golden Standards Assessment → Architect designs Capability Map (§2) and Risks (§8)
+- §4 AI Instruction Standards & Rules → Architect guides loop checklists (§3.loop)
+- §6 Architectural Recommendations → Architect defines Zone Mapping (§3) and Progressive Disclosure Plan (§7)
+
+**Architect → Planner** (design.md sections):
+- §3 Zone Mapping → Planner creates task breakdown
+- §7 Progressive Disclosure → Planner audit resources
+- §8 Risks → Planner creates mitigation tasks
+
+**Planner → Builder** (todo.md):
+- Phase tasks with priorities
+- Pre-requisites table
+- Resource readiness status
 
 ---
 
-## 🤖 3. KIẾN TRÚC MULTI-AGENT & ĐÓNG GÓI NGỮ CẢNH SUBAGENT
+## 3. ZONE MAPPING CONTRACT
 
-Để giải quyết vấn đề loãng ngữ cảnh ở session chính và tận dụng ưu điểm của Subagents (cửa sổ ngữ cảnh riêng biệt), Master Skill Suite Ver_2.0.0 thiết lập **Giao thức Đóng gói Ngữ cảnh Subagent (Subagent Context Isolation Protocol)**:
+When reading `design.md §3`, all skills must follow this format:
 
-```text
-[Main Session (State Manager & Orchestrator)]
-      │
-      ├─► Lọc bỏ nhiễu và logs rác (Noise Erasure)
-      ├─► Đóng gói Context Package (L0 Anchor + JSON Specs)
-      │
-      ▼
-[Subagent Session (Task-Specific Specialist)]
-      │
-      ├─► Tự động hóa Sandbox (Docker/gVisor)
-      ├─► Tạo kịch bản kiểm thử độc lập / Nghiên cứu sâu
-      │
-      ▼
-[Structured Result (JSON)] ──► Báo cáo gọn nhẹ về Main Session
+| Zone | Files cần tạo | Nội dung | Bắt buộc? |
+|------|--------------|----------|-----------|
+| Core | `SKILL.md` | Persona, phases, guardrails | ✅ |
+| Knowledge | `knowledge/xxx.md` | Domain, standards | ✅/❌ |
+| Scripts | `scripts/xxx.py` | Automation tools | ✅/❌ |
+| Templates | `templates/xxx.template` | Output formats | ✅/❌ |
+| Data | `data/xxx.yaml` | Config, schema | ✅/❌ |
+| Loop | `loop/xxx.md` | Checklists, verify rules | ✅/❌ |
+| Assets | N/A | Not needed | ❌ |
+
+**Rules**:
+- "Files cần tạo" column → direct input for task creation
+- "Không cần" → skip that zone
+- Builder MUST NOT add files not in §3 (except with documented rationale)
+
+---
+
+## 4. PROGRESSIVE DISCLOSURE (PD)
+
+Three-tier loading system:
+
+| Tier | Name | When to Load | Examples |
+|------|------|--------------|----------|
+| **Tier 1** | Mandatory | Always, at boot | `SKILL.md`, core knowledge |
+| **Tier 2** | Conditional | When context requires | Domain docs, templates |
+| **Tier 3** | Optional | On-demand | Assets, edge-case references |
+
+**PD in SKILL.md**:
+- Boot Sequence → Tier 1 files only
+- Each Phase → Reference Tier 2 files as needed
+
+---
+
+## 5. PIPELINE STAGE DEFINITIONS (HYBRID ARCHITECTURE)
+
+Hệ thống Suite **ver-3 hybrid** bao gồm **5 stages + Security + Human Gate**:
+
+| Stage | Skill | Input | Output | Key Sections |
+|-------|-------|-------|--------|--------------|
+| **0** | `skill-explorer` | Ý tưởng + Tài nguyên thô | `exploration.md` | SCS score, 7 chuẩn vàng |
+| **0.5** | `skill-knowledge-miner` | `exploration.md` + Tài liệu | `knowledge/domain-handbook.md` | Khai thác tri thức, triệt tiêu ảo tưởng |
+| **1** | `skill-architect` | `exploration.md` + Handbook | `design.md` | Zone Mapping, Mermaid diagrams |
+| **2** | `skill-gatekeeper` + `skill-security-reviewer` | `design.md` + Quality config | `data/quality-matrix.yaml` + security report | 20-point gates + OWASP |
+| **3** | `skill-planner` | `design.md` + Quality matrix | `todo.md` | Phase breakdown, trace tags |
+| **4** | `skill-builder` | `todo.md` + Design | `.hermes/skills/{name}/` | Implementation + tests |
+| **X** | **Human Confirmation** | `design.md` + `todo.md` | Confirmed/Rejected | **MANDATORY GATE** |
+
+### Security Review Trigger
+
+| Trigger | Action |
+|---------|--------|
+| Skill has auth/payment/upload | Auto-invoke `skill-security-reviewer` |
+| Documentation-only skill | Skip security review |
+| User explicitly requests | Invoke regardless |
+
+### Gate X: Mandatory Human Confirmation
+
+**Điều kiện vào**: Planner hoàn thành `todo.md`
+
+**Điều kiện qua**:
+```
+✓ User đã đọc design.md §1-10
+✓ User đã đọc todo.md phase breakdown
+✓ User hiểu scope (không thêm scope mới sau confirm)
+✓ User xác nhận: "proceed to build"
 ```
 
-### 3.1. Tester Subagent (Stage 4)
-*   **Lý do spawn:** Việc chạy Sandbox và sinh edge cases tạo ra log khổng lồ làm đầy ngữ cảnh session chính, đồng thời tăng nguy cơ bị Prompt Injection khi chạy thử code lạ.
-*   **Context Package:** Chỉ nạp `criteria.json` + Thư mục mã nguồn vừa build + file chỉ dẫn `tester_rules.yaml`. Không nạp lịch sử chat thiết kế.
-*   **Hoạt động:** Chạy Sandbox Docker cô lập, tự sinh tối thiểu **2 Edge Cases độc lập**, quét Semantic Placeholders, tính Confidence Score và chỉ trả về file báo cáo chắt lọc JSON.
+**Behavior nếu FAIL**:
+- Skill tạm dừng
+- User nhận notification với danh sách cần điều chỉnh
+- Planner sẵn sàng revise sau khi user feedback
 
-### 3.2. Research Subagent (Stage 0)
-*   **Lý do spawn:** Khi Explorer phân tích công nghệ/API phức tạp mà tài liệu tri thức dự án chưa đầy đủ.
-*   **Context Package:** Chỉ dẫn câu hỏi trọng tâm + đường dẫn mã nguồn/API cần quét.
-*   **Hoạt động:** Quét sâu mã nguồn đích, chắt lọc tri thức thành tệp JSON cô đọng gửi về session chính.
+### Sơ đồ Pipeline Mới (Hybrid)
 
----
+```mermaid
+graph TD
+    E[Stage 0: Explorer] --> M[Stage 0.5: Miner]
+    M --> A[Stage 1: Architect]
+    A --> G[Stage 2: Gatekeeper]
+    G -->|Auth/Payment/Upload| S[Security Reviewer]
+    G -->|Skip| P[Stage 3: Planner]
+    S --> P
+    P --> X{Gate X: Human Confirm?}
+    X -->|Yes| B[Stage 4: Builder]
+    X -->|No| Revise[Planner Revises]
+    Revise --> X
+    B --> I[Indexer → .hermes/skills/]
+    
+    B -->|1. Static errors| G
+    G -->|2. Adjust tasks| P
+    B -->|3. Architecture bottleneck| A
+    A -->|4. Sync design| E
+```
 
-## 🔄 4. GIAO THỨC CHẨN ĐOÁN VÀ PHỤC HỒI CASE (CASE RECOVERY @ 85%)
+### Rule Hierarchy
 
-Khi Tester Subagent phát hiện mã nguồn không đạt chuẩn chất lượng thực chất (chỉ số tự tin calculated < 85%), hệ thống sẽ tự động kích hoạt vòng lặp chẩn đoán rollback khép kín:
+| Priority | Location | Description |
+|----------|----------|-------------|
+| **1** | `_shared/rules/*.mdc` | Suite-wide rules (highest) |
+| **2** | `{skill}/SKILL.md` | Skill-specific overrides |
+| **3** | `_shared/knowledge/*.md` | Domain knowledge (lowest) |
 
-### 4.1. Công thức tính toán chỉ số tự tin thực chất (Fact-Based Confidence Score)
-$$\text{Confidence Score} = 0.4 \times (\text{Sandbox Test Pass Rate}) + 0.3 \times (1 - \text{Semantic Placeholder Density}) + 0.3 \times (\text{Static Analysis \& Lint Status})$$
-*   *Sandbox Test Pass Rate:* Tỷ lệ test case vượt qua (bao gồm cả Edge Cases).
-*   *Semantic Placeholder Density:* Mật độ hàm rỗng, hàm mock cứng hoặc cấu trúc logic thiếu xử lý lỗi. **Bắt buộc = 0 để đạt PASS.**
-*   *Static Analysis & Lint Status:* Trạng thái biên dịch và kiểm tra lỗi tĩnh.
-
-### 4.2. Vòng lặp phản hồi chẩn đoán tự sửa lỗi (Closed-Loop Diagnostic)
-1.  Tester Subagent sinh tệp `diagnostic.json` chứa: ID test case bị hỏng, phân loại lỗi, tệp vật lý + số dòng bị lỗi, log stdout lỗi sandbox và gợi ý định hướng kỹ thuật sửa lỗi.
-2.  Tín hiệu chẩn đoán tự động được chuyển ngược về Stage 1 (Architect) hoặc Stage 2 (Planner).
-3.  Architect/Planner tự động đọc `diagnostic.json`, định vị và cập nhật lại thiết kế/kế hoạch, rồi chuyển giao cho Builder viết lại code.
-4.  Vòng lặp tự sửa lỗi chạy tối đa **3 lần** tự động mà không làm phiền người dùng.
-
----
-
-## 📦 5. MÔ-ĐUN HÓA ĐỘC LẬP & ĐỊNH TUYẾN PIPELINE LINH HOẠT
-
-### 5.1. Loose Coupling (Mô-đun hóa)
-Mỗi Stage được đóng gói thành một mô-đun chức năng độc lập. Có thể chạy độc lập Stage 4 (Tester Subagent) để kiểm tra một skill viết tay bất kỳ bằng cách cung cấp tệp `criteria.json` bên ngoài. Có thể chạy Stage 5 (Indexer) độc lập để đăng ký và trích xuất tri thức từ một báo cáo kiểm thử sẵn có.
-
-### 5.2. Dynamic Re-routing (Định tuyến động)
-*   **Bypass thông minh:** Khi Steve chỉ thay đổi một tài liệu tri thức nhỏ hoặc sửa lỗi cú pháp trong một kỹ năng đang chạy, hệ thống phân tích Context Diff và tự động bỏ qua Stage 0 và Stage 1, đi thẳng từ Stage 2 hoặc Stage 3.
-*   **Re-routing khi lỗi:** Tester tự động phân loại lỗi để re-route về đúng stage phù hợp: lỗi logic thuật toán re-route về Stage 3 (Builder), lỗi cấu trúc/file vật lý re-route về Stage 1 (Architect).
+**Reference**: `_shared/rules/suite-rules.mdc` for conflict resolution.
 
 ---
 
-## 📚 6. QUẢN LÝ VÀ SỬ DỤNG SKILL SAU KHI BUILD (POST-BUILD LIFECYCLE)
+## 6. NAMING CONVENTIONS
 
-Sau khi một kỹ năng được xây dựng thành công, việc quản lý và đưa vào sử dụng phải tuân thủ quy trình an toàn tuyệt đối:
+### Skill Names
+- **Pattern**: `kebab-case` (lowercase, hyphen-separated)
+- ✅ `skill-planner`, `api-integrator`, `flow-design-analyst`
+- ❌ `SkillPlanner`, `skill_planner`, `skill planner`
 
-### 6.1. Đồng bộ Runtime Nguyên tử (Staging Atomic Swap Protocol)
-Để tránh gây crash cho agent đang hoạt động trong session chính khi chép đè trực tiếp vào `.hermes/skills/`:
-1.  Indexer tạo một bản cài đặt thử nghiệm tại `.hermes/skills/.staging/{skill-name}/`.
-2.  Kích hoạt một dry-run test độc lập tại môi trường staging.
-3.  Nếu vượt qua, thực hiện hoán đổi nguyên tử (atomic swap/mv) thư mục staging thành production runtime an toàn tuyệt đối.
-
-### 6.2. Nạp Tri thức Động theo Nhu cầu (On-Demand Activation)
-Để tiết kiệm 60-90% token budget và giữ session sạch sẽ, kỹ năng mới được đóng gói theo nguyên lý Layering:
-*   `SKILL.md` đóng vai trò là **L0 Anchor (Mục lục Động)**, chỉ chứa metadata kích hoạt (`when_to_use`) và các liên kết markdown tuyệt đối dẫn tới các file tri thức thành phần.
-*   AI agent khi sử dụng kỹ năng sẽ tự động kích hoạt luật và chỉ đọc đúng file tri thức cần thiết (`policy/guidelines.yaml` hoặc `knowledge/concepts.md`) tương ứng với tác vụ hiện tại, thay vì đọc toàn bộ thư mục.
-
----
-
-## 📚 7. GIAO THỨC CHUYỂN HÓA TRI THỨC TỰ HỌC (SELF-LEARNING DISTILLER)
-
-Để hệ thống tự học hỏi và cập nhật từ các sự cố/kinh nghiệm thực tế, Stage 5 (Indexer) vận hành một giao thức trích xuất tri thức tự động:
-1.  Đọc hiểu các logs sandbox, lỗi và các tinh chỉnh thủ công của lập trình viên trong quá trình dry-run.
-2.  Trích xuất bài học kinh nghiệm và mã hóa chúng thành cấu trúc chuẩn `standards.md` của Steve:
-    *   **YAML:** Các ràng buộc cứng (constraints, must, must_not).
-    *   **Markdown:** Giải thích kiến trúc và hiện tượng logic.
-    *   **XML tags:** Các ví dụ Good/Bad minh họa thực tế.
-3.  Ghi trực tiếp vào tệp tri thức tự học `knowledge/experience/{skill-name}.md`.
-4.  Tự động đăng ký tệp tri thức mới vào `knowledge/README.md` để các lượt chạy sau của Suite tự động nạp làm dữ liệu tham chiếu.
+### File Names in Zones
+| Zone | Pattern | Example |
+|------|---------|---------|
+| knowledge/ | `domain-topic.md` | `uml-rules.md`, `api-standards.md` |
+| scripts/ | `action-target.py` | `init-context.py`, `validate-skill.py` |
+| templates/ | `output-format.template` | `design-md.template` |
+| loop/ | `purpose-checklist.md` | `design-checklist.md`, `plan-checklist.md` |
+| data/ | `config-name.yaml` | `skill-config.yaml` |
 
 ---
 
-## 🔬 8. BỘ TIÊU CHÍ ĐÁNH GIÁ THIẾT KẾ ĐẠT CHUẦN (DEFINITION OF DONE)
+## 7. ANTI-HALLUCINATION RULES
 
-Một thiết kế được coi là Đạt chuẩn (Clean & Solid) khi và chỉ khi vượt qua các tiêu chí nghiệm thu kiến trúc sau:
+| Rule | Description | Violation |
+|------|-------------|-----------|
+| **AH1** | Every task MUST trace to source | Task without `[TỪ DESIGN §N]` |
+| **AH2** | Only decompose, don't add requirements | New requirement not in design.md |
+| **AH3** | Don't guess domain knowledge | Writing domain content without resources |
+| **AH4** | Always label sources | No `[TỪ DESIGN]` / `[GỢI Ý]` distinction |
+| **AH5** | Verify resources before completion | Planning complete with missing critical resources |
 
-1.  **ZPI (Zero Placeholder Integrity):** Mật độ placeholder = 0% thực chất (quét phát hiện logic mock cứng).
-2.  **SCR (Self-Correction Rate):** Tự động rollback sửa lỗi logic/biên dịch thành công >= 80% qua diagnostic loop.
-3.  **SAA (Subagent Autonomy):** Tester Subagent chạy hoàn toàn độc lập, không làm tràn log rác về session chính.
-4.  **ECC (Edge-Case Coverage):** Tester tự sinh thành công 2 Edge Cases độc lập để tra tấn mã nguồn.
-5.  **KRL (Knowledge Retrieval Latency):** Số lượng cuộc gọi công cụ đọc file của AI khi sử dụng kỹ năng mới giảm xuống dưới 3 cuộc gọi.
+### Trace Tags Standard
+
+```
+[TỪ DESIGN §N]      — Derived directly from design.md section N (regex: ^\[TỪ DESIGN §[0-9]+(\.[0-9]+)?\]$)
+[GỢI Ý BỔ SUNG]     — Suggested by skill, not in design.md
+[TỪ AUDIT TÀI NGUYÊN] — Generated because resource was missing
+[CẦN LÀM RÕ]        — Needs user clarification
+```
+
+---
+
+## 8. VERSION MANAGEMENT
+
+All skills use Semantic Versioning:
+
+```
+MAJOR.MINOR.PATCH
+- MAJOR: Breaking changes (output format, workflow)
+- MINOR: Backward-compatible (new features)
+- PATCH: Bug fixes, documentation
+```
+
+**Version update rules**:
+- New section (§11, §12) → MINOR
+- Zone Mapping format change → MAJOR
+- Typo fix, add example → PATCH
+
+---
+
+## 9. CONTEXT DIRECTORY STRUCTURE
+
+```
+.skill-context/{skill-name}/
+├── design.md        # Architect's output (INPUT)
+├── todo.md          # Planner's output (INPUT)
+├── build-log.md     # Builder's output (EVIDENCE)
+├── resources/       # User-provided domain docs (INPUT)
+├── data/            # Rule configs, scoring matrix (INPUT)
+└── loop/            # Prior checks, phase logs (SUPPORTIVE)
+```
+
+### Resource Priority Classification
+
+| Priority | Contents | Must Appear In |
+|----------|----------|----------------|
+| **Critical** | design.md, todo.md, resources/*, data/* | Resource Usage Matrix |
+| **Supportive** | loop/*, proof/snapshots | Optional |
+
+---
+
+## 10. 20-POINT QUALITY GATES (HYBRID ARCHITECTURE)
+
+**Tham khảo đầy đủ**: `_shared/rules/quality-gates.mdc`
+
+### Tóm tắt 20 Tiêu chí (4 per Stage)
+
+| Stage | Criteria | Mô tả |
+|-------|----------|--------|
+| **0: Explorer** | EXP-01 → EXP-04 | Business Intent, Golden Standards, SCS Score, Schema Pass |
+| **1: Architect** | ARC-01 → ARC-04 | Problem Statement, Zone Mapping, Mermaid, Schema Pass |
+| **2: Gatekeeper** | GAT-01 → GAT-04 + SEC-01 → SEC-04 | Quality Matrix, Security Review, No Ambiguities, Handoff |
+| **3: Planner** | PLN-01 → PLN-04 | Trace Tags, DAG, Resource Audit, Human Gate Ready |
+| **4: Builder** | BLD-01 → BLD-04 | Zone Contract, Token Budget, Placeholder, Human Confirmed |
+
+### Ambiguity BLOCKED Gate
+
+Nếu có OPEN `[CẦN LÀM RÕ]` tags → Pipeline BLOCKED cho đến khi resolved.
+
+**Resolution options**:
+- User cung cấp thêm context
+- Architect đưa ra fallback assumption (với warning)
+- PM Agent quyết định nếu là ambiguity về nghiệp vụ
+*   **[INT-08] Quality Gatekeeper Integration**: Sử dụng chính Kỹ năng `production-quality-gatekeeper` để quét và chấm điểm chéo các Kỹ năng mới tạo đạt tối thiểu 90% điểm số chất lượng.
+*   **[INT-09] Build Log Completeness**: File `build-log.md` ghi nhận đầy đủ, trung thực từng bước quyết định kỹ thuật và bằng chứng chạy test thành công.
+*   **[INT-10] Sync & Deployment Verification**: Xác minh sự hoạt động ổn định của Kỹ năng sau khi đồng bộ lên không gian làm việc chính thức.
+
+---
+
+> **Last Updated**: 2026-05-03
+> **Maintained By**: Meta-Skill Suite

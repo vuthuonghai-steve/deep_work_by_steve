@@ -1,15 +1,15 @@
 ---
-spec_version: "1.0.0"
+spec_version: "3.0.0"
 skill_name: "skill-planner"
 based_on:
   - "CLAUDE.md AI-First Documentation Standard v1.0"
-  - "skill-architect/SPEC.md v1.0"
-  - "Agent Skill Framework architure.md v2.0"
-last_updated: "2026-05-15"
+  - "skill-architect/SPEC.md v3.0"
+  - "Agent Skill Framework architecture.md v3.0.0"
+last_updated: "2026-05-31"
 maintained_by: "Steve Void Team"
 ---
 
-# skill-planner Technical Specification
+# skill-planner Technical Specification (Ver_3.0.0 - Physical Micro-skills)
 
 ## 1. Semantic Questions
 

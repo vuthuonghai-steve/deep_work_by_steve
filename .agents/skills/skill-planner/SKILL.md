@@ -14,30 +14,40 @@ must:
   - mark blockers with [CẦN LÀM RÕ]
   - preserve design.md as sole ground truth
   - achieve resource_completeness before marking ready_for_builder status
-  - run the core_case.py status check at startup before taking any actions
+  - run the status check and read `.skill-context/suite_config.yaml` at startup
+  - verify Stage 1.5 Quality Gate compliance: must find `.skill-context/{skill-name}/quality-matrix.yaml` before planning
+  - enforce the Cognitive Agentic Skill Paradigm: all planned tasks must focus on building the LLM's reasoning/cognitive layers (L0-L1 in SKILL.md, L2 in knowledge/, L3 in loop/) rather than procedural code
+  - plan Python scripts in `scripts/` ONLY for primitive tasks (I/O, SHA256/entropy, external APIs)
+  - if SCS >= 3.0 or micro-skills are defined, implement Recursive Physical Micro-skills planning:
+    - create a separate `todo.md` under `.skill-context/{skill-name}/{micro-skill-name}/todo.md` for each micro-skill
+    - create a Master orchestrator `todo.md` at `.skill-context/{skill-name}/todo.md`
 must_not:
   - invent requirements not in design.md
   - mark ready_for_builder when blockers are unresolved
   - skip resource audit for critical documents
   - add new zones or files outside design.md §3 Zone Mapping
+  - skip Stage 1.5 Quality Gate validation
+  - plan heavy business or synthesis logic in procedural Python scripts
 </instructions>
 
 <context>
 ### Boot Sequence
 1. Read `SKILL.md` (this file) — done
-2. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
-3. Read `../_shared/knowledge/case-system.md` — CASE System Boot & Gate rules
-4. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
-5. Run `python3 ../_shared/validators/check_status.py .skill-context/{skill-name}/design.md` to verify current phase and checkpoint.
-   - If checkpoint stale (> 7 days) or edited externally, alert user.
-6. Proceed to Step READ (Phase 1)
+2. Load configuration from `.skill-context/suite_config.yaml` (fallback to default if missing)
+3. Check Stage 1.5 Quality Gate: Verify `.skill-context/{skill-name}/quality-matrix.yaml` exists. If not, notify user and stop.
+4. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
+5. Read `../_shared/knowledge/case-system.md` — CASE System Boot & Gate rules
+6. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
+7. Run status checks on design.md
+8. Proceed to Step READ (Phase 1)
 
 ### Pipeline Specification
 - Stage Order: 2
-- Input Contract: `.skill-context/{skill-name}/design.md` (required)
-- Output Contract: `.skill-context/{skill-name}/todo.md`
-- Dependencies: skill-architect
-- Successor Hints: skill-builder (needs design.md, todo.md)
+- Input Contract: `.skill-context/{skill-name}/design.md` and `.skill-context/{skill-name}/quality-matrix.yaml`
+- Output Contract: `.skill-context/{skill-name}/todo.md` (and sub-plans if SCS >= 3.0)
+- Dependencies: skill-architect & production-quality-gatekeeper (must pass Stage 1.5)
+- Successor Hints: skill-builder (needs design.md, todo.md, quality-matrix.yaml)
+
 
 ### Routing Map (Progressive Disclosure)
 - **Tier 1 (Boot)**:

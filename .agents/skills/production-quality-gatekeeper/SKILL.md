@@ -9,7 +9,7 @@ user-invocable: true
 
 <instructions>
 must:
-  - run the core_case.py status check at startup before taking any actions
+  - run the check_status.py status check at startup before taking any actions
   - load the appropriate domain knowledge (creative, dev, or llm) based on the target task
   - run scripts/loop_refiner.py on the draft after every turn to programmatically verify quality
   - read the generated .skill-context/production-quality-gatekeeper/feedback.yaml upon loop failure (exit 1)
@@ -31,6 +31,13 @@ must_not:
    - If checkpoint stale (> 7 days), warn user.
 5. Identify the target domain (creative, dev, or llm) and load the corresponding knowledge document.
 6. Proceed to Phase 1: Quality Criteria Synthesis
+
+### Pipeline Specification
+- Stage Order: 2
+- Input Contract: `.skill-context/{skill-name}/design.md` (required)
+- Output Contract: `data/quality-matrix.yaml` + installed validation engines under `scripts/`
+- Dependencies: skill-architect (must pass Stage 1 gate)
+- Successor Hints: skill-planner (needs quality-matrix.yaml)
 
 ### Progressive Disclosure Plan
 - **Tier 1 (Boot)**:

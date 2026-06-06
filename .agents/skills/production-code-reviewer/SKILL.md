@@ -9,7 +9,7 @@ user-invocable: true
 
 <instructions>
 must:
-  - run the core_case.py status check at startup before taking any actions
+  - run the check_status.py status check at startup before taking any actions
   - load the google-standards.md guidelines under progressive disclosure Tier 2
   - execute scripts/code_auditor.py on the target file to capture static metrics
   - write constructive, respectful review comments explaining 'why' issues occur
@@ -31,6 +31,15 @@ must_not:
    - If checkpoint stale (> 7 days), warn user.
 5. Load the target code file / diff.
 6. Proceed to Phase 1: Code Scanning & Metrics Acquisition
+
+### Pipeline Specification
+- Stage Order: 4
+- Input Contract:
+    - `.skill-context/{skill-name}/design.md` (required)
+    - `.skill-context/{skill-name}/todo.md` (required)
+    - `../production-quality-gatekeeper/data/quality-matrix.yaml` (required)
+- Output Contract: Complete Skill Package under `{skills_root}/{skill-name}` + verification loop pass (exit 0) + review-report.md (exit 0)
+- Dependencies: skill-planner (must pass Stage 3 planning gate)
 
 ### Progressive Disclosure Plan
 - **Tier 1 (Boot)**:

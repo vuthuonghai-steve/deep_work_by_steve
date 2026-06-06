@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 trace_validator.py — Validate trace tag patterns in a Markdown file.
 
 4 valid patterns (from framework.md §7 Anti-Hallucination Rules):
