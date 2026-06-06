@@ -64,6 +64,47 @@ Markdown dùng cho phần cần đọc hiểu tự nhiên:
 
 Markdown phù hợp khi mục tiêu là giúp người và agent hiểu bối cảnh. Không nên dùng Markdown phẳng để chứa toàn bộ luật cứng, checklist, exception và policy vì mô hình dễ xem luật như ghi chú mềm.
 
+#### Quy chuẩn Định dạng Markdown Bắt buộc cho AI Agent & Lập trình viên:
+
+1. **Clickable File Links (Đường dẫn File click được)**:
+   - Bắt buộc tạo liên kết dạng click được cho các file và biểu tượng code (class, function, struct) bằng cú pháp: `[tên_file](file:///đường_dẫn_tuyệt_đối_đến_file)`.
+   - Đối với liên kết dòng cụ thể, sử dụng định dạng: `[tên_file:L123-145](file:///đường_dẫn_file#L123-L145)`.
+   - **QUAN TRỌNG**: Không bao bọc phần text hiển thị của link bằng dấu backticks (ví dụ: `[utils.py](file://...)` là ĐÚNG, `[`utils.py`](file://...)` là SAI vì sẽ làm hỏng khả năng hiển thị link trên giao diện chat/IDE).
+   - Nếu nhúng hình ảnh/video, bắt buộc dùng cú pháp `![caption](/đường_dẫn_tuyệt_đối)`.
+
+2. **GitHub-style Alerts (Các khối cảnh báo)**:
+   - Sử dụng các cảnh báo tiêu chuẩn của GitHub để phân cấp mức độ quan trọng:
+     > [!NOTE]
+     > Dành cho ngữ cảnh nền, chi tiết triển khai hoặc giải thích bổ sung.
+     > [!TIP]
+     > Dành cho tối ưu hiệu năng, thực hành tốt (best practices) hoặc mẹo nâng cao hiệu suất.
+     > [!IMPORTANT]
+     > Dành cho các yêu cầu bắt buộc, các bước quan trọng phải nhớ.
+     > [!WARNING]
+     > Cảnh báo về thay đổi lớn (breaking changes), vấn đề tương thích hoặc lỗi tiềm ẩn.
+     > [!CAUTION]
+     > Cảnh báo rủi ro cao có thể gây mất mát dữ liệu hoặc vi phạm bảo mật.
+
+3. **Code & Diffs (Khối mã và So sánh thay đổi)**:
+   - Chỉ định ngôn ngữ rõ ràng cho các khối code (ví dụ: ````typescript ... ````).
+   - Sử dụng khối `diff` để mô tả trực quan các thay đổi của code. Đánh dấu dòng thêm mới bằng `+` và dòng bị xóa/thay thế bằng `-`:
+     ```diff
+     - old_function_name()
+     + new_function_name()
+       unchanged_line()
+     ```
+
+4. **Mermaid Diagrams (Biểu đồ luồng)**:
+   - Sử dụng khối mã `mermaid` để trực quan hóa luồng dữ liệu, quan hệ hoặc kiến trúc.
+   - Để tránh lỗi cú pháp, bọc các nhãn chứa ký tự đặc biệt trong dấu ngoặc kép (ví dụ: `id["Nhãn (thông tin bổ sung)"]` thay vì không bọc) và tránh dùng các thẻ HTML bên trong nhãn.
+
+5. **Tables (Bảng dữ liệu)**:
+   - Sử dụng định dạng bảng Markdown tiêu chuẩn để trình bày dữ liệu có tính chất so sánh, đối chiếu hoặc cấu trúc đa chiều nhằm tối ưu khả năng quét thông tin của mô hình và con người.
+
+6. **Carousels (Trình diễn slide)**:
+   - Sử dụng khối mã ```carousel để nhóm các nội dung liên quan (ảnh mockup, diff code, sơ đồ) cần hiển thị tuần tự. Phân tách các slide bằng comment HTML `<!-- slide -->`.
+
+
 ### 3.2 YAML
 
 YAML dùng cho tri thức có tính cấu hình, policy hoặc schema hành vi:
