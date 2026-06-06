@@ -1,100 +1,82 @@
 ---
 name: skill-planner
-description: 'Doc ban thiet ke kien truc (design.md) va tao ke hoach trien khai chi tiet (todo.md). Trigger khi user noi: "lap ke hoach skill", "tao todo.md", "phan ra task tu design.md", "trace design -> task". Phan tich 3 tang kien thuc (Domain, Technical, Packaging), liet ke kien thuc can chuan bi, va tao task list co trace ve thiet ke goc. Skill nay la #2 trong bo Master Skill Suite (Architect -> Planner -> Builder).'
-category: meta
-version: "4.0.0"
-case_system: true
-pipeline:
-  stage_order: 2
-  input_contract:
-    - type: file
-      path: ".skill-context/{skill-name}/design.md"
-      required: true
-  output_contract:
-    - type: file
-      path: ".skill-context/{skill-name}/todo.md"
-      format: markdown
-  dependencies:
-    - skill-architect
-  successor_hints:
-    - skill: skill-builder
-      needs: [design.md, todo.md]
-progressive_disclosure:
-  tier1:
-    - path: "SKILL.md"
-      base: "skill_dir"
-    - path: "../_shared/knowledge/framework.md"
-      base: "skill_dir"
-    - path: "knowledge/case-system.md"
-      base: "skill_dir"
-      triggers: [boot_sequence, entering_planning]
-    - path: "scripts/check_status.py"
-      base: "skill_dir"
-      triggers: [boot_sequence]
-    - path: "knowledge/format-standards.md"
-      base: "skill_dir"
-      triggers: [boot_sequence]
-  tier2:
-    - path: "knowledge/architect.md"
-      base: "skill_dir"
-      load_when: "Step READ (audit design.md)"
-    - path: "knowledge/skill-packaging.md"
-      base: "skill_dir"
-      load_when: "Step ANALYZE (3-tier breakdown)"
-  tier3:
-    - path: "loop/plan-checklist.yaml"
-      base: "skill_dir"
-      load_when: "Before deliver (Quality Gate)"
-    - path: "loop/resume-checklist.yaml"
-      base: "skill_dir"
-      triggers: [resuming_from_checkpoint]
-
-# AI-FIRST SEMANTIC CONFIGURATION
-priority_order:
-  - source_fidelity          # design.md is ground truth
-  - resource_completeness    # resources must be ready before handoff
-  - task_traceability        # every task must trace to design source
-  - user_clarification      # blockers require user input
-  - minimal_invention        # only decompose, never add requirements
-
-constraints:
-  must:
-    - trace every task to design.md section (G1)
-    - label sources explicitly (G2)
-    - mark blockers with [CẦN LÀM RÕ]
-    - preserve design.md as sole ground truth
-    - achieve resource_completeness before ready_for_builder status
-  must_not:
-    - invent requirements not in design.md
-    - mark ready_for_builder when blockers unresolved
-    - skip resource audit for critical documents
-    - add new zones or files outside design.md §3
-
-output_contract:
-  include:
-    - pre_requisites_table       # with Tier, Trace, Status
-    - phase_breakdown            # with priority, dependencies
-    - knowledge_resources_list    # documents and tools
-    - definition_of_done          # completion criteria
-    - notes_with_clarification_flags
-  format: markdown_with_yaml_frontmatter
+description: "Đọc bản thiết kế kiến trúc (design.md) và lập kế hoạch triển khai chi tiết (todo.md)."
+disable-model-invocation: true
+user-invocable: true
 ---
 
+# === BOOT CONFIGURATION (L0 — Anchor Rules) ===
+
 <instructions>
-## 🚨 MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG
-Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
-Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-**Tại Boot**, bạn CHỈ đọc Tier 1 files.
-Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
-Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+must:
+  - trace every task to design.md section using the format: [TỪ DESIGN §N]
+  - label sources explicitly: [TỪ DESIGN §N] vs [GỢI Ý BỔ SUNG]
+  - mark blockers with [CẦN LÀM RÕ]
+  - preserve design.md as sole ground truth
+  - achieve resource_completeness before marking ready_for_builder status
+  - run the status check and read `.skill-context/suite_config.yaml` at startup
+  - verify Stage 1.5 Quality Gate compliance: must find `.skill-context/{skill-name}/quality-matrix.yaml` before planning
+  - enforce the Cognitive Agentic Skill Paradigm: all planned tasks must focus on building the LLM's reasoning/cognitive layers (L0-L1 in SKILL.md, L2 in knowledge/, L3 in loop/) rather than procedural code
+  - plan Python scripts in `scripts/` ONLY for primitive tasks (I/O, SHA256/entropy, external APIs)
+  - if SCS >= 3.0 or micro-skills are defined, implement Recursive Physical Micro-skills planning:
+    - create a separate `todo.md` under `.skill-context/{skill-name}/{micro-skill-name}/todo.md` for each micro-skill
+    - create a Master orchestrator `todo.md` at `.skill-context/{skill-name}/todo.md`
+must_not:
+  - invent requirements not in design.md
+  - mark ready_for_builder when blockers are unresolved
+  - skip resource audit for critical documents
+  - add new zones or files outside design.md §3 Zone Mapping
+  - skip Stage 1.5 Quality Gate validation
+  - plan heavy business or synthesis logic in procedural Python scripts
 </instructions>
 
 <context>
-## Mission Context
-Skill Planner là Phase 2 trong Master Skill Suite: Architect → Planner → Builder.
-Nó nhận design.md từ skill-architect và tạo todo.md cho skill-builder.
-Skill này CHỈ plan — không implement code hay design architecture.
+### Boot Sequence
+1. Read `SKILL.md` (this file) — done
+2. Load configuration from `.skill-context/suite_config.yaml` (fallback to default if missing)
+3. Check Stage 1.5 Quality Gate: Verify `.skill-context/{skill-name}/quality-matrix.yaml` exists. If not, notify user and stop.
+4. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
+5. Read `../_shared/knowledge/case-system.md` — CASE System Boot & Gate rules
+6. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
+7. Run status checks on design.md
+8. Proceed to Step READ (Phase 1)
+
+### Pipeline Specification
+- Stage Order: 2
+- Input Contract: `.skill-context/{skill-name}/design.md` and `.skill-context/{skill-name}/quality-matrix.yaml`
+- Output Contract: `.skill-context/{skill-name}/todo.md` (and sub-plans if SCS >= 3.0)
+- Dependencies: skill-architect & production-quality-gatekeeper (must pass Stage 1.5)
+- Successor Hints: skill-builder (needs design.md, todo.md, quality-matrix.yaml)
+
+
+### Routing Map (Progressive Disclosure)
+- **Tier 1 (Boot)**:
+  - `../_shared/knowledge/framework.md` (7 Zones, Pipeline, Anti-hallucination)
+  - `../_shared/knowledge/case-system.md` (CASE System specifications)
+  - `../_shared/validators/check_status.py` (Universal boot status checker)
+  - `knowledge/format-standards.md` (YAML/XML/Token rules)
+- **Tier 2 (Conditional)**:
+  - `knowledge/architect.md` (Load when: Step READ — audit design.md)
+  - `knowledge/skill-packaging.md` (Load when: Step ANALYZE — 3-tier breakdown)
+- **Tier 3 (On-Demand)**:
+  - `loop/plan-checklist.yaml` (Before deliver — Quality Gate)
+  - `loop/resume-checklist.yaml` (Resuming checkpoint)
+
+### Mission Context
+Skill Planner is Phase 2 in the Master Skill Suite: Architect → Planner → Builder.
+It receives design.md from skill-architect and creates todo.md for skill-builder.
+It ONLY plans — no implementation code or architecture design is created here.
 </context>
+
+<output_contract>
+include:
+  - pre_requisites_table (with Tier, Trace, Status)
+  - phase_breakdown (with priority, dependencies)
+  - knowledge_resources_list (documents and tools)
+  - definition_of_done (completion criteria)
+  - notes_with_clarification_flags
+format: markdown_with_yaml_frontmatter
+</output_contract>
 
 ---
 

@@ -53,18 +53,38 @@ class TodoValidator:
     def validate(self) -> bool:
         """Run all validation checks. Returns True if valid."""
         if not self.filepath.exists():
-            self.errors.append(f"File not found: {self.filepath}")
+            self.errors.append(f"Path not found: {self.filepath}")
             return False
 
-        content = self.filepath.read_text(encoding="utf-8")
+        if self.filepath.is_dir():
+            # Directory mode: find master todo.md and any sub todo.md files
+            master_todo = self.filepath / "todo.md"
+            if not master_todo.exists():
+                self.errors.append(f"Master todo.md not found in directory: {self.filepath}")
+                return False
+            
+            self.log(f"Validating Master todo.md: {master_todo}")
+            self._validate_file(master_todo)
 
+            # Find sub todo.md files
+            for p in self.filepath.iterdir():
+                if p.is_dir() and (p / "todo.md").exists():
+                    sub_todo = p / "todo.md"
+                    self.log(f"Validating Sub-skill todo.md: {sub_todo}")
+                    self._validate_file(sub_todo)
+        else:
+            self._validate_file(self.filepath)
+
+        return len(self.errors) == 0
+
+    def _validate_file(self, filepath: Path):
+        """Validate a single todo.md file."""
+        content = filepath.read_text(encoding="utf-8")
         self._validate_sections(content)
         self._validate_phase_breakdown_columns(content)
         self._validate_trace_tags(content)
         self._validate_priorities(content)
         self._validate_builder_feedback(content)
-
-        return len(self.errors) == 0
 
     def _validate_sections(self, content: str):
         """Check all required sections exist."""

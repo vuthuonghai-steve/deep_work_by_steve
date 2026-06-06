@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 """
 init_context.py — Khởi tạo cấu trúc thư mục .skill-context/{skill-name}/ cho Stage 0: skill-explorer.
-Hỗ trợ cả chế độ khởi tạo bối cảnh JSON đơn lẻ và chế độ Smart Context Splitter (phân rã Micro-skills) bằng JSON.
-Vận hành ĐỘNG 100% bằng cách phân giải các tài nguyên dùng chung từ thư mục _shared một cách di động (portable).
+Hỗ trợ cả chế độ khởi tạo Explorer ban đầu và chế độ Smart Context Splitter để phân rã Micro-skills.
 
 Usage:
     # Chế độ khởi tạo đơn (mặc định)
     python3 init_context.py <skill-name>
 
-    # Chế độ Smart Context Splitter (phân rã Micro-skills hạ nguồn bằng JSON)
-    python3 init_context.py --split .skill-context/knowledge-distiller/exploration.json
+    # Chế độ Smart Context Splitter (phân rã Micro-skills hạ nguồn)
+    python3 init_context.py --split .skill-context/knowledge-distiller/exploration.md
 """
 
 import sys
 import os
 import re
-import json
+import yaml
 import shutil
 from pathlib import Path
 from datetime import datetime, timezone
@@ -42,6 +41,13 @@ def validate_skill_name(name: str) -> bool:
     return bool(KEBAB_CASE_PATTERN.match(name))
 
 
+def replace_placeholders(content: str, replacements: dict[str, str]) -> str:
+    """Replace all placeholders in content."""
+    for placeholder, value in replacements.items():
+        content = content.replace(placeholder, value)
+    return content
+
+
 def safe_create_file(filepath: Path, content: str) -> str:
     """Create file only if it does not exist. Return status string."""
     if filepath.exists():
@@ -50,107 +56,85 @@ def safe_create_file(filepath: Path, content: str) -> str:
     return "CREATED"
 
 
+def parse_frontmatter(filepath: Path):
+    """Parse YAML frontmatter from exploration.md."""
+    try:
+        content = filepath.read_text(encoding="utf-8")
+    except Exception as e:
+        return None, f"Failed to read file: {e}"
+
+    match = re.match(r"^---\s*\n(.*?)\n(?:---|\.\.\.)", content, re.DOTALL)
+    if not match:
+        return None, "No YAML frontmatter found"
+
+    try:
+        data = yaml.safe_load(match.group(1))
+        return data, None
+    except Exception as e:
+        return None, f"YAML parsing error: {e}"
+
+
 def handle_single_init(skill_name: str, project_root: Path, script_dir: Path) -> int:
-    """Initialize a single Stage 0 exploration context using dynamic shared templates."""
+    """Initialize a single Stage 0 exploration context."""
     context_root = project_root / ".skill-context"
     skill_context_dir = context_root / skill_name
     resources_dir = skill_context_dir / "resources"
-
-    # PHÂN GIẢI ĐỘNG THƯ MỤC _SHARED (Portable resolution)
-    shared_dir = script_dir.parent.parent / "_shared"
-    exploration_template_path = shared_dir / "templates" / "exploration.json.template"
-    criteria_template_path = shared_dir / "templates" / "criteria.json.template"
+    template_path = script_dir.parent / "templates" / "exploration.md.template"
 
     now_iso = datetime.now(timezone.utc).isoformat()
+    replacements = {
+        "{skill_name}": skill_name,
+        "{date}": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "{generated_at}": now_iso,
+    }
 
     context_root.mkdir(exist_ok=True)
     skill_context_dir.mkdir(exist_ok=True)
     resources_dir.mkdir(exist_ok=True)
 
     print(f"\nContext directory: {skill_context_dir}")
-    print(f"Shared templates resolved dynamically at: {shared_dir / 'templates'}")
     print("-" * 50)
 
-    # 1. Initialize exploration.json
-    exploration_path = skill_context_dir / "exploration.json"
-    if exploration_template_path.is_file():
-        raw_content = exploration_template_path.read_text(encoding="utf-8")
-        content = raw_content.replace("{skill_name}", skill_name).replace("{generated_at}", now_iso)
+    exploration_path = skill_context_dir / "exploration.md"
+    if template_path.is_file():
+        raw_content = template_path.read_text(encoding="utf-8")
+        content = replace_placeholders(raw_content, replacements)
         status = safe_create_file(exploration_path, content)
-        print(f"  exploration.json     → {status}")
+        print(f"  exploration.md       → {status}")
     else:
-        # Fallback minimal JSON if shared directory is not sync'ed/found
-        fallback_exp = {
-            "$schema": "../_shared/schemas/exploration.schema.json",
-            "metadata": {
-                "skill_name": skill_name,
-                "version": "1.0.0",
-                "created_at": now_iso,
-                "lifecycle_status": "raw"
-            },
-            "problem_statement": {
-                "summary": f"Khảo sát nghiệp vụ cho skill {skill_name}",
-                "context": f"Bối cảnh chi tiết của kỹ năng {skill_name} cần được khảo sát tại Stage 0.",
-                "target_audience": "Hybrid (Human & AI)"
-            },
-            "technical_risks": [],
-            "security_risks": [],
-            "dependencies": []
-        }
-        status = safe_create_file(exploration_path, json.dumps(fallback_exp, indent=2, ensure_ascii=False))
-        print(f"  exploration.json     → {status} (fallback)")
+        fallback = f"# {skill_name} — Exploration\n"
+        status = safe_create_file(exploration_path, fallback)
+        print(f"  exploration.md       → {status}")
 
-    # 2. Initialize criteria.json
-    criteria_path = skill_context_dir / "criteria.json"
-    if criteria_template_path.is_file():
-        raw_content = criteria_template_path.read_text(encoding="utf-8")
-        content = raw_content.replace("{skill_name}", skill_name).replace("{updated_at}", now_iso)
-        status = safe_create_file(criteria_path, content)
-        print(f"  criteria.json        → {status}")
-    else:
-        fallback_crit = {
-            "$schema": "../_shared/schemas/criteria.schema.json",
-            "metadata": {
-                "skill_name": skill_name,
-                "version": "1.0.0",
-                "updated_at": now_iso
-            },
-            "acceptance_criteria": [],
-            "test_cases": []
-        }
-        status = safe_create_file(criteria_path, json.dumps(fallback_crit, indent=2, ensure_ascii=False))
-        print(f"  criteria.json        → {status} (fallback)")
-
-    print(f"\nDone: {resources_dir} and JSON ledgers configured successfully.")
+    print(f"\nDone: {resources_dir} and exploration.md configured successfully.")
     return 0
 
 
 def handle_split_run(exploration_path: Path, project_root: Path) -> int:
-    """Smart Context Splitter - parse exploration.json and generate all micro-skill folders."""
+    """Smart Context Splitter - parse exploration.md and generate all micro-skill folders."""
     if not exploration_path.is_file():
-        print(f"Error: Exploration JSON ledger not found at {exploration_path}")
+        print(f"Error: Exploration file not found at {exploration_path}")
         return 1
 
-    print(f"Parsing exploration ledger: {exploration_path}")
-    try:
-        data = json.loads(exploration_path.read_text(encoding="utf-8"))
-    except Exception as e:
-        print(f"Error parsing JSON: {e}")
+    print(f"Parsing exploration file: {exploration_path}")
+    data, err = parse_frontmatter(exploration_path)
+    if err:
+        print(f"Error: {err}")
         return 1
 
-    metadata = data.get("metadata", {})
-    master_name = metadata.get("skill_name", "master-skill")
     decomposed = data.get("decomposed", False)
     micro_skills = data.get("micro_skills", [])
+    master_name = data.get("skill_name", "master-skill")
 
     if not decomposed or not micro_skills:
-        print("Info: This exploration.json is not flagged for decomposition ('decomposed: true' and 'micro_skills' array needed).")
+        print("Info: This exploration.md is not flagged for decomposition ('decomposed: true' and 'micro_skills' array needed).")
         print("No micro-skills to split.")
         return 0
 
     print(f"\nSmart Context Splitter: Found {len(micro_skills)} Micro-skills from Master '{master_name}'")
     print("=" * 60)
 
+    context_root = project_root / ".skill-context"
     master_resources_dir = exploration_path.parent / "resources"
     now_iso = datetime.now(timezone.utc).isoformat()
     now_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -166,12 +150,12 @@ def handle_split_run(exploration_path: Path, project_root: Path) -> int:
             print(f"  ❌ Skipping invalid micro-skill name: '{name}'")
             continue
 
-        child_context_dir = exploration_path.parent.parent / name
+        child_context_dir = exploration_path.parent / name
         child_resources_dir = child_context_dir / "resources"
 
         # Create child directories
-        child_context_dir.mkdir(exist_ok=True, parents=True)
-        child_resources_dir.mkdir(exist_ok=True, parents=True)
+        child_context_dir.mkdir(exist_ok=True)
+        child_resources_dir.mkdir(exist_ok=True)
 
         # Copy resources from master resources dir to inherit 100% of the mined domain knowledge
         copied_resources = []
@@ -266,7 +250,7 @@ handoff:
 # {name} — Phân Rã Kiến Trúc Micro-Skill
 
 > **Khởi tạo**: {now_date}
-> **Nguồn gốc**: Sổ cái JSON Stage 0 của master skill '{master_name}'
+> **Nguồn gốc**: Báo cáo Stage 0 của master skill '{master_name}'
 > **Bản đồ chỉ dẫn cha**: [master-exploration](file://{exploration_path.resolve()})
 > **Quy tắc đệ quy**: [CẤM PHÂN RÃ] Đây là nút lá của hệ thống.
 
@@ -275,13 +259,17 @@ handoff:
 ## 1. Problem Statement
 
 ### A. Vấn đề thực tế (Pain Points)
+[TỪ EXPLORATION §1 & §3.3]
 Kế thừa từ Master Skill '{master_name}' để giải quyết độc lập tác vụ chuyên biệt sau:
 - **Tác vụ**: {description}
 
 ### B. Vai trò trong Orchestration Flow
+[TỪ EXPLORATION §5]
 Quy hoạch khuyến nghị phân vùng Zones ban đầu: {zones}
 
 ## 2. Capability Map
+
+[TỪ EXPLORATION §3.3 & §4]
 - **Nhiệm vụ nghiệp vụ chính**: {description}
 - **Ràng buộc AI chuyên biệt**: Xem chỉ dẫn tương ứng trong tài liệu resources/ đã kế thừa.
 
@@ -318,9 +306,9 @@ Quy hoạch khuyến nghị phân vùng Zones ban đầu: {zones}
 
 def main() -> int:
     import argparse
-    parser = argparse.ArgumentParser(description="Initialize Stage 0 exploration or Split Micro-skills context using JSON specs")
+    parser = argparse.ArgumentParser(description="Initialize Stage 0 exploration or Split Micro-skills context")
     parser.add_argument("skill_name", nargs="?", help="Skill name in kebab-case")
-    parser.add_argument("--split", help="Path to exploration.json file to perform Smart Context Splitter")
+    parser.add_argument("--split", help="Path to exploration.md file to perform Smart Context Splitting")
     parser.add_argument("--project-root", default=None, help="Override project root")
     args = parser.parse_args()
 

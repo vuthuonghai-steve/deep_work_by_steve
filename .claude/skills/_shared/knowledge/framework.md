@@ -3,7 +3,7 @@
 > **Purpose**: Single source of truth for all 3 meta-skills
 > **Location**: `_shared/knowledge/framework.md` (portable, resolved relative to skills-root)
 > **Path from SKILL.md**: `../_shared/knowledge/framework.md` (1 level up)
-> **Path from knowledge/*.md**: `../../../_shared/knowledge/framework.md` (2 levels up)
+> **Path from knowledge/*.md**: `../../_shared/knowledge/framework.md` (2 levels up)
 > **Usage**: Read this FIRST when working with skill-architect, skill-planner, or skill-builder
 
 ---
@@ -27,18 +27,23 @@ Every skill package MUST follow this directory structure:
 ## 2. PIPELINE FLOW
 
 ```
-skill-architect          skill-planner           skill-builder
+skill-explorer           skill-architect          skill-planner           skill-builder
+     │                        │                        │                        │
+     ▼                        ▼                        ▼                        ▼
+exploration.md §6   →    design.md §3       →    todo.md tasks      →   <skills-root>/{name}/
+(Arch Recommendations)  (Zone Mapping)         (phase breakdown)          (skill package)
      │                        │                        │
      ▼                        ▼                        ▼
-design.md §3       →    todo.md tasks      →   <skills-root>/{name}/
-(Zone Mapping)         (phase breakdown)          (skill package)
-     │                        │
-     ▼                        ▼
-design.md §7       →    Pre-req table
-(PD Plan)               (resources audit)
+exploration.md §3   →    design.md §7       →    Pre-req table
+(7 Golden Standards)    (PD Plan)               (resources audit)
 ```
 
 ### Handoff Contracts
+
+**Explorer → Architect** (exploration.md sections):
+- §3 Seven Golden Standards Assessment → Architect designs Capability Map (§2) and Risks (§8)
+- §4 AI Instruction Standards & Rules → Architect guides loop checklists (§3.loop)
+- §6 Architectural Recommendations → Architect defines Zone Mapping (§3) and Progressive Disclosure Plan (§7)
 
 **Architect → Planner** (design.md sections):
 - §3 Zone Mapping → Planner creates task breakdown
@@ -89,13 +94,76 @@ Three-tier loading system:
 
 ---
 
-## 5. PIPELINE STAGE DEFINITIONS
+## 5. PIPELINE STAGE DEFINITIONS (HYBRID ARCHITECTURE)
+
+Hệ thống Suite **ver-3 hybrid** bao gồm **5 stages + Security + Human Gate**:
 
 | Stage | Skill | Input | Output | Key Sections |
 |-------|-------|-------|--------|--------------|
-| **1** | skill-architect | User requirements | `design.md` | §1-§12 |
-| **2** | skill-planner | `design.md` | `todo.md` | Pre-reqs, Phase Breakdown |
-| **3** | skill-builder | `design.md` + `todo.md` | Skill files | SKILL.md, knowledge/*, loop/* |
+| **0** | `skill-explorer` | Ý tưởng + Tài nguyên thô | `exploration.md` | SCS score, 7 chuẩn vàng |
+| **0.5** | `skill-knowledge-miner` | `exploration.md` + Tài liệu | `knowledge/domain-handbook.md` | Khai thác tri thức, triệt tiêu ảo tưởng |
+| **1** | `skill-architect` | `exploration.md` + Handbook | `design.md` | Zone Mapping, Mermaid diagrams |
+| **2** | `skill-gatekeeper` + `skill-security-reviewer` | `design.md` + Quality config | `data/quality-matrix.yaml` + security report | 20-point gates + OWASP |
+| **3** | `skill-planner` | `design.md` + Quality matrix | `todo.md` | Phase breakdown, trace tags |
+| **4** | `skill-builder` | `todo.md` + Design | `.hermes/skills/{name}/` | Implementation + tests |
+| **X** | **Human Confirmation** | `design.md` + `todo.md` | Confirmed/Rejected | **MANDATORY GATE** |
+
+### Security Review Trigger
+
+| Trigger | Action |
+|---------|--------|
+| Skill has auth/payment/upload | Auto-invoke `skill-security-reviewer` |
+| Documentation-only skill | Skip security review |
+| User explicitly requests | Invoke regardless |
+
+### Gate X: Mandatory Human Confirmation
+
+**Điều kiện vào**: Planner hoàn thành `todo.md`
+
+**Điều kiện qua**:
+```
+✓ User đã đọc design.md §1-10
+✓ User đã đọc todo.md phase breakdown
+✓ User hiểu scope (không thêm scope mới sau confirm)
+✓ User xác nhận: "proceed to build"
+```
+
+**Behavior nếu FAIL**:
+- Skill tạm dừng
+- User nhận notification với danh sách cần điều chỉnh
+- Planner sẵn sàng revise sau khi user feedback
+
+### Sơ đồ Pipeline Mới (Hybrid)
+
+```mermaid
+graph TD
+    E[Stage 0: Explorer] --> M[Stage 0.5: Miner]
+    M --> A[Stage 1: Architect]
+    A --> G[Stage 2: Gatekeeper]
+    G -->|Auth/Payment/Upload| S[Security Reviewer]
+    G -->|Skip| P[Stage 3: Planner]
+    S --> P
+    P --> X{Gate X: Human Confirm?}
+    X -->|Yes| B[Stage 4: Builder]
+    X -->|No| Revise[Planner Revises]
+    Revise --> X
+    B --> I[Indexer → .hermes/skills/]
+    
+    B -->|1. Static errors| G
+    G -->|2. Adjust tasks| P
+    B -->|3. Architecture bottleneck| A
+    A -->|4. Sync design| E
+```
+
+### Rule Hierarchy
+
+| Priority | Location | Description |
+|----------|----------|-------------|
+| **1** | `_shared/rules/*.mdc` | Suite-wide rules (highest) |
+| **2** | `{skill}/SKILL.md` | Skill-specific overrides |
+| **3** | `_shared/knowledge/*.md` | Domain knowledge (lowest) |
+
+**Reference**: `_shared/rules/suite-rules.mdc` for conflict resolution.
 
 ---
 
@@ -177,25 +245,31 @@ MAJOR.MINOR.PATCH
 
 ---
 
-## 10. QUALITY GATES
+## 10. 20-POINT QUALITY GATES (HYBRID ARCHITECTURE)
 
-### Architect → Planner Gate
-- [ ] §3 Zone Mapping has specific filenames (no placeholders)
-- [ ] §7 distinguishes Tier 1 vs Tier 2
-- [ ] §8 has ≥3 risks with mitigation
-- [ ] §9 open questions resolved or flagged
+**Tham khảo đầy đủ**: `_shared/rules/quality-gates.mdc`
 
-### Planner → Builder Gate
-- [ ] All §3 files mapped to specific tasks
-- [ ] Pre-requisites table complete
-- [ ] Resource audit shows "Rich" status
-- [ ] Phase breakdown has priorities and dependencies
+### Tóm tắt 20 Tiêu chí (4 per Stage)
 
-### Builder → Complete Gate
-- [ ] Placeholder density <5 (WARNING at 5-9, FAIL at 10+)
-- [ ] All files in §3 created
-- [ ] Resource Usage Matrix populated
-- [ ] build-log.md contains evidence
+| Stage | Criteria | Mô tả |
+|-------|----------|--------|
+| **0: Explorer** | EXP-01 → EXP-04 | Business Intent, Golden Standards, SCS Score, Schema Pass |
+| **1: Architect** | ARC-01 → ARC-04 | Problem Statement, Zone Mapping, Mermaid, Schema Pass |
+| **2: Gatekeeper** | GAT-01 → GAT-04 + SEC-01 → SEC-04 | Quality Matrix, Security Review, No Ambiguities, Handoff |
+| **3: Planner** | PLN-01 → PLN-04 | Trace Tags, DAG, Resource Audit, Human Gate Ready |
+| **4: Builder** | BLD-01 → BLD-04 | Zone Contract, Token Budget, Placeholder, Human Confirmed |
+
+### Ambiguity BLOCKED Gate
+
+Nếu có OPEN `[CẦN LÀM RÕ]` tags → Pipeline BLOCKED cho đến khi resolved.
+
+**Resolution options**:
+- User cung cấp thêm context
+- Architect đưa ra fallback assumption (với warning)
+- PM Agent quyết định nếu là ambiguity về nghiệp vụ
+*   **[INT-08] Quality Gatekeeper Integration**: Sử dụng chính Kỹ năng `production-quality-gatekeeper` để quét và chấm điểm chéo các Kỹ năng mới tạo đạt tối thiểu 90% điểm số chất lượng.
+*   **[INT-09] Build Log Completeness**: File `build-log.md` ghi nhận đầy đủ, trung thực từng bước quyết định kỹ thuật và bằng chứng chạy test thành công.
+*   **[INT-10] Sync & Deployment Verification**: Xác minh sự hoạt động ổn định của Kỹ năng sau khi đồng bộ lên không gian làm việc chính thức.
 
 ---
 

@@ -1,93 +1,85 @@
 ---
 name: skill-builder
-description: 'Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md). Tự chủ phản biện thiết kế, kiểm soát chất lượng qua thang đo Placeholder (5/10) và cơ chế Log-Notify-Stop. Trigger khi user nói: "build skill", "triển khai skill", "implement design", "tạo skill từ design".'
-category: meta
-version: "4.0.0"
-pipeline:
-  stage_order: 3
-  input_contract:
-    - type: file
-      path: ".skill-context/{skill-name}/design.md"
-      required: true
-    - type: file
-      path: ".skill-context/{skill-name}/todo.md"
-      required: true
-  output_contract:
-    - type: directory
-      path: "{skills_root}/{skill-name}"
-      format: directory
-      note: "Portable path resolved at install time. skills_root is the parent directory of the skill suite."
-  dependencies:
-    - skill-planner
-progressive_disclosure:
-  tier1:
-    - path: "SKILL.md"
-      base: "skill_dir"
-    - path: "../_shared/knowledge/framework.md"
-      base: "skill_dir"
-    - path: "knowledge/format-standards.md"
-      base: "skill_dir"
-  tier2:
-    - path: "knowledge/architect.md"
-      base: "skill_dir"
-      load_when: "Phase 1: PREPARE & Evaluate"
-    - path: "knowledge/build-guidelines.md"
-      base: "skill_dir"
-      load_when: "Phase 3: BUILD phase"
-    - path: "knowledge/anthropic-skill-standards.md"
-      base: "skill_dir"
-      load_when: "Phase 3: BUILD phase (SKILL.md writing)"
-  tier3:
-    - path: "loop/build-checklist.yaml"
-      base: "skill_dir"
-      load_when: "Phase 4: VERIFY (Quality Gate)"
-    - path: "loop/build-log.md.template"
-      base: "skill_dir"
-      load_when: "Phase 5: DELIVER"
-
-# AI-FIRST SEMANTIC CONFIGURATION
-priority_order:
-  - source_fidelity          # design.md + todo.md are ground truth
-  - zone_contract           # only create files in design.md §3
-  - phase_discipline        # execute phase by phase, mark as done
-  - placeholder_control     # maintain <5 placeholders
-  - build_log_completeness  # track every decision
-
-constraints:
-  must:
-    - create ONLY files specified in design.md §3 Zone Mapping
-    - execute todo.md phases in order
-    - mark tasks done only after verification
-    - append to build-log.md with every decision
-    - resolve [CẦN LÀM RÕ] before proceeding
-  must_not:
-    - create files outside design.md §3
-    - skip phases or reorder without user approval
-    - mark task done without evidence
-    - continue after system error (Log-Notify-Stop)
-    - leave placeholder density > 9
-
-output_contract:
-  include:
-    - skill_directory_with_all_zones
-    - build_log_with_execution_trace
-    - resource_inventory
-    - resource_usage_matrix
-    - validation_result
-  format: directory_with_yaml_frontmatter_files
+description: "Kỹ sư triển khai Agent Skill (Senior Implementation Engineer). Thực thi bản thiết kế (design.md) và kế hoạch (todo.md)."
+disable-model-invocation: true
+user-invocable: true
 ---
 
+# === BOOT CONFIGURATION (L0 — Anchor Rules) ===
+
 <instructions>
-## 🚨 MỆNH LỆNH BẮT BUỘC TỪ HỆ THỐNG
-Bạn CHỈ MỚI ĐỌC file `SKILL.md` này. Trí tuệ của bạn chưa được nạp đầy đủ.
-Hệ thống **KHÔNG** tự động nạp các file kiến thức khác trong thư mục.
-**Tại Boot**, bạn CHỈ đọc Tier 1 files.
-Các file Tier 2/3 sẽ được load theo hướng dẫn trong từng Phase tương ứng.
-Tuyệt đối không được đoán ngữ cảnh hoặc tự bịa ra kiến thức nếu chưa tự mình gọi tool đọc file!
+must:
+  - create files specified in design.md §3 Zone Mapping and sub-skill plans
+  - execute todo.md phases in order
+  - mark tasks done only after verification
+  - append to build-log.md with every decision
+  - resolve [CẦN LÀM RÕ] before proceeding
+  - read `.skill-context/suite_config.yaml` at startup to determine the physical destination path (`runtime_dest`) dynamically
+  - verify Stage 3.5 Quality Gate: Ensure `.skill-context/{skill-name}/review-report.md` exists before proceeding to Stage 4 (Verification)
+  - enforce the Cognitive Agentic Skill Paradigm: build the cognitive reasoning layers of the agent skill (L0-L1 in SKILL.md, L2 in knowledge/, L3 in loop/) as persona-driven instructions that empower the AI agent to reason and decide
+  - restrict Python scripts under `scripts/` strictly to system primitives (I/O, entropy, API wrapper, math) without embedding high-level cognitive or business analysis logic
+  - if sub-skills todo.md plans exist in `.skill-context/{skill-name}/{sub-skill}/todo.md`, physically build and install them as separate packages under `runtime_dest/{sub-skill-name}`
+  - automatically generate `scripts/orchestrate.py` in the main Meta-skill `runtime_dest/{meta-skill-name}` to orchestrate sub-skills using shared state files via SSP (State & Signal Protocol)
+must_not:
+  - create files outside design.md §3 Zone Mapping / sub-skill plans
+  - skip phases or reorder without user approval
+  - mark task done without evidence
+  - continue after system error (Log-Notify-Stop)
+  - leave placeholder density > 9
+  - skip Stage 3.5 Quality Gate checks
+  - embed high-level cognitive reasoning, synthesis, or domain analysis logic inside Python scripts
 </instructions>
 
 <context>
-## Mission Context
+### Boot Sequence
+1. Read `SKILL.md` (this file) — done
+2. Load global suite configurations from `.skill-context/suite_config.yaml` to extract target installation paths and OS environment.
+3. Check Stage 3.5 Quality Gate: Verify `.skill-context/{skill-name}/review-report.md` exists. If missing, notify developer and halt.
+4. Read `../_shared/knowledge/framework.md` — 7 Zones, Pipeline
+5. Read `../_shared/knowledge/case-system.md` — CASE System specifications
+6. Read `../_shared/knowledge/format-standards.md` — Formatting specifications
+7. Verify current phase and checkpoint.
+8. Proceed to Phase 1: PREPARE & Evaluate
+
+### Pipeline Specification
+- Stage Order: 3
+- Input Contract:
+    - `.skill-context/{skill-name}/design.md` (required)
+    - `.skill-context/{skill-name}/todo.md` (required, can be recursive folder tree)
+    - `.skill-context/{skill-name}/review-report.md` (required)
+- Output Contract: Complete Skill Packages installed physically under `{runtime_dest}/{skill-name}` and its decoupled children.
+- Dependencies: skill-planner & production-code-reviewer
+
+
+### Routing Map (Progressive Disclosure)
+- **Tier 1 (Boot)**:
+  - `../_shared/knowledge/framework.md` (7 Zones, Pipeline, Anti-hallucination)
+  - `../_shared/knowledge/case-system.md` (CASE System specifications)
+  - `../_shared/validators/check_status.py` (Universal boot status checker)
+  - `knowledge/format-standards.md` (YAML/XML/Token rules)
+- **Tier 2 (Conditional)**:
+  - `knowledge/architect.md` (Load when: Phase 1 — PREPARE & Evaluate)
+  - `knowledge/build-guidelines.md` (Load when: Phase 3 — BUILD phase)
+  - `knowledge/anthropic-skill-standards.md` (Load when: Phase 3 — BUILD phase - SKILL.md writing)
+- **Tier 3 (On-Demand)**:
+  - `loop/build-checklist.yaml` (Phase 4 — VERIFY - Quality Gate)
+  - `loop/build-log.md.template` (Phase 5 — DELIVER)
+
+### Mission Context
+Skill Builder is Phase 3 in the Master Skill Suite: Architect → Planner → Builder.
+It receives design.md and todo.md and builds the final skill package.
+It operates in a strict execution loop with a placeholder count gate (< 5 placeholders).
+</context>
+
+<output_contract>
+include:
+  - skill_directory_with_all_zones
+  - build_log_with_execution_trace
+  - resource_inventory
+  - resource_usage_matrix
+  - validation_result
+format: directory_with_yaml_frontmatter_files
+</output_contract>
 Skill Builder là Phase 3 trong Master Skill Suite: Architect → Planner → Builder.
 Nó nhận design.md từ skill-architect và todo.md từ skill-planner, tạo production-ready Agent Skill.
 Builder là Senior Implementation Engineer — có quyền và trách nhiệm phản biện thiết kế.
@@ -147,9 +139,7 @@ Builder phải scan đúng 4 trace tags chuẩn:
 - `[GỢI Ý BỔ SUNG]` — suggested by Planner, not in design.md
 - `[CẦN LÀM RÕ]` — needs user/Architect/Planner clarification
 
-Legacy tags (fail trên validator):
-- `[GỢI Ý]`, `[TỪ AUDIT]`, `[TỪ AUDIT CUSTOM]`, `[CẦU LÀM RÕ]` (typo)
-
+Legacy tags (fail trên validator — xem framework.md §7 để biết spec canonical):
 → **[⏸️ Gate: Wait for user clarification before proceeding]**
 
 ## Phase 3: BUILD (Phase-Driven)
