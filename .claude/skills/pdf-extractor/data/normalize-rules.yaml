@@ -1,0 +1,31 @@
+# PDF Extractor Normalization Rules
+# Centralized configuration for text normalization
+
+encoding:
+  target: UTF-8
+  fallback: replace-unsafe-chars
+
+line_endings:
+  style: unix  # \n only
+  max_consecutive: 2
+
+whitespace:
+  collapse: true
+  trim_lines: true
+  code_block_indent: preserve
+
+structure:
+  heading_style: atx  # ## syntax
+  list_style: hyphen  # - items
+  code_fence: triple_backtick
+
+markers:
+  table_ambiguous: "[TABLE_AMBIGUOUS]"
+  table_extracted: "[TABLE_EXTRACTED]"
+  image_removed: "[IMAGE_REMOVED]"
+  encrypted: "[ENCRYPTED]"
+  ocr_applied: "[OCR_APPLIED]"
+
+quality:
+  min_confidence: 70
+  max_file_size_mb: 10

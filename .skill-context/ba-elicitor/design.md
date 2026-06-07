@@ -5,7 +5,102 @@ skill_name: "ba-elicitor"
 generated_by: "skill-architect"
 generated_at: "2026-06-06T22:10:00+07:00"
 stage: "architect"
-status: "completed"
+status: "ready_for_planner"
+canonical_source:
+  zone_mapping: "frontmatter.zone_mapping"
+  progressive_disclosure: "frontmatter.progressive_disclosure"
+zone_mapping:
+  core:
+    files:
+      - path: "SKILL.md"
+        file_required: true
+        content_type: "persona-definition"
+    zone_required: true
+  knowledge:
+    files:
+      - path: "knowledge/mindset-keywords.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/elicitation-rules.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/question-framework.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/normalization-logic.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/scope-definition.md"
+        file_required: true
+        content_type: "domain-knowledge"
+    zone_required: true
+  scripts:
+    files: []
+    zone_required: false
+  templates:
+    files:
+      - path: "templates/elicitation-report.md.template"
+        file_required: true
+        content_type: "output-template"
+    zone_required: true
+  data:
+    files: []
+    zone_required: false
+  loop:
+    files:
+      - path: "loop/elicitor-checklist.md"
+        file_required: true
+        content_type: "quality-gate"
+    zone_required: true
+  assets:
+    files: []
+    zone_required: false
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/mindset-keywords.md"
+      base: "skill_dir"
+      load_when: "Pha phân tích khoảng trống và phản biện lượng hóa"
+    - path: "knowledge/elicitation-rules.md"
+      base: "skill_dir"
+      load_when: "Pha phân tích khoảng trống và phản biện lượng hóa"
+    - path: "knowledge/question-framework.md"
+      base: "skill_dir"
+      load_when: "Pha phân tích khoảng trống và phản biện lượng hóa"
+    - path: "knowledge/normalization-logic.md"
+      base: "skill_dir"
+      load_when: "Pha phân tích khoảng trống và phản biện lượng hóa"
+    - path: "knowledge/scope-definition.md"
+      base: "skill_dir"
+      load_when: "Pha phân tích khoảng trống và phản biện lượng hóa"
+  tier3:
+    - path: "templates/elicitation-report.md.template"
+      base: "skill_dir"
+      load_when: "Pha chuẩn bị đóng gói và ghi báo cáo"
+    - path: "loop/elicitor-checklist.md"
+      base: "skill_dir"
+      load_when: "Pha tự kiểm định chất lượng"
+required_sections:
+  - "1_problem_statement"
+  - "2_capability_map"
+  - "3_zone_mapping"
+  - "4_folder_structure"
+  - "5_execution_flow"
+  - "6_interaction_points"
+  - "7_progressive_disclosure"
+  - "8_risks"
+  - "9_open_questions"
+  - "10_metadata"
+handoff:
+  next_stage: "planner"
+  ready_condition:
+    required:
+      frontmatter_valid: true
+      zone_mapping_complete: true
+      required_sections_present: true
+      no_blockers: true
 ---
 
 # 🏛️ Bản Thiết Kế Kiến Trúc: ba-elicitor (Micro-Skill Elicitor)
@@ -64,18 +159,21 @@ capabilities:
 
 ---
 
-## §3. Zone Mapping
+## 3. Zone Mapping
 
-Bản đồ quy hoạch 7 Zones cho micro-skill `ba-elicitor` sau khi build vào thư mục cài đặt gốc `skills/rebuild/ba-elicitor/`. Tuyệt đối không sử dụng tên file placeholder.
+Bản đồ quy hoạch 7 Zones cho micro-skill ba-elicitor sau khi build vào thư mục cài đặt gốc skills/rebuild/ba-elicitor/. Tuyệt đối không sử dụng tên file placeholder.
 
 | Zone | File Path | Mục đích & Nội dung kỹ thuật | Trace |
 |:---|:---|:---|:---|
-| **L0: Core** | `skills/rebuild/ba-elicitor/SKILL.md` | L0 Anchor: Chứa Persona Elicitor, quy trình 4 pha chi tiết, các chỉ đạo bắt buộc (must/must_not), các giới hạn vận hành (Limitations) và tình huống không nên dùng (When not to use). | [EXPLORATION §6.1] |
-| **L1: Knowledge** | `skills/rebuild/ba-elicitor/knowledge/mindset-keywords.md` | Định nghĩa 6 từ khóa tư duy cốt lõi (Systems Thinking, Root Cause, MECE, First Principles, Impact Analysis, Structural Decomposition) cùng các vector anchors tương ứng để Agent kích hoạt tư duy phản biện. | [EXPLORATION §2 VÀ §4.A] |
-| **L1: Knowledge** | `skills/rebuild/ba-elicitor/knowledge/elicitation-rules.md` | Chứa các quy tắc chuẩn hóa thông tin thô, logic bóc tách NFR định lượng, và bộ câu hỏi 5W1H mẫu cho từng loại hình tác vụ. | [EXPLORATION §4.A] |
-| **L2: Templates** | `skills/rebuild/ba-elicitor/templates/elicitation-report.md.template` | Mẫu cấu trúc Markdown chuẩn cho đầu ra `elicitation-report.md`, định nghĩa các section bắt buộc phải có để Agent điền dữ liệu. | [EXPLORATION §6.1] |
-| **L3: Data** | `skills/rebuild/ba-elicitor/data/input-schema.yaml` | Lược đồ dữ liệu YAML để cấu trúc hóa đầu vào trong trường hợp người dùng cung cấp thông tin dạng terrminal JSON/YAML thay vì free-text. | [EXPLORATION §6.1] |
-| **L4: Loop** | `skills/rebuild/ba-elicitor/loop/elicitor-checklist.md` | Danh sách kiểm định chất lượng tự động trước khi xuất xưởng báo cáo. Agent phải tự chấm điểm đạt 100% checklist mới được ghi file kết quả. | [EXPLORATION §6.1] |
+| **L0: Core** | `SKILL.md` | L0 Anchor: Chứa Persona Elicitor, quy trình 4 pha chi tiết, các chỉ đạo bắt buộc (must/must_not), các giới hạn vận hành (Limitations) và tình huống không nên dùng (When not to use). | [EXPLORATION §6.1] |
+| **L1: Knowledge** | `knowledge/mindset-keywords.md` | Định nghĩa 6 từ khóa tư duy cốt lõi cùng các vector anchors tương ứng để Agent kích hoạt tư duy phản biện. | [EXPLORATION §2 VÀ §4.A] |
+| **L1: Knowledge** | `knowledge/elicitation-rules.md` | Chứa các quy tắc chuẩn hóa thông tin thô, logic bóc tách NFR định lượng, và bộ câu hỏi 5W1H mẫu. | [EXPLORATION §4.A] |
+| **L1: Knowledge** | `knowledge/question-framework.md` | Cấu trúc câu hỏi 5W1H khơi gợi phản biện và cơ chế phân tách 3 paths. | [EXPLORATION §4.A] |
+| **L1: Knowledge** | `knowledge/normalization-logic.md` | Logic chuẩn hóa đầu vào tự do và phản biện chủ động. | [EXPLORATION §4.A] |
+| **L1: Knowledge** | `knowledge/scope-definition.md` | Đặc tả scope, input/output contract và handoff. | [EXPLORATION §6.1] |
+| **L2: Templates** | `templates/elicitation-report.md.template` | Mẫu cấu trúc Markdown chuẩn cho đầu ra elicitation-report.md. | [EXPLORATION §6.1] |
+| **L3: Data** | `data/input-schema.yaml` | Lược đồ dữ liệu YAML để cấu trúc hóa đầu vào. | [EXPLORATION §6.1] |
+| **L4: Loop** | `loop/elicitor-checklist.md` | Danh sách kiểm định chất lượng tự động trước khi xuất xưởng báo cáo. | [EXPLORATION §6.1] |
 
 ---
 

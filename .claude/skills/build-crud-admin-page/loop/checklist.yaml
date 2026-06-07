@@ -1,0 +1,153 @@
+# Build CRUD Admin Page — Quality Checklist (YAML)
+
+version: "1.0.0"
+artifact_type: "build-crud-admin-page-checklist"
+
+quality_gates:
+  structure:
+    description: "Skill structure follows 7-Zone framework"
+    checks:
+      - id: "S1"
+        description: "SKILL.md exists at root"
+        rule: "file_exists"
+      - id: "S2"
+        description: "knowledge/ directory exists with 6 files"
+        rule: "directory_has_files"
+        files: ["README.md", "architecture.md", "template-guide.md", "implementation-logic.md", "errors.md", "ui-skills-summary.md"]
+      - id: "S3"
+        description: "loop/ directory exists with checklist files"
+        rule: "directory_has_files"
+        files: ["checklist.md", "checklist.yaml"]
+      - id: "S4"
+        description: "No orphaned files outside zones"
+        rule: "no_orphans"
+
+  skill_md:
+    description: "SKILL.md quality standards"
+    checks:
+      - id: "M1"
+        description: "SKILL.md < 150 lines"
+        rule: "line_count_max"
+        max: 150
+      - id: "M2"
+        description: "YAML frontmatter at line 1"
+        rule: "yaml_frontmatter_line1"
+      - id: "M3"
+        description: "Has name, description, category, version"
+        rule: "has_required_fields"
+      - id: "M4"
+        description: "Has triggers listed"
+        rule: "has_triggers"
+      - id: "M5"
+        description: "Has 2 workflow phases documented"
+        rule: "has_phases"
+      - id: "M6"
+        description: "Has guardrails defined"
+        rule: "has_guardrails"
+      - id: "M7"
+        description: "Has boot sequence"
+        rule: "has_boot_sequence"
+
+  knowledge:
+    description: "Knowledge files quality"
+    checks:
+      - id: "K1"
+        description: "architecture.md has folder structure"
+        rule: "has_section"
+        section: "folder structure"
+      - id: "K2"
+        description: "architecture.md has data flow diagram"
+        rule: "has_diagram"
+      - id: "K3"
+        description: "architecture.md has form mode pattern"
+        rule: "has_form_mode_pattern"
+      - id: "K4"
+        description: "template-guide.md has 8 steps"
+        rule: "has_steps"
+        min: 8
+      - id: "K5"
+        description: "implementation-logic.md has FormMode type"
+        rule: "has_code_snippet"
+        snippet: "FormMode"
+      - id: "K6"
+        description: "errors.md has TypeScript error solutions"
+        rule: "has_error_solutions"
+      - id: "K7"
+        description: "ui-skills-summary.md has 4 UI skills"
+        rule: "has_ui_skills"
+        count: 4
+
+  checklist:
+    description: "Implementation checklist"
+    checks:
+      - id: "C1"
+        description: "Pre-implementation items present"
+        rule: "has_section"
+        section: "Pre-Implementation"
+      - id: "C2"
+        description: "Setup items present"
+        rule: "has_section"
+        section: "Setup"
+      - id: "C3"
+        description: "ProductListView items present"
+        rule: "has_section"
+        section: "ProductListView"
+      - id: "C4"
+        description: "ProductFormView items present"
+        rule: "has_section"
+        section: "ProductFormView"
+      - id: "C5"
+        description: "Form sections items present"
+        rule: "has_section"
+        section: "Form Sections"
+      - id: "C6"
+        description: "Form validation items present"
+        rule: "has_section"
+        section: "Form Validation"
+      - id: "C7"
+        description: "Routes items present"
+        rule: "has_section"
+        section: "Routes"
+      - id: "C8"
+        description: "UX features items present"
+        rule: "has_section"
+        section: "UX Features"
+
+  references:
+    description: "Reference integrity"
+    checks:
+      - id: "R1"
+        description: "Form mode pattern documented"
+        rule: "has_pattern"
+        pattern: "create.*view.*edit"
+      - id: "R2"
+        description: "Route structure documented"
+        rule: "has_routes"
+        routes: 4
+      - id: "R3"
+        description: "Component responsibilities defined"
+        rule: "has_responsibilities"
+
+trace_validation:
+  enabled: true
+  valid_tags:
+    - "[TỪ DESIGN §N]"
+    - "[GỢI Ý BỔ SUNG]"
+    - "[TỪ AUDIT TÀI NGUYÊN]"
+    - "[CẦN LÀM RÕ]"
+
+output_format:
+  show_passed: true
+  show_failed: true
+  show_warnings: true
+  severity_levels:
+    - "MUST"
+    - "SHOULD"
+    - "INFO"
+
+severity_assignment:
+  structure: "MUST"
+  skill_md: "MUST"
+  knowledge: "SHOULD"
+  checklist: "SHOULD"
+  references: "INFO"

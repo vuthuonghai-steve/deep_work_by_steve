@@ -1,0 +1,29 @@
+# Text Normalizer Normalization Rules
+# Shared configuration for text standardization
+
+encoding:
+  target: UTF-8
+  fallback: replace-invalid
+  normalization:
+    smart_quotes: true
+    dashes: true
+    spaces: true
+
+line_endings:
+  style: unix
+  max_consecutive: 2
+
+whitespace:
+  collapse: true
+  trim_lines: true
+  preserve_alignment: false
+
+structure:
+  paragraph_detection: double_newline
+  code_block_detection:
+    - triple_backtick
+    - indented_4spaces
+
+output:
+  trailing_newline: true
+  max_line_length: unset

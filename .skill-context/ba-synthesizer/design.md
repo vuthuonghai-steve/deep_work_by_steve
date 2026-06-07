@@ -5,7 +5,90 @@ skill_name: "ba-synthesizer"
 generated_by: "skill-architect"
 generated_at: "2026-06-06T22:30:00+07:00"
 stage: "architect"
-status: "completed"
+status: "ready_for_planner"
+canonical_source:
+  zone_mapping: "frontmatter.zone_mapping"
+  progressive_disclosure: "frontmatter.progressive_disclosure"
+zone_mapping:
+  core:
+    files:
+      - path: "SKILL.md"
+        file_required: true
+        content_type: "persona-definition"
+    zone_required: true
+  knowledge:
+    files:
+      - path: "knowledge/quality-criteria.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/cross-ref-rules.md"
+        file_required: true
+        content_type: "domain-knowledge"
+    zone_required: true
+  scripts:
+    files: []
+    zone_required: false
+  templates:
+    files:
+      - path: "templates/business-analysis.md.template"
+        file_required: true
+        content_type: "output-template"
+    zone_required: true
+  data:
+    files:
+      - path: "data/quality-matrix.yaml"
+        file_required: true
+        content_type: "static-data"
+    zone_required: true
+  loop:
+    files:
+      - path: "loop/synthesizer-checklist.md"
+        file_required: true
+        content_type: "quality-gate"
+    zone_required: true
+  assets:
+    files: []
+    zone_required: false
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/cross-ref-rules.md"
+      base: "skill_dir"
+      load_when: "Pha chạy kiểm định chéo logic sơ đồ và yêu cầu"
+  tier3:
+    - path: "knowledge/quality-criteria.md"
+      base: "skill_dir"
+      load_when: "Pha tính toán điểm chất lượng và phân loại"
+    - path: "data/quality-matrix.yaml"
+      base: "skill_dir"
+      load_when: "Pha tính toán điểm chất lượng và phân loại"
+    - path: "templates/business-analysis.md.template"
+      base: "skill_dir"
+      load_when: "Pha tổng hợp báo cáo hợp nhất"
+    - path: "loop/synthesizer-checklist.md"
+      base: "skill_dir"
+      load_when: "Pha tự kiểm tra checklist cuối cùng"
+required_sections:
+  - "1_problem_statement"
+  - "2_capability_map"
+  - "3_zone_mapping"
+  - "4_folder_structure"
+  - "5_execution_flow"
+  - "6_interaction_points"
+  - "7_progressive_disclosure"
+  - "8_risks"
+  - "9_open_questions"
+  - "10_metadata"
+handoff:
+  next_stage: "planner"
+  ready_condition:
+    required:
+      frontmatter_valid: true
+      zone_mapping_complete: true
+      required_sections_present: true
+      no_blockers: true
 ---
 
 # 🏛️ Bản Thiết Kế Kiến Trúc: ba-synthesizer (Micro-Skill Synthesizer)
@@ -64,18 +147,18 @@ capabilities:
 
 ---
 
-## §3. Zone Mapping
+## 3. Zone Mapping
 
-Quy hoạch 7 Zones cho micro-skill `ba-synthesizer` sau khi build vào thư mục cài đặt gốc `skills/rebuild/ba-synthesizer/`.
+Quy hoạch 7 Zones cho micro-skill ba-synthesizer sau khi build vào thư mục cài đặt gốc skills/rebuild/ba-synthesizer/.
 
 | Zone | File Path | Mục đích & Nội dung kỹ thuật | Trace |
 |:---|:---|:---|:---|
-| **L0: Core** | `skills/rebuild/ba-synthesizer/SKILL.md` | Persona Synthesizer, quy trình 4 pha xử lý, chỉ đạo must/must_not, limitations, when not to use. | [EXPLORATION §6] |
-| **L1: Knowledge** | `skills/rebuild/ba-synthesizer/knowledge/quality-criteria.md` | Bộ tiêu chí chất lượng cho từng deliverable và trọng số tính điểm tương ứng. | [EXPLORATION §2 VÀ §4.A] |
-| **L1: Knowledge** | `skills/rebuild/ba-synthesizer/knowledge/cross-ref-rules.md` | Các quy tắc logic kiểm định chéo và trigger cảnh báo. | [EXPLORATION §2 VÀ §4.A] |
-| **L2: Templates** | `skills/rebuild/ba-synthesizer/templates/business-analysis.md.template` | Mẫu cấu trúc Markdown chuẩn hợp nhất cho `business-analysis.md`. | [EXPLORATION §5] |
-| **L3: Data** | `skills/rebuild/ba-synthesizer/data/quality-matrix.yaml` | Ma trận chất lượng định lượng dùng để tính toán điểm. | [EXPLORATION §6] |
-| **L4: Loop** | `skills/rebuild/ba-synthesizer/loop/synthesizer-checklist.md` | Checklist kiểm tra tính toàn vẹn của metadata và tài liệu cuối trước khi handoff. | [EXPLORATION §6] |
+| **L0: Core** | `SKILL.md` | Persona Synthesizer, quy trình 4 pha xử lý, chỉ đạo must/must_not, limitations, when not to use. | [EXPLORATION §6] |
+| **L1: Knowledge** | `knowledge/quality-criteria.md` | Bộ tiêu chí chất lượng cho từng deliverable và trọng số tính điểm tương ứng. | [EXPLORATION §2 VÀ §4.A] |
+| **L1: Knowledge** | `knowledge/cross-ref-rules.md` | Các quy tắc logic kiểm định chéo và trigger cảnh báo. | [EXPLORATION §2 VÀ §4.A] |
+| **L2: Templates** | `templates/business-analysis.md.template` | Mẫu cấu trúc Markdown chuẩn hợp nhất cho business-analysis.md. | [EXPLORATION §5] |
+| **L3: Data** | `data/quality-matrix.yaml` | Ma trận chất lượng định lượng dùng để tính toán điểm. | [EXPLORATION §6] |
+| **L4: Loop** | `loop/synthesizer-checklist.md` | Checklist kiểm tra tính toàn vẹn của metadata và tài liệu cuối trước khi handoff. | [EXPLORATION §6] |
 
 ---
 

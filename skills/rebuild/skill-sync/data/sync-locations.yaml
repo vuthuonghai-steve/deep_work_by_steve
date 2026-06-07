@@ -13,15 +13,7 @@ destinations:
     description: "Workspace-level Claude skills"
     git_tracked: true
 
-  user_hermes:
-    path: "/home/steve/.hermes/skills"
-    description: "User-level Hermes skills (global)"
-    git_tracked: false
-
-  user_claude:
-    path: "/home/steve/.claude/skills"
-    description: "User-level Claude skills (global)"
-    git_tracked: false
-
-# Skills to monitor - auto-detected from source directory
-# The script reads all directories with SKILL.md automatically
+  workspace_agents:
+    path: "/home/steve/Work-space/deep_work_by_steve/.agents/skills"
+    description: "Workspace-level Agents/Antigravity skills"
+    git_tracked: true

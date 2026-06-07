@@ -5,7 +5,96 @@ skill_name: "ba-analyst"
 generated_by: "skill-architect"
 generated_at: "2026-06-06T22:20:00+07:00"
 stage: "architect"
-status: "completed"
+status: "ready_for_planner"
+canonical_source:
+  zone_mapping: "frontmatter.zone_mapping"
+  progressive_disclosure: "frontmatter.progressive_disclosure"
+zone_mapping:
+  core:
+    files:
+      - path: "SKILL.md"
+        file_required: true
+        content_type: "persona-definition"
+    zone_required: true
+  knowledge:
+    files:
+      - path: "knowledge/classification-rules.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/mermaid-syntax.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/gherkin-guide.md"
+        file_required: true
+        content_type: "domain-knowledge"
+      - path: "knowledge/risk-assessment.md"
+        file_required: true
+        content_type: "domain-knowledge"
+    zone_required: true
+  scripts:
+    files: []
+    zone_required: false
+  templates:
+    files:
+      - path: "templates/analysis-report.md.template"
+        file_required: true
+        content_type: "output-template"
+    zone_required: true
+  data:
+    files: []
+    zone_required: false
+  loop:
+    files:
+      - path: "loop/analyst-checklist.md"
+        file_required: true
+        content_type: "quality-gate"
+    zone_required: true
+  assets:
+    files: []
+    zone_required: false
+progressive_disclosure:
+  tier1:
+    - path: "SKILL.md"
+      base: "skill_dir"
+  tier2:
+    - path: "knowledge/classification-rules.md"
+      base: "skill_dir"
+      load_when: "Pha phân loại MoSCoW và phân tích rủi ro hệ thống"
+    - path: "knowledge/risk-assessment.md"
+      base: "skill_dir"
+      load_when: "Pha phân loại MoSCoW và phân tích rủi ro hệ thống"
+  tier3:
+    - path: "knowledge/mermaid-syntax.md"
+      base: "skill_dir"
+      load_when: "Pha vẽ sơ đồ Mermaid và sinh kịch bản Gherkin"
+    - path: "knowledge/gherkin-guide.md"
+      base: "skill_dir"
+      load_when: "Pha vẽ sơ đồ Mermaid và sinh kịch bản Gherkin"
+    - path: "templates/analysis-report.md.template"
+      base: "skill_dir"
+      load_when: "Pha tổng hợp báo cáo và tự kiểm định chất lượng"
+    - path: "loop/analyst-checklist.md"
+      base: "skill_dir"
+      load_when: "Pha tổng hợp báo cáo và tự kiểm định chất lượng"
+required_sections:
+  - "1_problem_statement"
+  - "2_capability_map"
+  - "3_zone_mapping"
+  - "4_folder_structure"
+  - "5_execution_flow"
+  - "6_interaction_points"
+  - "7_progressive_disclosure"
+  - "8_risks"
+  - "9_open_questions"
+  - "10_metadata"
+handoff:
+  next_stage: "planner"
+  ready_condition:
+    required:
+      frontmatter_valid: true
+      zone_mapping_complete: true
+      required_sections_present: true
+      no_blockers: true
 ---
 
 # 🏛️ Bản Thiết Kế Kiến Trúc: ba-analyst (Micro-Skill Analyst)
@@ -65,19 +154,19 @@ capabilities:
 
 ---
 
-## §3. Zone Mapping
+## 3. Zone Mapping
 
-Quy hoạch 7 Zones cho micro-skill `ba-analyst` sau khi build vào thư mục cài đặt gốc `skills/rebuild/ba-analyst/`.
+Quy hoạch 7 Zones cho micro-skill ba-analyst sau khi build vào thư mục cài đặt gốc skills/rebuild/ba-analyst/.
 
 | Zone | File Path | Mục đích & Nội dung kỹ thuật | Trace |
 |:---|:---|:---|:---|
-| **L0: Core** | `skills/rebuild/ba-analyst/SKILL.md` | Persona Analyst, quy trình 7 pha xử lý, chỉ đạo must/must_not, limitations, when not to use. | [EXPLORATION §6] |
-| **L1: Knowledge** | `skills/rebuild/ba-analyst/knowledge/classification-rules.md` | Logic phân loại FR/NFR, ma trận MoSCoW, lý do kỹ thuật mẫu. | [EXPLORATION §2 VÀ §4.A] |
-| **L1: Knowledge** | `skills/rebuild/ba-analyst/knowledge/mermaid-syntax.md` | Cú pháp mẫu và hướng dẫn vẽ Sequence, Flowchart, ERD bằng Mermaid.js. | [EXPLORATION §2 VÀ §4.A] |
-| **L1: Knowledge** | `skills/rebuild/ba-analyst/knowledge/gherkin-guide.md` | Chuẩn viết Acceptance Criteria bằng Gherkin cho 3 paths. | [EXPLORATION §2 VÀ §4.A] |
-| **L1: Knowledge** | `skills/rebuild/ba-analyst/knowledge/risk-assessment.md` | Khung đánh giá rủi ro, ma trận tác động và quy tắc tích hợp với MoSCoW. | [EXPLORATION §2 VÀ §4.A] |
-| **L2: Templates** | `skills/rebuild/ba-analyst/templates/analysis-report.md.template` | Mẫu cấu trúc Markdown chuẩn cho đầu ra `analysis-report.md`. | [EXPLORATION §5] |
-| **L4: Loop** | `skills/rebuild/ba-analyst/loop/analyst-checklist.md` | Checklist tự kiểm định 7 deliverables trước khi ghi file. | [EXPLORATION §6] |
+| **L0: Core** | `SKILL.md` | Persona Analyst, quy trình 7 pha xử lý, chỉ đạo must/must_not, limitations, when not to use. | [EXPLORATION §6] |
+| **L1: Knowledge** | `knowledge/classification-rules.md` | Logic phân loại FR/NFR, ma trận MoSCoW, lý do kỹ thuật mẫu. | [EXPLORATION §2 VÀ §4.A] |
+| **L1: Knowledge** | `knowledge/mermaid-syntax.md` | Cú pháp mẫu và hướng dẫn vẽ Sequence, Flowchart, ERD bằng Mermaid.js. | [EXPLORATION §2 VÀ §4.A] |
+| **L1: Knowledge** | `knowledge/gherkin-guide.md` | Chuẩn viết Acceptance Criteria bằng Gherkin cho 3 paths. | [EXPLORATION §2 VÀ §4.A] |
+| **L1: Knowledge** | `knowledge/risk-assessment.md` | Khung đánh giá rủi ro, ma trận tác động và quy tắc tích hợp với MoSCoW. | [EXPLORATION §2 VÀ §4.A] |
+| **L2: Templates** | `templates/analysis-report.md.template` | Mẫu cấu trúc Markdown chuẩn cho đầu ra analysis-report.md. | [EXPLORATION §5] |
+| **L4: Loop** | `loop/analyst-checklist.md` | Checklist tự kiểm định 7 deliverables trước khi ghi file. | [EXPLORATION §6] |
 
 ---
 

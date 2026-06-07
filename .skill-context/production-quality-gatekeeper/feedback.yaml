@@ -1,42 +1,109 @@
-status: PASS
-domain: dev
-file: /home/steve/Work-space/deep_work_by_steve/skills/Update-suite/current-suite/ver-2/_shared/fixtures/bad/flawed_code.py
-timestamp: '2026-05-30T16:05:34.772036Z'
-turn: 4
+status: FAIL
+domain: llm
+file: .skill-context/ba-analyst/design.md
+timestamp: '2026-06-07T11:36:33.670321Z'
+turn: 1
 stats:
-  total: 15
-  passed: 15
-  failed: 0
-  percentage: 100
+  total: 30
+  passed: 22
+  failed: 8
+  percentage: 73
 results:
-  DEV-1.01:
+  LLM-1.01:
+    passed: false
+    error: 'Thiếu thẻ XML bọc kép: ''<instructions>'' hoặc ''</instructions>''. Bắt
+      buộc có tag <instructions> cô lập các chỉ thị cứng.'
+    fix_hint: Thêm phân vùng thẻ XML '<instructions> ... </instructions>' tương ứng
+      vào trong cấu trúc prompt.
+  LLM-1.03:
+    passed: false
+    error: 'Thiếu thẻ XML bọc kép: ''<context>'' hoặc ''</context>''. Bắt buộc dùng
+      tag <context> để cô lập tài nguyên nền tảng.'
+    fix_hint: Thêm phân vùng thẻ XML '<context> ... </context>' tương ứng vào trong
+      cấu trúc prompt.
+  LLM-1.04:
+    passed: false
+    error: 'Thiếu thẻ XML bọc kép: ''<input>'' hoặc ''</input>''. Bắt buộc dùng tag
+      <input> cách ly dữ liệu động người dùng.'
+    fix_hint: Thêm phân vùng thẻ XML '<input> ... </input>' tương ứng vào trong cấu
+      trúc prompt.
+  LLM-1.05:
+    passed: false
+    error: 'Thiếu thẻ XML bọc kép: ''<output_contract>'' hoặc ''</output_contract>''.
+      Bắt buộc có tag <output_contract> đặc tả định dạng đầu ra.'
+    fix_hint: Thêm phân vùng thẻ XML '<output_contract> ... </output_contract>' tương
+      ứng vào trong cấu trúc prompt.
+  LLM-1.02:
+    passed: false
+    error: Thiếu khối instructions.
+    fix_hint: Thêm <instructions> thẻ.
+  LLM-1.06:
     passed: true
-  DEV-1.02:
+  LLM-1.09:
+    passed: false
+    error: Prompt thiếu cơ chế phòng chống ảo tưởng (Anti-Hallucination) của LLM.
+    fix_hint: 'Thêm câu lệnh: ''Nếu thông tin không được cung cấp trong context, hãy
+      trả lời tôi không biết, tuyệt đối không đoán mò.'''
+  LLM-3.01:
+    passed: false
+    error: Prompt thiếu thiết lập quy trình tự động phản biện (Self-Refining Loop)
+      1-10 turns.
+    fix_hint: Định nghĩa rõ quy trình lặp kiểm định 1-10 turns cho tới khi script
+      loop_refiner báo PASS.
+  LLM-3.06:
     passed: true
-  DEV-1.03:
+  LLM-3.07:
+    passed: false
+    error: Prompt thiếu đặc tả xuất báo cáo chất lượng evaluation-report.md sau khi
+      kết thúc loop.
+    fix_hint: Thêm chỉ thị bắt buộc tạo báo cáo đánh giá chất lượng chi tiết bằng
+      Markdown tại .skill-context.
+  LLM-2.01:
     passed: true
-  DEV-1.04:
+  LLM-2.02:
     passed: true
-  DEV-1.05:
+  LLM-3.02:
     passed: true
-  DEV-1.07:
+  LLM-2.03:
     passed: true
-  DEV-1.09:
+  LLM-3.03:
     passed: true
-  DEV-2.04:
+  LLM-2.04:
     passed: true
-  DEV-2.07:
+  LLM-3.04:
     passed: true
-  DEV-3.01:
+  LLM-2.05:
     passed: true
-  DEV-3.05:
+  LLM-3.05:
     passed: true
-  DEV-3.10:
+  LLM-2.06:
     passed: true
-  DEV-2.10:
+  LLM-1.07:
     passed: true
-  DEV-2.05:
+  LLM-2.07:
     passed: true
-  DEV-2.01:
+  LLM-1.08:
     passed: true
-failures: []
+  LLM-2.08:
+    passed: true
+  LLM-3.08:
+    passed: true
+  LLM-2.09:
+    passed: true
+  LLM-3.09:
+    passed: true
+  LLM-1.10:
+    passed: true
+  LLM-2.10:
+    passed: true
+  LLM-3.10:
+    passed: true
+failures:
+- LLM-1.01
+- LLM-1.03
+- LLM-1.04
+- LLM-1.05
+- LLM-1.02
+- LLM-1.09
+- LLM-3.01
+- LLM-3.07
