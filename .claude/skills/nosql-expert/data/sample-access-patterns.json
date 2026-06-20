@@ -1,0 +1,69 @@
+{
+  "project": "E-Commerce Microservices",
+  "domain_context": "Hệ thống mua sắm trực tuyến với hàng triệu sản phẩm, đánh giá và đơn hàng.",
+  "entities": [
+    {
+      "name": "Product",
+      "access_patterns": [
+        {
+          "id": "AP1",
+          "description": "Lấy chi tiết sản phẩm và 5 đánh giá mới nhất.",
+          "query": "Tìm sản phẩm theo product_id. Trả về cả dữ liệu đánh giá mà không cần JOIN.",
+          "type": "read",
+          "frequency": "Rất cao (10,000 req/s)",
+          "nfr": "Latency < 50ms"
+        },
+        {
+          "id": "AP2",
+          "description": "Tìm kiếm sản phẩm theo nhiều đặc tính động (Dynamic Attributes).",
+          "query": "Lọc sản phẩm theo thương hiệu, màu sắc, kích cỡ, chất liệu tùy biến.",
+          "type": "read",
+          "frequency": "Cao (2,000 req/s)",
+          "nfr": "Flexible Schema Support"
+        }
+      ]
+    },
+    {
+      "name": "IoT Sensor Data",
+      "access_patterns": [
+        {
+          "id": "AP3",
+          "description": "Ghi nhận nhiệt độ từ cảm biến mỗi giây.",
+          "query": "Chèn bản ghi mới liên tục.",
+          "type": "write",
+          "frequency": "Cực cao (50,000 req/s)",
+          "nfr": "Write-optimized, chống phình Document 16MB"
+        },
+        {
+          "id": "AP4",
+          "description": "Lấy biểu đồ nhiệt độ theo từng giờ.",
+          "query": "Tính trung bình nhiệt độ và hiển thị mốc thời gian.",
+          "type": "read",
+          "frequency": "Thấp (50 req/s)",
+          "nfr": "Tránh tải dữ liệu thô quá lớn về RAM"
+        }
+      ]
+    },
+    {
+      "name": "Social Network Feed",
+      "access_patterns": [
+        {
+          "id": "AP5",
+          "description": "Tải bài viết kèm thông tin người đăng (Avatar, Tên) mà không cần JOIN.",
+          "query": "Query bài post và render ngay giao diện người dùng.",
+          "type": "read",
+          "frequency": "Cực cao (20,000 req/s)",
+          "nfr": "Độ trễ thấp, đánh đổi dung lượng lưu trữ"
+        },
+        {
+          "id": "AP6",
+          "description": "Một ca sĩ nổi tiếng (Outlier) có 5 triệu lượt like ở bài viết.",
+          "query": "Tải danh sách những người like.",
+          "type": "read",
+          "frequency": "Trung bình (500 req/s)",
+          "nfr": "Chống lỗi OOM khi tải mảng Like array"
+        }
+      ]
+    }
+  ]
+}

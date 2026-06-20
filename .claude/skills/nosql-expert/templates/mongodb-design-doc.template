@@ -1,0 +1,32 @@
+# MongoDB Architecture Design Document
+
+<trace>[TỪ DESIGN §3]</trace>
+
+## 1. Bối cảnh & Access Patterns
+- **User Case:** {user_case_description}
+- **Read/Write Ratio:** {read_write_ratio}
+- **Key Queries:**
+  1. {query_1}
+  2. {query_2}
+
+## 2. Document Model (JSON Schema)
+```json
+{json_schema_definition}
+```
+
+## 3. Kiến trúc tham chiếu (Patterns Applied)
+- **Patterns:** {applied_patterns} (Ví dụ: Extended Reference Pattern, Bucket Pattern)
+- **Lý do:** {justification_for_patterns}
+
+## 4. Indexing Strategy (Quy tắc ESR)
+```javascript
+{indexing_code}
+```
+- **Equality:** {equality_fields}
+- **Sort:** {sort_fields}
+- **Range:** {range_fields}
+- **Giải thích:** {indexing_justification}
+
+## 5. Đánh giá Rủi ro
+- **BSON Size Risk (16MB):** {bson_size_risk_evaluation}
+- **N+1 Query Risk:** {n_plus_one_risk_evaluation}

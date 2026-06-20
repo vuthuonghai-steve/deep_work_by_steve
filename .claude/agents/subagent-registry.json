@@ -1,0 +1,252 @@
+{
+  "$schema": "subagent-registry-schema",
+  "suite": "WASHVN",
+  "version": "0.0.2",
+  "description": "Registry cho hệ thống subagent orchestration trong WASHVN 8-Stage Pipeline. Track subagents (.claude/agents/*.md). Skills (7-Zone) được track riêng tại skills/ver-0.0.2/skills-registry.json.",
+  "updated_at": "2026-06-18T09:49:00+07:00",
+  "registry_path": ".claude/agents/",
+  "staging_path": ".claude/agents/_staging/",
+  "skills_source": "skills/ver-0.0.2/",
+  "skills_registry_ref": "skills/ver-0.0.2/skills-registry.json",
+  "discovery_method": "filesystem scan at session start",
+
+  "pipeline_flow": [
+    "ba-analyst → knowledge-miner-agent → skill-architect-agent → skill-planner-agent → skill-builder-agent"
+  ],
+
+  "subagents": [
+    {
+      "name": "subagent-forge",
+      "file": ".claude/agents/subagent-forge.md",
+      "status": "deployed",
+      "model": "opus",
+      "color": null,
+      "pipeline_stage": "meta",
+      "role": "Subagent design specialist — tạo, đánh giá và staging custom Claude Code subagents. Orchestrates 4-evaluator multi-agent eval trước khi deploy.",
+      "tools": ["Read", "Write", "Edit", "Glob", "Grep", "Task"],
+      "permission_mode": "default",
+      "equipped_skills": ["skill-security-reviewer"],
+      "hooks": {
+        "PreToolUse": [
+          {
+            "matcher": "Write|Edit",
+            "purpose": "Block writes outside _staging/"
+          },
+          {
+            "matcher": "Task",
+            "purpose": "Block recursive subagent-forge spawn"
+          }
+        ]
+      },
+      "trigger_phrases": [
+        "create a subagent for",
+        "design a subagent that",
+        "update the <name> subagent",
+        "build me a <role> agent",
+        "forge a <purpose> agent"
+      ],
+      "upstream": [],
+      "downstream": ["ba-analyst", "knowledge-miner-agent", "skill-architect-agent", "skill-planner-agent", "skill-builder-agent"],
+      "writable_zone": ".claude/agents/_staging/",
+      "output_artifacts": [
+        {
+          "file_id": "staged_subagent",
+          "path_template": ".claude/agents/_staging/<name>.md"
+        },
+        {
+          "file_id": "eval_report",
+          "path_template": ".skill-context/_subagent-staging/<name>/eval-report.md"
+        }
+      ]
+    },
+    {
+      "name": "ba-analyst",
+      "file": ".claude/agents/ba-analyst.md",
+      "status": "deployed",
+      "model": "opus",
+      "color": null,
+      "pipeline_stage": "Stage -1",
+      "role": "Business Analyst specialist — orchestrates ba-elicitor → ba-analyst → ba-synthesizer để chuyển yêu cầu thô thành BA report set lượng hóa (elicitation-report.md + analysis-report.md + business-analysis.md).",
+      "tools": ["Read", "Write", "Edit", "Glob", "Grep", "WebFetch"],
+      "permission_mode": "default",
+      "equipped_skills": ["ba-elicitor", "ba-analyst", "ba-synthesizer"],
+      "hooks": {},
+      "trigger_phrases": [
+        "analyze business requirements for",
+        "vague or injection-prone skill requests",
+        "unclear business requirements",
+        "new-skill scoping before Stage 0"
+      ],
+      "upstream": [],
+      "downstream": ["knowledge-miner-agent"],
+      "writable_zone": ".skill-context/{feature_name}/",
+      "output_artifacts": [
+        {
+          "file_id": "elicitation_report",
+          "path_template": ".skill-context/{feature_name}/ba-elicitor/elicitation-report.md"
+        },
+        {
+          "file_id": "analysis_report",
+          "path_template": ".skill-context/{feature_name}/ba-analyst/analysis-report.md"
+        },
+        {
+          "file_id": "synthesized_business_analysis",
+          "path_template": ".skill-context/{feature_name}/business-analysis.md"
+        }
+      ]
+    },
+    {
+      "name": "knowledge-miner-agent",
+      "file": ".claude/agents/knowledge-miner-agent.md",
+      "status": "deployed",
+      "model": "sonnet",
+      "color": "cyan",
+      "pipeline_stage": "Stage 0.5",
+      "role": "Knowledge Mining Specialist — mine, synthesize, structure domain knowledge từ BA reports, source code, project docs thành Domain Handbook cho Stage 1 (Architect).",
+      "tools": ["Read", "Glob", "Grep", "Write", "Skill"],
+      "permission_mode": "default",
+      "equipped_skills": ["skill-knowledge-miner", "skill-explorer", "ba-synthesizer"],
+      "hooks": {},
+      "trigger_phrases": [
+        "mine knowledge for",
+        "extract domain from",
+        "build a knowledge base for skill X",
+        "prepare handbook before architect"
+      ],
+      "upstream": ["ba-analyst"],
+      "downstream": ["skill-architect-agent"],
+      "writable_zone": ".skill-context/{target-skill}/",
+      "output_artifacts": [
+        {
+          "file_id": "domain_handbook",
+          "path_template": ".skill-context/{target-skill}/domain-handbook.md"
+        }
+      ]
+    },
+    {
+      "name": "skill-architect-agent",
+      "file": ".claude/agents/skill-architect-agent.md",
+      "status": "deployed",
+      "model": "opus",
+      "color": "blue",
+      "pipeline_stage": "Stage 1 + Stage 1.5",
+      "role": "Senior Skill Architect — combines Stage 1 (Architect) và Stage 1.5 (Quality Gatekeeper). Thiết kế 7-Zone architecture, chạy loop_refiner.py quality gate, produce design.md + quality-matrix.yaml + evaluation-report.md.",
+      "tools": ["Read", "Write", "Edit", "Glob", "Grep", "Skill"],
+      "permission_mode": "default",
+      "equipped_skills": ["skill-architect", "production-quality-gatekeeper"],
+      "hooks": {},
+      "trigger_phrases": [
+        "design skill architecture",
+        "architect the new skill",
+        "run stage 1",
+        "build 7-zone design",
+        "quality-gate the design",
+        "what zones should skill X have"
+      ],
+      "upstream": ["ba-analyst", "knowledge-miner-agent"],
+      "downstream": ["skill-planner-agent"],
+      "writable_zone": ".skill-context/{target_skill}/",
+      "output_artifacts": [
+        {
+          "file_id": "architect_design",
+          "path_template": ".skill-context/{target_skill}/design.md"
+        },
+        {
+          "file_id": "quality_matrix",
+          "path_template": ".skill-context/{target_skill}/quality-matrix.yaml"
+        },
+        {
+          "file_id": "evaluation_report",
+          "path_template": ".skill-context/{target_skill}/evaluation-report.md"
+        }
+      ]
+    },
+    {
+      "name": "skill-planner-agent",
+      "file": ".claude/agents/skill-planner-agent.md",
+      "status": "deployed",
+      "model": "opus",
+      "color": "green",
+      "pipeline_stage": "Stage 2",
+      "role": "Implementation Planner — decompose quality-gated design.md thành trace-tagged todo.md với DAG blockers và DRC-compliant output_contract. Không build code.",
+      "tools": ["Read", "Write", "Edit", "Glob", "Grep", "Skill"],
+      "permission_mode": "default",
+      "equipped_skills": ["skill-planner"],
+      "hooks": {},
+      "trigger_phrases": [
+        "plan implementation for",
+        "decompose design into todo",
+        "create todo.md from design",
+        "run stage 2",
+        "build the implementation plan for skill X"
+      ],
+      "upstream": ["skill-architect-agent"],
+      "downstream": ["skill-builder-agent"],
+      "writable_zone": ".skill-context/{target_skill}/",
+      "output_artifacts": [
+        {
+          "file_id": "execution_plan",
+          "path_template": ".skill-context/{target_skill}/todo.md"
+        }
+      ]
+    },
+    {
+      "name": "skill-builder-agent",
+      "file": ".claude/agents/skill-builder-agent.md",
+      "status": "deployed",
+      "model": "opus",
+      "color": null,
+      "pipeline_stage": "Stage 3 + Security Gate",
+      "role": "Senior Implementation Engineer — executes 5-phase workflow (PREPARE/CLARIFY/BUILD/VERIFY/DELIVER) để build physical skill package. Triggers skill-security-reviewer cho auth/payment/upload skills.",
+      "tools": ["Read", "Write", "Edit", "Glob", "Grep", "Skill"],
+      "permission_mode": "default",
+      "equipped_skills": ["skill-builder", "skill-security-reviewer"],
+      "hooks": {},
+      "trigger_phrases": [
+        "build skill from design",
+        "implement skill X",
+        "run stage 3",
+        "deploy skill package",
+        "execute the todo list"
+      ],
+      "upstream": ["skill-planner-agent"],
+      "downstream": [],
+      "writable_zone": "{runtime_dest}/{target_skill}/",
+      "output_artifacts": [
+        {
+          "file_id": "skill_package",
+          "path_template": "{runtime_dest}/{target_skill}/SKILL.md"
+        },
+        {
+          "file_id": "build_log",
+          "path_template": ".skill-context/{target_skill}/build-log.md"
+        },
+        {
+          "file_id": "security_review_report",
+          "path_template": ".skill-context/{target_skill}/security-review-report.md",
+          "condition": "security_gate_required = true"
+        }
+      ]
+    }
+  ],
+
+  "summary": {
+    "total_subagents": 6,
+    "deployed": 6,
+    "staging": 0,
+    "pipeline_coverage": {
+      "Stage -1 (BA)": "ba-analyst",
+      "Stage 0.5 (Miner)": "knowledge-miner-agent",
+      "Stage 1 + 1.5 (Architect + Gate)": "skill-architect-agent",
+      "Stage 2 (Planner)": "skill-planner-agent",
+      "Stage 3 + Security (Builder)": "skill-builder-agent",
+      "Meta (Forge)": "subagent-forge"
+    },
+    "uncovered_stages": [
+      "Stage 0 (Explorer) — chưa có subagent riêng, dùng trực tiếp skill-explorer",
+      "Stage 3.5 (Code Reviewer) — chưa có subagent, dùng trực tiếp production-code-reviewer skill",
+      "Stage 4 (Sandbox Tester) — skill chưa build (planned trong ROADMAP Phase 2)",
+      "Stage 5 (Indexer) — skill chưa build (planned trong ROADMAP Phase 2)"
+    ]
+  }
+}
