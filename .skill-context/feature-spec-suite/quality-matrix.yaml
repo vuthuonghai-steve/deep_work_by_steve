@@ -1,0 +1,90 @@
+---
+quality_matrix:
+  suite_name: "feature-spec-suite"
+  version: "1.0.0"
+  starter_validation_burden: 0.0
+  validation_timing: "END_OF_STEP"
+  evaluation_logic: "BINARY_AND"
+  threshold_pass: 0.80
+
+  micro_skills:
+    spec-elicitor-clarifier:
+      assigned_steps: [1, 2, 3]
+      gates:
+        - step: 1
+          name: "Input Analysis & XML Enclosure"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G1-01"
+              description: "100% raw input must be enclosed within <user_skill_request> XML tags"
+              weight: 0.50
+              required: true
+        - step: 2
+          name: "Information Normalization"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G2-01"
+              description: "100% raw items classified into User Requirements vs Provided Context"
+              weight: 0.60
+              required: true
+        - step: 3
+          name: "Interactive Clarification"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G3-01"
+              description: "100% ambiguous questions provide >= 2 recommended options + 1 default option"
+              weight: 0.50
+              required: true
+            - rule_id: "G3-02"
+              description: "Timeout 300s auto-selects default option and logs warning in clarification-log.md"
+              weight: 0.50
+              required: true
+
+    spec-architect-designer:
+      assigned_steps: [4, 5]
+      gates:
+        - step: 4
+          name: "BA & Use Cases Breakdown"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G4-01"
+              description: "4 Use Case categories present (Basic, Must-Have, Nice-To-Have, Exception)"
+              weight: 0.50
+              required: true
+            - rule_id: "G4-02"
+              description: "100% NFRs quantified, 0% vague unquantified terms"
+              weight: 0.50
+              required: true
+        - step: 5
+          name: "Architecture & Mermaid Isolation"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G5-01"
+              description: "100% Mermaid diagrams stored under Docs/Specs/{feature-name}/diagrams/"
+              weight: 0.40
+              required: true
+            - rule_id: "G5-02"
+              description: "100% Mermaid node/edge labels wrapped in double quotes"
+              weight: 0.30
+              required: true
+
+    spec-synthesizer-evaluator:
+      assigned_steps: [6]
+      gates:
+        - step: 6
+          name: "Final Spec Synthesis & Quality Evaluation"
+          timing: "END_OF_STEP"
+          rules:
+            - rule_id: "G6-01"
+              description: "Final Spec consolidated strictly at Docs/Specs/{feature-name}/spec.md"
+              weight: 0.30
+              required: true
+            - rule_id: "G6-02"
+              description: "100% compliance with standards.md (Alerts, Tables, Clickable Relative Links, 0% forbidden placeholders)"
+              weight: 0.40
+              required: true
+            - rule_id: "G6-03"
+              description: "Weighted Quality Score >= 0.80 (PASS)"
+              weight: 0.30
+              required: true
+---
