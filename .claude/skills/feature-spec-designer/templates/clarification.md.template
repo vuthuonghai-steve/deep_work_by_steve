@@ -1,0 +1,33 @@
+> [!IMPORTANT]
+> **Step 3: Interactive Clarification Required**
+> Feature Name: `{{FEATURE_NAME}}`
+> Ambiguities / Unquantified NFRs detected in raw input. Please select an option for each item below:
+
+---
+
+### Câu hỏi 1: {{QUESTION_1_TITLE}}
+{{QUESTION_1_DESC}}
+- **Option A [Khuyến nghị]**: {{QUESTION_1_OPT_A}}
+- **Option B**: {{QUESTION_1_OPT_B}}
+- **Option C**: Tùy chỉnh con số hoặc yêu cầu của bạn: `[Write-in]`
+
+---
+
+### Câu hỏi 2: {{QUESTION_2_TITLE}}
+{{QUESTION_2_DESC}}
+- **Option A [Khuyến nghị]**: {{QUESTION_2_OPT_A}}
+- **Option B**: {{QUESTION_2_OPT_B}}
+- **Option C**: Tùy chỉnh con số hoặc yêu cầu của bạn: `[Write-in]`
+
+---
+
+### Câu hỏi 3: {{QUESTION_3_TITLE}}
+{{QUESTION_3_DESC}}
+- **Option A [Khuyến nghị]**: {{QUESTION_3_OPT_A}}
+- **Option B**: {{QUESTION_3_OPT_B}}
+- **Option C**: Tùy chỉnh con số hoặc yêu cầu của bạn: `[Write-in]`
+
+---
+
+> [!NOTE]
+> **Fallback Policy Notice**: If no response is received within 300 seconds, Option A `[Khuyến nghị]` will be automatically applied to maintain workflow continuity and logged to `clarification-log.md`.

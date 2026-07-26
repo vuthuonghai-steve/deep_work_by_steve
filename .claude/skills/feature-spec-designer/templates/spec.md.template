@@ -1,0 +1,129 @@
+# Feature Specification: {{FEATURE_NAME}}
+
+**Feature Name:** `{{FEATURE_NAME}}`  
+**Target Path:** `Docs/Specs/{{FEATURE_NAME}}/`  
+**Diagrams Path:** `Docs/Specs/{{FEATURE_NAME}}/diagrams/`  
+**Status:** `COMPLETED`  
+**Quality Score:** {{QUALITY_SCORE}}  
+
+---
+
+## 1. User Requirements vs Provided Context
+
+### A. User Requirements
+{{USER_REQUIREMENTS_LIST}}
+
+### B. Provided Context
+{{PROVIDED_CONTEXT_LIST}}
+
+---
+
+## 2. Business Goals & Scope Boundaries
+
+### A. Business Goals
+{{BUSINESS_GOALS}}
+
+### B. Scope Boundaries
+- **In-Scope**:
+{{IN_SCOPE_ITEMS}}
+- **Out-of-Scope**:
+{{OUT_OF_SCOPE_ITEMS}}
+
+---
+
+## 3. Quantified Functional Requirements (FR)
+
+| Mã FR | Tên Step / Function | Mô tả Chi tiết | Tiêu chí Lượng hóa Bắt buộc |
+|---|---|---|---|
+{{FR_TABLE_ROWS}}
+
+---
+
+## 4. Quantified Non-Functional Requirements (NFR)
+
+1. **NFR-1 (Latency & Performance)**: {{NFR_LATENCY}}
+2. **NFR-2 (Format Compliance)**: 100% compliance with `standards.md`.
+3. **NFR-3 (Storage Isolation)**: 100% files stored under `Docs/Specs/{{FEATURE_NAME}}/` and `diagrams/`.
+4. **NFR-4 (Validation Timing)**: Validation Gate executed DUY NHẤT at END OF EACH STEP.
+5. **NFR-5 (Reliability & Error Budget)**: Completion Success Rate ≥ 99.9%, 0% Mermaid syntax errors.
+
+---
+
+## 5. Detailed Use Cases Breakdown
+
+### UC-01: Basic Flow (Happy Path)
+- **Actor**: {{BASIC_ACTOR}}
+- **Pre-condition**: {{BASIC_PRECONDITION}}
+- **Main Flow**:
+{{BASIC_MAIN_FLOW}}
+- **Post-condition**: {{BASIC_POSTCONDITION}}
+
+### UC-02: Must-Have Flow (Interactive Clarification)
+{{UC_MUST_HAVE}}
+
+### UC-03: Nice-To-Have Flow
+{{UC_NICE_TO_HAVE}}
+
+### UC-04: Exception Flow (Storage & Path Correction)
+{{UC_EXCEPTION_STORAGE}}
+
+### UC-05: Exception Flow (Validation Failure & Self-Correction)
+{{UC_EXCEPTION_VALIDATION}}
+
+---
+
+## 6. Risk Matrix & MoSCoW Prioritization
+
+### A. MoSCoW Prioritization
+{{MOSCOW_TABLE}}
+
+### B. Risk Matrix
+{{RISK_MATRIX_TABLE}}
+
+---
+
+## 7. Architecture Diagrams & Mermaid Models
+
+### A. Sequence Diagram
+Refer to isolated file: [sequence.mmd](file:///Docs/Specs/{{FEATURE_NAME}}/diagrams/sequence.mmd)
+
+```mermaid
+{{MERMAID_SEQUENCE}}
+```
+
+### B. Flowchart
+Refer to isolated file: [flowchart.mmd](file:///Docs/Specs/{{FEATURE_NAME}}/diagrams/flowchart.mmd)
+
+```mermaid
+{{MERMAID_FLOWCHART}}
+```
+
+### C. ERD Schema
+Refer to isolated file: [erd.mmd](file:///Docs/Specs/{{FEATURE_NAME}}/diagrams/erd.mmd)
+
+```mermaid
+{{MERMAID_ERD}}
+```
+
+---
+
+## 8. BDD Gherkin Acceptance Test Scenarios
+
+```gherkin
+{{GHERKIN_SCENARIOS}}
+```
+
+---
+
+## 9. End-of-Step Validation Gates Summary
+
+| Step Number | Step Name | Timing Rule | Status | Score |
+|---|---|---|---|---|
+| Step 1 | Input Analysis | END_OF_STEP | PASS | 1.00 |
+| Step 2 | Normalization | END_OF_STEP | PASS | 1.00 |
+| Step 3 | Interactive Clarification | END_OF_STEP | PASS | 1.00 |
+| Step 4 | BA & Use Cases | END_OF_STEP | PASS | 1.00 |
+| Step 5 | Architecture Analysis | END_OF_STEP | PASS | 1.00 |
+| Step 6 | Final Synthesis | END_OF_STEP | PASS | 1.00 |
+
+**Final Quality Score**: {{FINAL_QUALITY_SCORE}} (PASS ≥ 0.80)

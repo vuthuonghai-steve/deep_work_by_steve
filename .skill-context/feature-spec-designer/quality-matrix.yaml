@@ -1,0 +1,186 @@
+---
+skill_name: "feature-spec-designer"
+version: "1.0.0"
+pipeline_stage: "1.5"
+author: "skill-architect-agent"
+evaluation_logic: "AND" # Tất cả 6 bước phải PASS để toàn bộ quy trình PASS
+
+steps:
+  step_1_input_analysis:
+    name: "Input Analysis & XML Enclosure"
+    timing_rule: "END_OF_STEP" # S1 Negation: Cổng kiểm định ĐẶT DUY NHẤT Ở CUỐI STEP
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP1-01"
+        description: "Lọc nhiễu và đóng gói 100% input thô trong thẻ XML <user_skill_request>"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L50]"
+      - id: "STEP1-02"
+        description: "Latency xử lý Step 1 p95 < 1000ms"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L96]"
+      - id: "STEP1-03"
+        description: "Validation Gate ở CUỐI STEP 1 đạt kết quả PASS (Quality Score >= 80%)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L63]"
+
+  step_2_normalization:
+    name: "Information Categorization & Normalization"
+    timing_rule: "END_OF_STEP"
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP2-01"
+        description: "Trích xuất và phân tách triệt để 100% User Requirements vs Provided Context"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L51]"
+      - id: "STEP2-02"
+        description: "Tỷ lệ các ý thô từ input chưa được phân loại gán nhãn = 0%"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L97]"
+      - id: "STEP2-03"
+        description: "Validation Gate ở CUỐI STEP 2 đạt kết quả PASS (Quality Score >= 80%)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L63]"
+
+  step_3_interactive_clarification:
+    name: "Interactive Clarification & Options Generation"
+    timing_rule: "END_OF_STEP"
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP3-01"
+        description: "Phát hiện 100% điểm mơ hồ, mâu thuẫn hoặc thiếu chỉ số NFRs"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L52-53]"
+      - id: "STEP3-02"
+        description: "100% câu hỏi kèm tối thiểu 2-3 options gợi ý chi tiết + 1 Option Mặc định [Khuyến nghị]"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ HANDBOOK: L183-192]"
+      - id: "STEP3-03"
+        description: "Kích hoạt Default Option Fallback tự động khi người dùng im lặng/timeout ở Step 3"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L183]"
+      - id: "STEP3-04"
+        description: "Validation Gate ở CUỐI STEP 3 đạt kết quả PASS (Quality Score >= 80%)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L63]"
+
+  step_4_ba_use_cases:
+    name: "Business Analysis & Use Cases Breakdown"
+    timing_rule: "END_OF_STEP"
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP4-01"
+        description: "Phân rã đủ 4 nhóm Use Cases (Basic Flow, Must-Have Flow, Nice-To-Have Flow, Exception Flow)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L53]"
+      - id: "STEP4-02"
+        description: "Lượng hóa 100% các NFRs, tỷ lệ xuất hiện từ mơ hồ (nhanh, tốt, nhiều) = 0%"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L99]"
+      - id: "STEP4-03"
+        description: "Xây dựng đầy đủ các kịch bản BDD Gherkin cho 4 nhóm Use Cases"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L298-336]"
+      - id: "STEP4-04"
+        description: "Validation Gate ở CUỐI STEP 4 đạt kết quả PASS (Quality Score >= 80%)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L63]"
+
+  step_5_architecture_analysis:
+    name: "Architecture Analysis & Mermaid Storage Isolation"
+    timing_rule: "END_OF_STEP"
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP5-01"
+        description: "Thực thi đủ 3 sub-steps (5.1 Top-level, 5.2 Sub-modules, 5.3 Detailed Mermaid)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L54-56]"
+      - id: "STEP5-02"
+        description: "100% sơ đồ Mermaid được cô lập duy nhất tại Docs/Specs/{feature-name}/diagrams/"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L57-58]"
+      - id: "STEP5-03"
+        description: "100% nhãn Node/Edge trong Mermaid được bọc ngoặc kép \"\" và không chứa thẻ HTML"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ HANDBOOK: L112-113]"
+      - id: "STEP5-04"
+        description: "Kích hoạt Self-Correction Loop tự động sửa cú pháp Mermaid hoặc nắn chỉnh đường dẫn khi phát hiện lỗi"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L156-170]"
+      - id: "STEP5-05"
+        description: "Validation Gate ở CUỐI STEP 5 đạt kết quả PASS (Quality Score >= 80%)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L63]"
+
+  step_6_synthesis_and_eval:
+    name: "Final Spec Synthesis & standards.md Quality Gate Evaluation"
+    timing_rule: "END_OF_STEP"
+    evaluation_logic: "AND"
+    criteria:
+      - id: "STEP6-01"
+        description: "Hợp nhất Final Feature Spec duy nhất tại Docs/Specs/{feature-name}/spec.md"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L59-60]"
+      - id: "STEP6-02"
+        description: "Tuân thủ 100% quy chuẩn định dạng từ standards.md (Alerts, Code blocks, Tables, Relative Links)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L61]"
+      - id: "STEP6-03"
+        description: "Tỷ lệ forbidden placeholders (TODO, TBD, ...) = 0%"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ HANDBOOK: L213]"
+      - id: "STEP6-04"
+        description: "Final Quality Score >= 80% (Ngưỡng PASS)"
+        type: "binary"
+        weight: 1.0
+        expected: true
+        trace_tag: "[TỪ BA: L62]"
+
+final_delivery_gate:
+  evaluation_rule: "ALL_STEPS_PASS" # Step 1 AND Step 2 AND Step 3 AND Step 4 AND Step 5 AND Step 6
+  required_status: "PASS"
+  min_overall_score: 0.80

@@ -1,0 +1,16 @@
+skill_name: "feature-spec-designer"
+lifecycle_phase: "COMPLETED"
+entry_stage: "-1"
+created_at: "2026-07-27T02:40:00+07:00"
+last_updated: "2026-07-27T02:43:30+07:00"
+confidence_score: 0.98
+current_stage: "DELIVERY"
+status: "COMPLETED"
+artifacts:
+  business_analysis: ".skill-context/feature-spec-designer/business-analysis.md"
+  domain_handbook: ".skill-context/feature-spec-designer/domain-handbook.md"
+  design: ".skill-context/feature-spec-designer/design.md"
+  quality_matrix: ".skill-context/feature-spec-designer/quality-matrix.yaml"
+  todo: ".skill-context/feature-spec-designer/todo.md"
+  skill_md: ".agents/skills/feature-spec-designer/SKILL.md"
+  build_log: ".skill-context/feature-spec-designer/build-log.md"

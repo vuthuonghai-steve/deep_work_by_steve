@@ -1,0 +1,25 @@
+---
+skill_name: "feature-spec-designer"
+version: "1.0.0"
+nfr_standards:
+  latency_p95_ms: 3000
+  latency_p99_ms: 5000
+  clarification_generation_p95_ms: 1500
+  interactive_timeout_seconds: 300
+
+forbidden_words:
+  - "TODO"
+  - "TBD"
+  - "..."
+  - "nhanh"
+  - "tốt"
+  - "nhiều"
+
+storage_isolation:
+  allowed_spec_root: "Docs/Specs/{feature-name}/"
+  allowed_diagrams_root: "Docs/Specs/{feature-name}/diagrams/"
+
+validation_gates:
+  rule: "END_OF_STEP_ONLY"
+  min_pass_score: 0.80
+  starter_validation_burden_allowed: false
